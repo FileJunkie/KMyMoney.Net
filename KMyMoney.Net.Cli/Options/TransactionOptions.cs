@@ -6,5 +6,5 @@ namespace KMyMoney.Net.Cli.Options;
 public class TransactionOptions : BaseOptions
 {
     [Option("id", Required = false, HelpText = "The ID of the transaction to find. If not provided, all transactions will be listed.")]
-    public string? Id { get; set; }
+    public string? Id { get; init; }
 }

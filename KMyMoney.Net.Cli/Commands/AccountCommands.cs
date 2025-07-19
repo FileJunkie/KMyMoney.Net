@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using KMyMoney.Net.Core;
 using KMyMoney.Net.Cli.Options;
 
@@ -6,14 +7,12 @@ namespace KMyMoney.Net.Cli.Commands;
 
 public static class AccountCommands
 {
-    public static int Execute(AccountOptions opts)
+    public static void Execute(AccountOptions opts)
     {
-        if (opts.FilePath == null) return 1;
         var kmyMoneyFile = KMyMoneyFileLoader.Load(opts.FilePath);
         if (kmyMoneyFile == null)
         {
-            Console.WriteLine("Error loading or parsing the file.");
-            return 1;
+            throw new InvalidDataException("Error loading or parsing the file. It might be corrupted or not a valid KMyMoney file.");
         }
         var repo = new AccountRepository(kmyMoneyFile);
 
@@ -33,9 +32,8 @@ public static class AccountCommands
             }
             else
             {
-                Console.WriteLine("Account not found.");
+                throw new InvalidOperationException($"Account with ID '{opts.Id}' not found.");
             }
         }
-        return 0;
     }
 }

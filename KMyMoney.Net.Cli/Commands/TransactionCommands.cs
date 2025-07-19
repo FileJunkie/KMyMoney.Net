@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using KMyMoney.Net.Core;
 using KMyMoney.Net.Cli.Options;
 
@@ -6,14 +7,12 @@ namespace KMyMoney.Net.Cli.Commands;
 
 public static class TransactionCommands
 {
-    public static int Execute(TransactionOptions opts)
+    public static void Execute(TransactionOptions opts)
     {
-        if (opts.FilePath == null) return 1;
         var kmyMoneyFile = KMyMoneyFileLoader.Load(opts.FilePath);
         if (kmyMoneyFile == null)
         {
-            Console.WriteLine("Error loading or parsing the file.");
-            return 1;
+            throw new InvalidDataException("Error loading or parsing the file. It might be corrupted or not a valid KMyMoney file.");
         }
         var repo = new TransactionRepository(kmyMoneyFile);
 
@@ -33,9 +32,8 @@ public static class TransactionCommands
             }
             else
             {
-                Console.WriteLine("Transaction not found.");
+                throw new InvalidOperationException($"Transaction with ID '{opts.Id}' not found.");
             }
         }
-        return 0;
     }
 }
