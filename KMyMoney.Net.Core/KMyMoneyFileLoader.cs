@@ -16,7 +16,8 @@ public static class KMyMoneyFileLoader
         
         var settings = new XmlReaderSettings
         {
-            DtdProcessing = DtdProcessing.Parse
+            DtdProcessing = DtdProcessing.Parse,
+            IgnoreWhitespace = true
         };
 
         using var xmlReader = XmlReader.Create(gzipStream, settings);

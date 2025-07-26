@@ -12,5 +12,5 @@ public class User
     public required string Email { get; set; }
 
     [XmlElement("ADDRESS")]
-    public Address? Address { get; set; }
+    public UserAddress? Address { get; set; }
 }

@@ -14,8 +14,8 @@ public class Transaction
     [XmlAttribute("memo")]
     public string? Memo { get; set; }
 
-    [XmlAttribute("currency")]
-    public string? Currency { get; set; }
+    [XmlAttribute("entrydate")]
+    public required string EntryDate { get; set; }
 
     [XmlAttribute("commodity")]
     public required string Commodity { get; set; }

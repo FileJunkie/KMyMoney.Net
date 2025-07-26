@@ -8,11 +8,11 @@ public class AccountRepository(KmyMoneyFile kmyMoneyFile)
 {
     public IEnumerable<Account> GetAll()
     {
-        return kmyMoneyFile.Accounts;
+        return kmyMoneyFile.Accounts.Account;
     }
 
     public Account? GetById(string id)
     {
-        return kmyMoneyFile.Accounts.FirstOrDefault(a => a.Id == id);
+        return kmyMoneyFile.Accounts.Account.FirstOrDefault(a => a.Id == id);
     }
 }

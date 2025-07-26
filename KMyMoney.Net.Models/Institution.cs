@@ -5,20 +5,20 @@ using System.Xml.Serialization;
 [XmlRoot("INSTITUTION")]
 public class Institution
 {
-    [XmlAttribute("manager")]
-    public string? Manager { get; set; }
+    [XmlAttribute("name")]
+    public required string Name { get; set; }
 
     [XmlAttribute("id")]
     public required string Id { get; set; }
 
-    [XmlAttribute("name")]
-    public required string Name { get; set; }
-
     [XmlAttribute("sortcode")]
     public string? Sortcode { get; set; }
 
+    [XmlAttribute("manager")]
+    public string? Manager { get; set; }
+
     [XmlElement("ADDRESS")]
-    public Address? Address { get; set; }
+    public InstitutionAddress? Address { get; set; }
 
     [XmlArray("ACCOUNTIDS")]
     [XmlArrayItem("ACCOUNTID")]

@@ -8,11 +8,11 @@ public class TransactionRepository(KmyMoneyFile kmyMoneyFile)
 {
     public IEnumerable<Transaction> GetAll()
     {
-        return kmyMoneyFile.Transactions;
+        return kmyMoneyFile.Transactions.Transaction;
     }
 
     public Transaction? GetById(string id)
     {
-        return kmyMoneyFile.Transactions.FirstOrDefault(t => t.Id == id);
+        return kmyMoneyFile.Transactions.Transaction.FirstOrDefault(t => t.Id == id);
     }
 }
