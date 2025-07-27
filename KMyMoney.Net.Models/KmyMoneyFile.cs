@@ -6,50 +6,50 @@ using System.Xml.Serialization;
 public class KmyMoneyFile
 {
     [XmlElement("FILEINFO")]
-    public FileInfo? FileInfo { get; set; }
+    public required FileInfo FileInfo { get; init; }
 
     [XmlElement("USER")]
-    public User? User { get; set; }
+    public required User User { get; init; }
 
     [XmlElement("INSTITUTIONS")]
-    public required Institutions Institutions { get; set; }
+    public required Institutions Institutions { get; init; }
 
     [XmlElement("PAYEES")]
-    public required Payees Payees { get; set; }
+    public required Payees Payees { get; init; }
 
     [XmlElement("COSTCENTERS")]
-    public CostCenters? CostCenters { get; set; }
+    public required CostCenters CostCenters { get; init; }
 
     [XmlElement("TAGS")]
-    public Tags? Tags { get; set; }
+    public required Tags Tags { get; init; }
 
     [XmlElement("ACCOUNTS")]
-    public required Accounts Accounts { get; set; }
+    public required Accounts Accounts { get; init; }
 
     [XmlElement("TRANSACTIONS")]
-    public required Transactions Transactions { get; set; }
+    public required Transactions Transactions { get; init; }
 
     [XmlElement("KEYVALUEPAIRS")]
-    public KeyValuePairs? KeyValuePairs { get; set; }
+    public required KeyValuePairs KeyValuePairs { get; init; }
 
     [XmlElement("SCHEDULES")]
-    public Schedules? Schedules { get; set; }
+    public required Schedules Schedules { get; init; }
 
     [XmlElement("SECURITIES")]
-    public Securities? Securities { get; set; }
+    public required Securities Securities { get; init; }
 
     [XmlElement("CURRENCIES")]
-    public Currencies? Currencies { get; set; }
+    public required Currencies Currencies { get; init; }
 
     [XmlElement("PRICES")]
-    public Prices? Prices { get; set; }
+    public required Prices Prices { get; init; }
 
     [XmlElement("REPORTS")]
-    public Reports? Reports { get; set; }
+    public required Reports Reports { get; init; }
 
     [XmlElement("BUDGETS")]
-    public Budgets? Budgets { get; init; }
+    public required Budgets Budgets { get; init; }
 
     [XmlElement("ONLINEJOBS")]
-    public OnlineJobs? OnlineJobs { get; init; }
+    public required OnlineJobs OnlineJobs { get; init; }
 }

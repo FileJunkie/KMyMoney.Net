@@ -10,14 +10,6 @@ namespace KMyMoney.Net.Cli.Commands;
 
 public static class TransactionCommands
 {
-    public static void Execute(TransactionOptions opts)
-    {
-        // This is a placeholder for listing transactions. 
-        // The original implementation was removed to focus on adding transactions.
-        // A proper implementation would list transactions.
-        Console.WriteLine("Listing transactions is not fully implemented in this version.");
-    }
-
     public static void Execute(AddTransactionOptions opts)
     {
         var kmyMoneyFile = KMyMoneyFileLoader.Load(opts.FilePath);

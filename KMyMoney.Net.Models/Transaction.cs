@@ -12,7 +12,7 @@ public class Transaction
     public required string PostDate { get; set; }
 
     [XmlAttribute("memo")]
-    public string? Memo { get; set; }
+    public string Memo { get; set; } = string.Empty;
 
     [XmlAttribute("entrydate")]
     public required string EntryDate { get; set; }

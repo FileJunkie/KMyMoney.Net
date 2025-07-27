@@ -16,6 +16,7 @@ public class AccountRepository(KmyMoneyFile kmyMoneyFile)
 
     public Account? FindByNameOrId(string nameOrId)
     {
-        return kmyMoneyFile.Accounts.Values.FirstOrDefault(a => a.Id == nameOrId || a.Name == nameOrId);
+        return kmyMoneyFile.Accounts.Values.FirstOrDefault(a => a.Id == nameOrId) ??
+               kmyMoneyFile.Accounts.Values.FirstOrDefault(a => a.Name == nameOrId);
     }
 }
