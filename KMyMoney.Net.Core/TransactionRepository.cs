@@ -33,11 +33,11 @@ public class TransactionRepository(KmyMoneyFile kmyMoneyFile)
             EntryDate = postDate.ToString("yyyy-MM-dd"),
             Commodity = currency,
             Memo = memo ?? string.Empty,
-            Splits = new Splits
+            Splits = new()
             {
                 Split =
                 [
-                    new Split
+                    new()
                     {
                         Id = "S0001",
                         Account = fromAccount.Id,
@@ -45,7 +45,7 @@ public class TransactionRepository(KmyMoneyFile kmyMoneyFile)
                         Shares = fromAmountConverted.ToString(),
                         Memo = memo ?? string.Empty
                     },
-                    new Split
+                    new()
                     {
                         Id = "S0002",
                         Account = toAccount.Id,
@@ -75,23 +75,27 @@ public class TransactionRepository(KmyMoneyFile kmyMoneyFile)
     private Fraction ConvertCurrency(decimal amount, string fromCurrency, string toCurrency)
     {
         var pricePair = kmyMoneyFile.Prices.Values.FirstOrDefault(p => p.From == fromCurrency && p.To == toCurrency);
-        if (pricePair == null)
-        {
-            // Also check reverse pair
-            pricePair = kmyMoneyFile.Prices.Values.FirstOrDefault(p => p.From == toCurrency && p.To == fromCurrency);
-            if (pricePair != null)
-            {
-                var latestPrice = pricePair.Price.OrderByDescending(p => p.Date).First();
-                var price = Fraction.FromString(latestPrice.Price);
-                return amount / price;
-            }
-            throw new Exception($"No exchange rate found for {fromCurrency} to {toCurrency}");
-        }
-        else
+
+        Fraction? price = null;
+        if (pricePair != null)
         {
             var latestPrice = pricePair.Price.OrderByDescending(p => p.Date).First();
-            var price = Fraction.FromString(latestPrice.Price);
-            return amount * price;
+            price = Fraction.FromString(latestPrice.Price);
         }
+
+        pricePair = kmyMoneyFile.Prices.Values.FirstOrDefault(p => p.From == toCurrency && p.To == fromCurrency);
+
+        if (pricePair != null)
+        {
+            var latestPrice = pricePair.Price.OrderByDescending(p => p.Date).First();
+            price = Fraction.FromString(latestPrice.Price).Reciprocal();
+        }
+
+        if (price == null)
+        {
+            throw new($"No exchange rate found for {fromCurrency} to {toCurrency}");
+        }
+
+        return amount * price.Value;
     }
 }
