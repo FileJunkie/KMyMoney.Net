@@ -1,0 +1,1 @@
+Most of these classes were AI-generated from existing XML and polished manually afterwards. Enter at your own risk.

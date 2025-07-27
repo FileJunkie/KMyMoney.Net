@@ -1,39 +1,114 @@
-using System;
-using System.IO;
-using KMyMoney.Net.Core;
+using System.CommandLine;
 using KMyMoney.Net.Cli.Options;
+using KMyMoney.Net.Core;
+using KMyMoney.Net.Models;
 
 namespace KMyMoney.Net.Cli.Commands;
 
 public static class TransactionCommands
 {
-    public static void Execute(TransactionOptions opts)
-    {
-        var kmyMoneyFile = KMyMoneyFileLoader.Load(opts.FilePath);
-        if (kmyMoneyFile == null)
-        {
-            throw new InvalidDataException("Error loading or parsing the file. It might be corrupted or not a valid KMyMoney file.");
-        }
-        var repo = new TransactionRepository(kmyMoneyFile);
+    public static Command Get { get; }
+    public static Command List { get; }
+    public static Command Add { get; }
 
-        if (string.IsNullOrEmpty(opts.Id))
+    static TransactionCommands()
+    {
+        Get = CreateGetCommand();
+        List = CreateListCommand();
+        Add = CreateAddCommand();
+    }
+    
+    private static Command CreateGetCommand()
+    {
+        var idOption = new Option<string>("--id")
         {
-            foreach (var transaction in repo.GetAll())
-            {
-                Console.WriteLine($"{transaction.Id}: {transaction.PostDate}");
-            }
-        }
-        else
+            Required = false,
+        };
+
+        var result = new Command("get")
         {
-            var transaction = repo.GetById(opts.Id);
-            if (transaction != null)
+            idOption
+        };
+        
+        result.SetAction(parseResult =>
+        {
+            var id = parseResult.GetValue(idOption);
+            var transactions = KmyMoneyFileExtensions.Load(parseResult.GetRequiredValue(BaseOptions.File)).Transactions.Values.AsEnumerable();
+            if (!string.IsNullOrWhiteSpace(id))
             {
-                Console.WriteLine($"{transaction.Id}: {transaction.PostDate}");
+                transactions = transactions.Where(a => a.Id == id);
             }
-            else
-            {
-                throw new InvalidOperationException($"Transaction with ID '{opts.Id}' not found.");
-            }
+
+            OutputTransactions(transactions.ToArray());
+        });
+        
+        return result;
+    }
+    
+    private static Command CreateListCommand()
+    {
+        var result = new Command("list");
+        result.SetAction(parseResult =>
+        {
+            OutputTransactions(KmyMoneyFileExtensions.Load(parseResult.GetRequiredValue(BaseOptions.File)).Transactions.Values);
+        });
+        
+        return result;
+    }
+
+    private static Command CreateAddCommand()
+    {
+        var from = new Option<string>("--from")
+        {
+            Required = true,
+        };
+
+        var to = new Option<string>("--to")
+        {
+            Required = true,
+        };
+
+        var amount = new Option<decimal>("--amount")
+        {
+            Required = true,
+        };
+
+        var currency = new Option<string>("--currency")
+        {
+            Required = true,
+        };
+
+        var memo = new Option<string>("--memo")
+        {
+            Required = false,
+        };
+        
+        var result = new Command("add")
+        {
+            from, to, amount, currency, memo
+        };
+        result.SetAction(parseResult =>
+        {
+            var filePath = parseResult.GetRequiredValue(BaseOptions.File);
+            var file = KmyMoneyFileExtensions.Load(filePath);
+            file.AddTransaction(
+                parseResult.GetRequiredValue(from),
+                parseResult.GetRequiredValue(to),
+                parseResult.GetRequiredValue(amount),
+                parseResult.GetRequiredValue(currency),
+                parseResult.GetValue(memo));
+            file.Save(filePath);
+        });
+        
+        return result;
+    }
+
+    private static void OutputTransactions(params Transaction[] transactions)
+    {
+        foreach (var transaction in transactions)
+        {
+            Console.WriteLine(transaction.Id);
         }
     }
+
 }

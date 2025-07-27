@@ -6,24 +6,50 @@ using System.Xml.Serialization;
 public class KmyMoneyFile
 {
     [XmlElement("FILEINFO")]
-    public FileInfo? FileInfo { get; set; }
+    public required FileInfo FileInfo { get; init; }
 
     [XmlElement("USER")]
-    public User? User { get; set; }
+    public required User User { get; init; }
 
-    [XmlArray("INSTITUTIONS")]
-    [XmlArrayItem("INSTITUTION")]
-    public required Institution[] Institutions { get; set; } = [];
+    [XmlElement("INSTITUTIONS")]
+    public required Institutions Institutions { get; init; }
 
-    [XmlArray("PAYEES")]
-    [XmlArrayItem("PAYEE")]
-    public required Payee[] Payees { get; set; } = [];
+    [XmlElement("PAYEES")]
+    public required Payees Payees { get; init; }
 
-    [XmlArray("ACCOUNTS")]
-    [XmlArrayItem("ACCOUNT")]
-    public required Account[] Accounts { get; set; } = [];
+    [XmlElement("COSTCENTERS")]
+    public required CostCenters CostCenters { get; init; }
 
-    [XmlArray("TRANSACTIONS")]
-    [XmlArrayItem("TRANSACTION")]
-    public required Transaction[] Transactions { get; set; } = [];
+    [XmlElement("TAGS")]
+    public required Tags Tags { get; init; }
+
+    [XmlElement("ACCOUNTS")]
+    public required Accounts Accounts { get; init; }
+
+    [XmlElement("TRANSACTIONS")]
+    public required Transactions Transactions { get; init; }
+
+    [XmlElement("KEYVALUEPAIRS")]
+    public required KeyValuePairs KeyValuePairs { get; init; }
+
+    [XmlElement("SCHEDULES")]
+    public required Schedules Schedules { get; init; }
+
+    [XmlElement("SECURITIES")]
+    public required Securities Securities { get; init; }
+
+    [XmlElement("CURRENCIES")]
+    public required Currencies Currencies { get; init; }
+
+    [XmlElement("PRICES")]
+    public required Prices Prices { get; init; }
+
+    [XmlElement("REPORTS")]
+    public required Reports Reports { get; init; }
+
+    [XmlElement("BUDGETS")]
+    public required Budgets Budgets { get; init; }
+
+    [XmlElement("ONLINEJOBS")]
+    public required OnlineJobs OnlineJobs { get; init; }
 }

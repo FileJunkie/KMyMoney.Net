@@ -3,23 +3,23 @@ namespace KMyMoney.Net.Models;
 using System.Xml.Serialization;
 
 [XmlRoot("PAYEE")]
-public class Payee
+public class Payee : IHasId, IHasName
 {
-    [XmlAttribute("id")]
-    public required string Id { get; set; }
-
     [XmlAttribute("name")]
-    public required string Name { get; set; }
-
-    [XmlAttribute("matchingenabled")]
-    public required string MatchingEnabled { get; set; }
-
-    [XmlAttribute("email")]
-    public string? Email { get; set; }
+    public required string Name { get; init; }
 
     [XmlAttribute("reference")]
-    public string? Reference { get; set; }
+    public string? Reference { get; init; }
+
+    [XmlAttribute("matchingenabled")]
+    public required string MatchingEnabled { get; init; }
+
+    [XmlAttribute("id")]
+    public required string Id { get; init; }
+
+    [XmlAttribute("email")]
+    public string? Email { get; init; }
 
     [XmlElement("ADDRESS")]
-    public Address? Address { get; set; }
+    public PayeeAddress? Address { get; init; }
 }

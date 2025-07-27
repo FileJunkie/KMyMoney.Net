@@ -3,24 +3,24 @@ namespace KMyMoney.Net.Models;
 using System.Xml.Serialization;
 
 [XmlRoot("INSTITUTION")]
-public class Institution
+public class Institution : IHasId, IHasName
 {
-    [XmlAttribute("manager")]
-    public string? Manager { get; set; }
+    [XmlAttribute("name")]
+    public required string Name { get; init; }
 
     [XmlAttribute("id")]
-    public required string Id { get; set; }
-
-    [XmlAttribute("name")]
-    public required string Name { get; set; }
+    public required string Id { get; init; }
 
     [XmlAttribute("sortcode")]
-    public string? Sortcode { get; set; }
+    public string? Sortcode { get; init; }
+
+    [XmlAttribute("manager")]
+    public string? Manager { get; init; }
 
     [XmlElement("ADDRESS")]
-    public Address? Address { get; set; }
+    public InstitutionAddress? Address { get; init; }
 
     [XmlArray("ACCOUNTIDS")]
     [XmlArrayItem("ACCOUNTID")]
-    public required AccountId[] AccountIds { get; set; } = [];
+    public required AccountId[] AccountIds { get; init; } = [];
 }

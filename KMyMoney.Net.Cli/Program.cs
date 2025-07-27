@@ -1,30 +1,35 @@
-using System;
-using CommandLine;
+using System.CommandLine;
 using KMyMoney.Net.Cli.Commands;
 using KMyMoney.Net.Cli.Options;
 
-public class Program
+var rootCommand = new RootCommand("KMyMoney.NET CLI tool")
 {
-    public static int Main(string[] args)
+    Options =
     {
-        try
+        BaseOptions.File,
+    },
+    Subcommands =
+    {
+        new Command("account")
         {
-            return Parser.Default.ParseArguments<AccountOptions, TransactionOptions>(args)
-                .MapResult(
-                    (AccountOptions opts) => {
-                        AccountCommands.Execute(opts);
-                        return 0;
-                    },
-                    (TransactionOptions opts) => {
-                        TransactionCommands.Execute(opts);
-                        return 0;
-                    },
-                    errs => 1);
-        }
-        catch (Exception ex)
+            Subcommands =
+            {
+                AccountCommands.Get,
+                AccountCommands.List,
+            }
+        },
+        new Command("transaction")
         {
-            Console.Error.WriteLine($"Error: {ex.Message}");
-            return 1;
-        }
+            Subcommands =
+            {
+                TransactionCommands.Add,
+                TransactionCommands.Get,
+                TransactionCommands.List,
+            }
+        },
+        DumpCommand.Command,
     }
-}
+};
+
+var parseResult = rootCommand.Parse(args);
+return await parseResult.InvokeAsync();
