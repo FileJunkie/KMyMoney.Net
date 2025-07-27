@@ -20,7 +20,7 @@ public static class KmyMoneyFileExtensions
         var settings = new XmlReaderSettings
         {
             DtdProcessing = DtdProcessing.Parse,
-            IgnoreWhitespace = true
+            IgnoreWhitespace = true,
         };
         
         using var xmlReader = XmlReader.Create(gzipStream, settings);
@@ -57,10 +57,7 @@ public static class KmyMoneyFileExtensions
             serializer.Serialize(writer, file, ns);
         }
 
-        // TODO: check if KMyMoney is actually that sensitive
-        var xml = stringWriter.ToString()
-            .Replace("&#xA;", "&#xa;")
-            .Replace(" />", "/>");
+        var xml = stringWriter.ToString();
 
         var sb = new StringBuilder();
         sb.AppendLine("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
