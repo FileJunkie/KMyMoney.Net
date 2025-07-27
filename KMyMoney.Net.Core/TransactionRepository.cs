@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
 using KMyMoney.Net.Models;
 
 namespace KMyMoney.Net.Core
@@ -58,17 +54,16 @@ namespace KMyMoney.Net.Core
                 }
             };
 
-            var transactions = kmyMoneyFile.Transactions.Transaction.ToList();
+            var transactions = kmyMoneyFile.Transactions.Values.ToList();
             transactions.Add(transaction);
-            kmyMoneyFile.Transactions.Transaction = transactions.ToArray();
+            kmyMoneyFile.Transactions.Values = transactions.ToArray();
 
             return transaction;
         }
 
         private string GenerateNextTransactionId()
         {
-            var maxId = kmyMoneyFile.Transactions.Transaction
-                .Select(t => int.Parse(t.Id.Substring(1)))
+            var maxId = kmyMoneyFile.Transactions.Values.Select(t => int.Parse(t.Id.Substring(1)))
                 .DefaultIfEmpty(0)
                 .Max();
             return $"T{maxId + 1:D18}";
@@ -86,11 +81,11 @@ namespace KMyMoney.Net.Core
                 throw new Exception("No price information available in the file.");
             }
 
-            var pricePair = kmyMoneyFile.Prices.PricePair.FirstOrDefault(p => p.From == fromCurrency && p.To == toCurrency);
+            var pricePair = kmyMoneyFile.Prices.Values.FirstOrDefault(p => p.From == fromCurrency && p.To == toCurrency);
             if (pricePair == null)
             {
                 // Also check reverse pair
-                pricePair = kmyMoneyFile.Prices.PricePair.FirstOrDefault(p => p.From == toCurrency && p.To == fromCurrency);
+                pricePair = kmyMoneyFile.Prices.Values.FirstOrDefault(p => p.From == toCurrency && p.To == fromCurrency);
                 if (pricePair != null)
                 {
                     var latestPrice = pricePair.Price.OrderByDescending(p => p.Date).First();

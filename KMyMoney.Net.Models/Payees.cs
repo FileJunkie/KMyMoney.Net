@@ -2,15 +2,8 @@ namespace KMyMoney.Net.Models;
 
 using System.Xml.Serialization;
 
-public class Payees
+public class Payees : ArrayWithCount<Payee>
 {
-    [XmlAttribute("count")]
-    public int Count
-    {
-        get => Payee.Length;
-        init { }
-    }
-
     [XmlElement("PAYEE")]
-    public required Payee[] Payee { get; set; } = [];
+    public override required Payee[] Values { get; set; } = [];
 }

@@ -2,11 +2,8 @@ namespace KMyMoney.Net.Models;
 
 using System.Xml.Serialization;
 
-public class Transactions
+public class Transactions : ArrayWithCount<Transaction>
 {
-    [XmlAttribute("count")]
-    public int Count { get; set; }
-
     [XmlElement("TRANSACTION")]
-    public required Transaction[] Transaction { get; set; } = [];
+    public override required Transaction[] Values { get; set; } = [];
 }

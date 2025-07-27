@@ -2,15 +2,8 @@ namespace KMyMoney.Net.Models;
 
 using System.Xml.Serialization;
 
-public class Institutions
+public class Institutions : ArrayWithCount<Institution>
 {
-    [XmlAttribute("count")]
-    public int Count
-    {
-        get => Institution.Length;
-        init { }
-    }
-
     [XmlElement("INSTITUTION")]
-    public required Institution[] Institution { get; set; } = [];
+    public override required Institution[] Values { get; set; } = [];
 }

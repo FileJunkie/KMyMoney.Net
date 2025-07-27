@@ -1,5 +1,3 @@
-using System;
-using System.IO;
 using KMyMoney.Net.Core;
 using KMyMoney.Net.Cli.Options;
 

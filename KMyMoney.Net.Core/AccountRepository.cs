@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System.Linq;
 using KMyMoney.Net.Models;
 
 namespace KMyMoney.Net.Core;
@@ -8,16 +6,16 @@ public class AccountRepository(KmyMoneyFile kmyMoneyFile)
 {
     public IEnumerable<Account> GetAll()
     {
-        return kmyMoneyFile.Accounts.Account;
+        return kmyMoneyFile.Accounts.Values;
     }
 
     public Account? GetById(string id)
     {
-        return kmyMoneyFile.Accounts.Account.FirstOrDefault(a => a.Id == id);
+        return kmyMoneyFile.Accounts.Values.FirstOrDefault(a => a.Id == id);
     }
 
     public Account? FindByNameOrId(string nameOrId)
     {
-        return kmyMoneyFile.Accounts.Account.FirstOrDefault(a => a.Id == nameOrId || a.Name == nameOrId);
+        return kmyMoneyFile.Accounts.Values.FirstOrDefault(a => a.Id == nameOrId || a.Name == nameOrId);
     }
 }

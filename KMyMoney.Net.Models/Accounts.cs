@@ -2,15 +2,8 @@ namespace KMyMoney.Net.Models;
 
 using System.Xml.Serialization;
 
-public class Accounts
+public class Accounts : ArrayWithCount<Account>
 {
-    [XmlAttribute("count")]
-    public int Count
-    {
-        get => Account.Length;
-        init { }
-    }
-
     [XmlElement("ACCOUNT")]
-    public required Account[] Account { get; set; } = [];
+    public override required Account[] Values { get; set; } = [];
 }

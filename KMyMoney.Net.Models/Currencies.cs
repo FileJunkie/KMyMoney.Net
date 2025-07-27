@@ -2,15 +2,8 @@ namespace KMyMoney.Net.Models;
 
 using System.Xml.Serialization;
 
-public class Currencies
+public class Currencies : ArrayWithCount<Currency>
 {
-    [XmlAttribute("count")]
-    public int Count
-    {
-        get => Currency.Length;
-        init { }
-    }
-
     [XmlElement("CURRENCY")]
-    public required Currency[] Currency { get; set; } = [];
+    public override required Currency[] Values { get; set; } = [];
 }

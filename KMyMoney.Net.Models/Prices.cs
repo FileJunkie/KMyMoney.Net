@@ -2,15 +2,8 @@ namespace KMyMoney.Net.Models;
 
 using System.Xml.Serialization;
 
-public class Prices
+public class Prices : ArrayWithCount<PricePair>
 {
-    [XmlAttribute("count")]
-    public int Count
-    {
-        get => PricePair.Length;
-        init { }
-    }
-
     [XmlElement("PRICEPAIR")]
-    public required PricePair[] PricePair { get; set; } = [];
+    public override required PricePair[] Values { get; set; } = [];
 }
