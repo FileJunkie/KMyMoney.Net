@@ -4,63 +4,129 @@ using System.Xml.Serialization;
 
 public class Report
 {
-    [XmlAttribute("count")]
-    public required string Type { get; init; }
+    [XmlAttribute("chartbydefault")]
+    public string? ChartByDefault { get; set; }
 
-    [XmlAttribute("detail")]
-    public required string Detail { get; init; }
+    [XmlAttribute("chartchgridlines")]
+    public string? ChartChGridLines { get; set; }
 
-    [XmlAttribute("investments")]
-    public required string Investments { get; init; }
+    [XmlAttribute("chartdatalabels")]
+    public string? ChartDataLabels { get; set; }
 
-    [XmlAttribute("hidetransactions")]
-    public required string HideTransactions { get; init; }
+    [XmlAttribute("chartlinewidth")]
+    public string? ChartLineWidth { get; set; }
 
-    [XmlAttribute("rowtype")]
-    public required string RowType { get; init; }
+    [XmlAttribute("chartpalette")]
+    public string? ChartPalette { get; set; }
 
-    [XmlAttribute("loans")]
-    public required string Loans { get; init; }
+    [XmlAttribute("chartsvgridlines")]
+    public string? ChartSvGridLines { get; set; }
 
-    [XmlAttribute("group")]
-    public required string Group { get; init; }
+    [XmlAttribute("charttype")]
+    public string? ChartType { get; set; }
 
-    [XmlAttribute("datelock")]
-    public required string DateLock { get; init; }
+    [XmlAttribute("columnsaredays")]
+    public string? ColumnsAreDays { get; set; }
 
-    [XmlAttribute("investmentsum")]
-    public required string InvestmentSum { get; init; }
-
-    [XmlAttribute("tax")]
-    public required string Tax { get; init; }
-
-    [XmlAttribute("includestransfers")]
-    public required string IncludesTransfers { get; init; }
-
-    [XmlAttribute("name")]
-    public required string Name { get; init; }
-
-    [XmlAttribute("skipZero")]
-    public required string SkipZero { get; init; }
-
-    [XmlAttribute("convertcurrency")]
-    public required string ConvertCurrency { get; init; }
-
-    [XmlAttribute("id")]
-    public required string Id { get; init; }
+    [XmlAttribute("columntype")]
+    public string? ColumnType { get; set; }
 
     [XmlAttribute("comment")]
-    public required string Comment { get; init; }
+    public string? Comment { get; set; }
+
+    [XmlAttribute("convertcurrency")]
+    public string? ConvertCurrency { get; set; }
+
+    [XmlAttribute("datalock")]
+    public string? DataLock { get; set; }
+
+    [XmlAttribute("dataMajorTick")]
+    public string? DataMajorTick { get; set; }
+
+    [XmlAttribute("dataMinorTick")]
+    public string? DataMinorTick { get; set; }
+
+    [XmlAttribute("dataRangeEnd")]
+    public string? DataRangeEnd { get; set; }
+
+    [XmlAttribute("dataRangeStart")]
+    public string? DataRangeStart { get; set; }
+
+    [XmlAttribute("datelock")]
+    public string? DateLock { get; set; }
+
+    [XmlAttribute("detail")]
+    public string? Detail { get; set; }
 
     [XmlAttribute("favorite")]
-    public required string Favorite { get; init; }
+    public string? Favorite { get; set; }
 
-    [XmlAttribute("querycolumns")]
-    public required string QueryColumns { get; init; }
+    [XmlAttribute("group")]
+    public string? Group { get; set; }
 
-    [XmlAttribute("showcolumntotal")]
-    public required string ShowColumnTotal { get; init; }
+    [XmlAttribute("hidetransactions")]
+    public string? HideTransactions { get; set; }
+
+    [XmlAttribute("id")]
+    public string? Id { get; set; }
+
+    [XmlAttribute("includesactuals")]
+    public string? IncludesActuals { get; set; }
+
+    [XmlAttribute("includesaverageprice")]
+    public string? IncludesAveragePrice { get; set; }
+
+    [XmlAttribute("includeschedules")]
+    public string? IncludeSchedules { get; set; }
+
+    [XmlAttribute("includesforecast")]
+    public string? IncludesForecast { get; set; }
+
+    [XmlAttribute("includesmovingaverage")]
+    public string? IncludesMovingAverage { get; set; }
+
+    [XmlAttribute("includesprice")]
+    public string? IncludesPrice { get; set; }
+
+    [XmlAttribute("includestransfers")]
+    public string? IncludeTransfers { get; set; }
+
+    [XmlAttribute("includeunused")]
+    public string? IncludeUnused { get; set; }
+
+    [XmlAttribute("investments")]
+    public string? Investments { get; set; }
+
+    [XmlAttribute("logYaxis")]
+    public string? LogYaxis { get; set; }
+
+    [XmlAttribute("mixedtime")]
+    public string? MixedTime { get; set; }
+
+    [XmlAttribute("name")]
+    public string? Name { get; set; }
+
+    [XmlAttribute("negexpenses")]
+    public string? NegExpenses { get; set; }
+
+    [XmlAttribute("rowtype")]
+    public string? RowType { get; set; }
+
+    [XmlAttribute("showcolumntotals")]
+    public string? ShowColumnTotals { get; set; }
+
+    [XmlAttribute("showrowtotals")]
+    public string? ShowRowTotals { get; set; }
+
+    [XmlAttribute("skipZero")]
+    public string? SkipZero { get; set; }
+
+    [XmlAttribute("type")]
+    public string? Type { get; set; }
+
+    [XmlAttribute("yLabelsPrecision")]
+    public string? YLabelsPrecision { get; set; }
 
     [XmlElement("ACCOUNTGROUP")]
-    public required AccountGroup[] AccountGroups { get; set; } = [];
+    public AccountGroup[]? AccountGroups { get; set; }
 }

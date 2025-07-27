@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.IO.Compression;
 using System.Xml;
 using System.Xml.Serialization;
 using KMyMoney.Net.Cli.Options;
@@ -56,7 +57,17 @@ namespace KMyMoney.Net.Cli.Commands
                         Console.Error.WriteLine("Output file not specified.");
                         return;
                     }
-                    File.WriteAllText(opts.OutputFile, sb.ToString());
+
+                    using (var fileStream = new FileStream(opts.OutputFile, FileMode.Create))
+                    {
+                        using (var gzipStream = new GZipStream(fileStream, CompressionMode.Compress))
+                        {
+                            using (var streamWriter = new StreamWriter(gzipStream))
+                            {
+                                streamWriter.Write(sb.ToString());
+                            }
+                        }
+                    }
                 }
 
                 Console.WriteLine($"Successfully serialized to {opts.OutputFile}");
