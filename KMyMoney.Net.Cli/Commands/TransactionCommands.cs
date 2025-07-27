@@ -1,81 +1,114 @@
-using System.IO.Compression;
-using System.Text;
-using System.Xml;
-using System.Xml.Serialization;
-using KMyMoney.Net.Core;
+using System.CommandLine;
 using KMyMoney.Net.Cli.Options;
+using KMyMoney.Net.Core;
 using KMyMoney.Net.Models;
 
 namespace KMyMoney.Net.Cli.Commands;
 
 public static class TransactionCommands
 {
-    public static void Execute(AddTransactionOptions opts)
+    public static Command Get { get; }
+    public static Command List { get; }
+    public static Command Add { get; }
+
+    static TransactionCommands()
     {
-        var kmyMoneyFile = KMyMoneyFileLoader.Load(opts.FilePath);
-        if (kmyMoneyFile == null)
-        {
-            throw new InvalidDataException("Error loading or parsing the file.");
-        }
-
-        var accountRepo = new AccountRepository(kmyMoneyFile);
-        var fromAccount = accountRepo.FindByNameOrId(opts.From);
-        var toAccount = accountRepo.FindByNameOrId(opts.To);
-
-        if (fromAccount == null)
-        {
-            Console.Error.WriteLine($"Source account '{opts.From}' not found.");
-            return;
-        }
-
-        if (toAccount == null)
-        {
-            Console.Error.WriteLine($"Destination account '{opts.To}' not found.");
-            return;
-        }
-
-        var transactionRepo = new TransactionRepository(kmyMoneyFile);
-        var transaction = transactionRepo.AddTransaction(fromAccount, toAccount, opts.Amount, opts.Currency, opts.Memo);
-
-        Console.WriteLine($"Successfully added transaction {transaction.Id}.");
-
-        SaveChanges(kmyMoneyFile, opts.FilePath);
-        Console.WriteLine($"File '{opts.FilePath}' saved successfully.");
+        Get = CreateGetCommand();
+        List = CreateListCommand();
+        Add = CreateAddCommand();
     }
-
-    private static void SaveChanges(KmyMoneyFile file, string path)
+    
+    private static Command CreateGetCommand()
     {
-        var serializer = new XmlSerializer(typeof(KmyMoneyFile));
-        var ns = new XmlSerializerNamespaces();
-        ns.Add("", "");
-
-        var settings = new XmlWriterSettings
+        var idOption = new Option<string>("--id")
         {
-            Indent = true,
-            IndentChars = " ",
-            NewLineChars = "\n",
-            NewLineHandling = NewLineHandling.Replace,
-            OmitXmlDeclaration = true
+            Required = false,
         };
 
-        using var stringWriter = new StringWriter();
-        using (var writer = XmlWriter.Create(stringWriter, settings))
+        var result = new Command("get")
         {
-            serializer.Serialize(writer, file, ns);
-        }
+            idOption
+        };
+        
+        result.SetAction(parseResult =>
+        {
+            var id = parseResult.GetValue(idOption);
+            var transactions = KmyMoneyFileExtensions.Load(parseResult.GetRequiredValue(BaseOptions.File)).Transactions.Values.AsEnumerable();
+            if (!string.IsNullOrWhiteSpace(id))
+            {
+                transactions = transactions.Where(a => a.Id == id);
+            }
 
-        var xml = stringWriter.ToString();
-        xml = xml.Replace("&#xA;", "&#xa;");
-        xml = xml.Replace(" />", "/>");
-
-        var sb = new StringBuilder();
-        sb.AppendLine("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
-        sb.AppendLine("<!DOCTYPE KMYMONEY-FILE>");
-        sb.Append(xml);
-
-        using var fileStream = new FileStream(path, FileMode.Create);
-        using var gzipStream = new GZipStream(fileStream, CompressionMode.Compress);
-        using var streamWriter = new StreamWriter(gzipStream);
-        streamWriter.Write(sb.ToString());
+            OutputTransactions(transactions.ToArray());
+        });
+        
+        return result;
     }
+    
+    private static Command CreateListCommand()
+    {
+        var result = new Command("list");
+        result.SetAction(parseResult =>
+        {
+            OutputTransactions(KmyMoneyFileExtensions.Load(parseResult.GetRequiredValue(BaseOptions.File)).Transactions.Values);
+        });
+        
+        return result;
+    }
+
+    private static Command CreateAddCommand()
+    {
+        var from = new Option<string>("--from")
+        {
+            Required = true,
+        };
+
+        var to = new Option<string>("--to")
+        {
+            Required = true,
+        };
+
+        var amount = new Option<decimal>("--amount")
+        {
+            Required = true,
+        };
+
+        var currency = new Option<string>("--currency")
+        {
+            Required = true,
+        };
+
+        var memo = new Option<string>("--memo")
+        {
+            Required = false,
+        };
+        
+        var result = new Command("add")
+        {
+            from, to, amount, currency, memo
+        };
+        result.SetAction(parseResult =>
+        {
+            var filePath = parseResult.GetRequiredValue(BaseOptions.File);
+            var file = KmyMoneyFileExtensions.Load(filePath);
+            file.AddTransaction(
+                parseResult.GetRequiredValue(from),
+                parseResult.GetRequiredValue(to),
+                parseResult.GetRequiredValue(amount),
+                parseResult.GetRequiredValue(currency),
+                parseResult.GetValue(memo));
+            file.Save(filePath);
+        });
+        
+        return result;
+    }
+
+    private static void OutputTransactions(params Transaction[] transactions)
+    {
+        foreach (var transaction in transactions)
+        {
+            Console.WriteLine(transaction.Id);
+        }
+    }
+
 }

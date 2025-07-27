@@ -5,38 +5,38 @@ using System.Xml.Serialization;
 public class Split
 {
     [XmlAttribute("reconciledate")]
-    public string ReconcileDate { get; set; } = string.Empty;
+    public string ReconcileDate { get; init; } = string.Empty;
 
     [XmlAttribute("bankid")]
-    public string BankId { get; set; } = string.Empty;
+    public string BankId { get; init; } = string.Empty;
 
     [XmlAttribute("id")]
-    public required string Id { get; set; }
+    public required string Id { get; init; }
 
     [XmlAttribute("payee")]
-    public string Payee { get; set; } = string.Empty;
+    public string Payee { get; init; } = string.Empty;
 
     [XmlAttribute("action")]
-    public string Action { get; set; } = string.Empty;
+    public string Action { get; init; } = string.Empty;
 
     [XmlAttribute("price")]
-    public string Price { get; set; } = string.Empty;
+    public string Price { get; init; } = string.Empty;
 
     [XmlAttribute("memo")]
-    public string Memo { get; set; } = string.Empty;
+    public string Memo { get; init; } = string.Empty;
 
     [XmlAttribute("number")]
-    public string Number { get; set; } = string.Empty;
+    public string Number { get; init; } = string.Empty;
 
     [XmlAttribute("value")]
-    public required string Value { get; set; }
+    public required string Value { get; init; }
 
     [XmlAttribute("account")]
-    public required string Account { get; set; }
+    public required string Account { get; init; }
 
     [XmlAttribute("reconcileflag")]
-    public string ReconcileFlag { get; set; } = string.Empty;
+    public string ReconcileFlag { get; init; } = string.Empty;
 
     [XmlAttribute("shares")]
-    public required string Shares { get; set; }
+    public required string Shares { get; init; }
 }

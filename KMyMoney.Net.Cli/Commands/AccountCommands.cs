@@ -1,37 +1,74 @@
-using KMyMoney.Net.Core;
+using System.CommandLine;
 using KMyMoney.Net.Cli.Options;
+using KMyMoney.Net.Core;
+using KMyMoney.Net.Models;
 
 namespace KMyMoney.Net.Cli.Commands;
 
 public static class AccountCommands
 {
-    public static void Execute(AccountOptions opts)
-    {
-        var kmyMoneyFile = KMyMoneyFileLoader.Load(opts.FilePath);
-        if (kmyMoneyFile == null)
-        {
-            throw new InvalidDataException("Error loading or parsing the file. It might be corrupted or not a valid KMyMoney file.");
-        }
-        var repo = new AccountRepository(kmyMoneyFile);
+    public static Command Get { get; }
+    public static Command List { get; }
 
-        if (string.IsNullOrEmpty(opts.Id))
+    static AccountCommands()
+    {
+        Get = CreateGetCommand();
+        List = CreateListCommand();
+    }
+
+    private static Command CreateGetCommand()
+    {
+        var idOption = new Option<string>("--id")
         {
-            foreach (var account in repo.GetAll())
-            {
-                Console.WriteLine($"{account.Id}: {account.Name}");
-            }
-        }
-        else
+            Required = false,
+        };
+        var nameOption = new Option<string>("--name")
         {
-            var account = repo.GetById(opts.Id);
-            if (account != null)
+            Required = false,
+        };
+
+        var result = new Command("get")
+        {
+            idOption, nameOption
+        };
+        
+        result.SetAction(parseResult =>
+        {
+            var id = parseResult.GetValue(idOption);
+            var name = parseResult.GetValue(nameOption);
+            var accounts = KmyMoneyFileExtensions.Load(parseResult.GetRequiredValue(BaseOptions.File)).Accounts.Values.AsEnumerable();
+            if (!string.IsNullOrWhiteSpace(id))
             {
-                Console.WriteLine($"{account.Id}: {account.Name}");
+                accounts = accounts.Where(a => a.Id == id);
             }
-            else
+
+            if (!string.IsNullOrWhiteSpace(name))
             {
-                throw new InvalidOperationException($"Account with ID '{opts.Id}' not found.");
+                accounts = accounts.Where(a => a.Name == name);
             }
+            
+            OutputAccounts(accounts.ToArray());
+        });
+        
+        return result;
+    }
+    
+    private static Command CreateListCommand()
+    {
+        var result = new Command("list");
+        result.SetAction(parseResult =>
+        {
+            OutputAccounts(KmyMoneyFileExtensions.Load(parseResult.GetRequiredValue(BaseOptions.File)).Accounts.Values);
+        });
+        
+        return result;
+    }
+
+    private static void OutputAccounts(params Account[] accounts)
+    {
+        foreach (var account in accounts)
+        {
+            Console.WriteLine($"{account.Id}: {account.Name}");
         }
     }
 }

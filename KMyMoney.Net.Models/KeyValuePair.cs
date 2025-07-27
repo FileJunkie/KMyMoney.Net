@@ -6,8 +6,8 @@ using System.Xml.Serialization;
 public class KeyValuePair
 {
     [XmlAttribute("key")]
-    public required string Key { get; set; }
+    public required string Key { get; init; }
 
     [XmlAttribute("value")]
-    public required string Value { get; set; }
+    public required string Value { get; init; }
 }

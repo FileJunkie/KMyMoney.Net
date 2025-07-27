@@ -3,12 +3,30 @@ using KMyMoney.Net.Models;
 
 namespace KMyMoney.Net.Core;
 
-public class TransactionRepository(KmyMoneyFile kmyMoneyFile)
+public static class TransactionExtensions
 {
-    public Transaction AddTransaction(Account fromAccount, Account toAccount, decimal amount, string currency, string? memo)
+    public static Transaction AddTransaction(this KmyMoneyFile kmyMoneyFile,
+        string from,
+        string to,
+        decimal amount,
+        string currency,
+        string? memo)
     {
+        var fromAccount = kmyMoneyFile.Accounts.GetByNameOrId(from);
+        var toAccount = kmyMoneyFile.Accounts.GetByNameOrId(to);
+
+        if (fromAccount == null)
+        {
+            throw new($"Source account '{from}' not found.");
+        }
+
+        if (toAccount == null)
+        {
+            throw new($"Destination account '{to}' not found.");
+        }
+
         var postDate = DateTime.Now;
-        var transactionId = GenerateNextTransactionId();
+        var transactionId = kmyMoneyFile.GenerateNextTransactionId();
 
         var fromAmount = Fraction.FromDecimal(-amount);
         var fromAmountConverted =  fromAmount; 
@@ -18,12 +36,12 @@ public class TransactionRepository(KmyMoneyFile kmyMoneyFile)
         // Handle currency conversion
         if (fromAccount.Currency != currency)
         {
-            fromAmountConverted = ConvertCurrency(amount, currency, fromAccount.Currency);
+            fromAmountConverted = kmyMoneyFile.Prices.ConvertCurrency(amount, currency, fromAccount.Currency);
         }
 
         if (toAccount.Currency != currency)
         {
-            toAmountConverted = ConvertCurrency(amount, currency, toAccount.Currency);
+            toAmountConverted = kmyMoneyFile.Prices.ConvertCurrency(amount, currency, toAccount.Currency);
         }
 
         var transaction = new Transaction
@@ -63,39 +81,12 @@ public class TransactionRepository(KmyMoneyFile kmyMoneyFile)
 
         return transaction;
     }
-
-    private string GenerateNextTransactionId()
+    
+    public static string GenerateNextTransactionId(this KmyMoneyFile kmyMoneyFile)
     {
-        var maxId = kmyMoneyFile.Transactions.Values.Select(t => int.Parse(t.Id.Substring(1)))
+        var maxId = kmyMoneyFile.Transactions.Values.Select(t => int.Parse(t.Id[1..]))
             .DefaultIfEmpty(0)
             .Max();
         return $"T{maxId + 1:D18}";
-    }
-
-    private Fraction ConvertCurrency(decimal amount, string fromCurrency, string toCurrency)
-    {
-        var pricePair = kmyMoneyFile.Prices.Values.FirstOrDefault(p => p.From == fromCurrency && p.To == toCurrency);
-
-        Fraction? price = null;
-        if (pricePair != null)
-        {
-            var latestPrice = pricePair.Price.OrderByDescending(p => p.Date).First();
-            price = Fraction.FromString(latestPrice.Price);
-        }
-
-        pricePair = kmyMoneyFile.Prices.Values.FirstOrDefault(p => p.From == toCurrency && p.To == fromCurrency);
-
-        if (pricePair != null)
-        {
-            var latestPrice = pricePair.Price.OrderByDescending(p => p.Date).First();
-            price = Fraction.FromString(latestPrice.Price).Reciprocal();
-        }
-
-        if (price == null)
-        {
-            throw new($"No exchange rate found for {fromCurrency} to {toCurrency}");
-        }
-
-        return amount * price.Value;
     }
 }

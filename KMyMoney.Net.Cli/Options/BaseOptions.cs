@@ -1,9 +1,15 @@
-using CommandLine;
+using System.CommandLine;
+using KMyMoney.Net.Core;
+using KMyMoney.Net.Models;
 
 namespace KMyMoney.Net.Cli.Options;
 
-public abstract class BaseOptions
+public static class BaseOptions
 {
-    [Option('f', "file", Required = true, HelpText = "The KMyMoney file to process.")]
-    public required string FilePath { get; init; }
+    public static Option<string> File { get; } = new ("--file", "-f")
+    {
+        Description = "Input KMyMoney file",
+        Recursive = true,
+        Required = true,
+    };
 }

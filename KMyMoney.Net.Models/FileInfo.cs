@@ -6,14 +6,14 @@ using System.Xml.Serialization;
 public class FileInfo
 {
     [XmlElement("CREATION_DATE")]
-    public CreationDate? CreationDate { get; set; }
+    public CreationDate? CreationDate { get; init; }
 
     [XmlElement("LAST_MODIFIED_DATE")]
-    public LastModifiedDate? LastModifiedDate { get; set; }
+    public LastModifiedDate? LastModifiedDate { get; init; }
 
     [XmlElement("VERSION")]
-    public Version? Version { get; set; }
+    public Version? Version { get; init; }
 
     [XmlElement("FIXVERSION")]
-    public FixVersion? FixVersion { get; set; }
+    public FixVersion? FixVersion { get; init; }
 }

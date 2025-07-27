@@ -6,47 +6,47 @@ using System.Xml.Serialization;
 public class ScheduledTransaction
 {
     [XmlAttribute("paymentType")]
-    public required string PaymentType { get; set; }
+    public required string PaymentType { get; init; }
 
     [XmlAttribute("name")]
-    public required string Name { get; set; }
+    public required string Name { get; init; }
 
     [XmlAttribute("endDate")]
-    public string? EndDate { get; set; }
+    public string? EndDate { get; init; }
 
     [XmlAttribute("type")]
-    public required string Type { get; set; }
+    public required string Type { get; init; }
 
     [XmlAttribute("occurence")]
-    public required string Occurence { get; set; }
+    public required string Occurence { get; init; }
 
     [XmlAttribute("weekendOption")]
-    public required string WeekendOption { get; set; }
+    public required string WeekendOption { get; init; }
 
     [XmlAttribute("autoEnter")]
-    public required string AutoEnter { get; set; }
+    public required string AutoEnter { get; init; }
 
     [XmlAttribute("fixed")]
-    public required string Fixed { get; set; }
+    public required string Fixed { get; init; }
 
     [XmlAttribute("startDate")]
-    public required string StartDate { get; set; }
+    public required string StartDate { get; init; }
 
     [XmlAttribute("id")]
-    public required string Id { get; set; }
+    public required string Id { get; init; }
 
     [XmlAttribute("lastDayInMonth")]
-    public required string LastDayInMonth { get; set; }
+    public required string LastDayInMonth { get; init; }
 
     [XmlAttribute("lastPayment")]
-    public string? LastPayment { get; set; }
+    public string? LastPayment { get; init; }
 
     [XmlAttribute("occurenceMultiplier")]
-    public required string OccurenceMultiplier { get; set; }
+    public required string OccurenceMultiplier { get; init; }
 
     [XmlElement("PAYMENTS")]
-    public Payments? Payments { get; set; }
+    public Payments? Payments { get; init; }
 
     [XmlElement("TRANSACTION")]
-    public required Transaction Transaction { get; set; }
+    public required Transaction Transaction { get; init; }
 }

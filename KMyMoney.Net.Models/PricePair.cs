@@ -11,5 +11,5 @@ public class PricePair
     public required string From { get; init; }
 
     [XmlElement("PRICE")]
-    public required PriceObj[] Price { get; set; } = [];
+    public required PriceObj[] Price { get; init; } = [];
 }

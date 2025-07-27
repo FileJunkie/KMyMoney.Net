@@ -2,7 +2,7 @@ namespace KMyMoney.Net.Models;
 
 using System.Xml.Serialization;
 
-public class Currency
+public class Currency : IHasId, IHasName
 {
     [XmlAttribute("scf")]
     public required string Scf { get; init; }
