@@ -9,7 +9,7 @@ public class Program
     {
         try
         {
-            return Parser.Default.ParseArguments<AccountOptions, TransactionOptions, TestDumpOptions>(args)
+            return Parser.Default.ParseArguments<AccountOptions, TransactionOptions, TestDumpOptions, AddTransactionOptions>(args)
                 .MapResult(
                     (AccountOptions opts) => {
                         AccountCommands.Execute(opts);
@@ -21,6 +21,10 @@ public class Program
                     },
                     (TestDumpOptions opts) => {
                         TestDumpCommands.Execute(opts);
+                        return 0;
+                    },
+                    (AddTransactionOptions opts) => {
+                        TransactionCommands.Execute(opts);
                         return 0;
                     },
                     errs => 1);
