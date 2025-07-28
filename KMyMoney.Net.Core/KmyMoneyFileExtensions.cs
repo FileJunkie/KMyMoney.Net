@@ -13,8 +13,13 @@ public static class KmyMoneyFileExtensions
     // extension(KmyMoneyFile file)
     public static KmyMoneyFile Load(string filePath)
     {
-        var serializer = new XmlSerializer(typeof(KmyMoneyFile));
         using var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read);
+        return Load(fileStream);
+    }
+
+    public static KmyMoneyFile Load(Stream fileStream)
+    {
+        var serializer = new XmlSerializer(typeof(KmyMoneyFile));
         using var gzipStream = new GZipStream(fileStream, CompressionMode.Decompress);
         
         var settings = new XmlReaderSettings
@@ -25,7 +30,7 @@ public static class KmyMoneyFileExtensions
         
         using var xmlReader = XmlReader.Create(gzipStream, settings);
         return (KmyMoneyFile?)serializer.Deserialize(xmlReader) ??
-               throw new($"Could not load KMyMoneyFile {filePath}");
+               throw new($"Could not load KMyMoneyFile");
     }
 
     public static void Save(this KmyMoneyFile file, string filePath)
@@ -48,7 +53,7 @@ public static class KmyMoneyFileExtensions
             IndentChars = " ",
             NewLineChars = "\n",
             NewLineHandling = NewLineHandling.Replace,
-            OmitXmlDeclaration = true
+            OmitXmlDeclaration = true,
         };
 
         using var stringWriter = new StringWriter();
