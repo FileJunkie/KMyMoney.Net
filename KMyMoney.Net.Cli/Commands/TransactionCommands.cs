@@ -97,7 +97,7 @@ public static class TransactionCommands
                 parseResult.GetRequiredValue(amount),
                 parseResult.GetRequiredValue(currency),
                 parseResult.GetValue(memo));
-            file.Save(file.Uri);
+            await file.SaveAsync();
         });
 
         return result;

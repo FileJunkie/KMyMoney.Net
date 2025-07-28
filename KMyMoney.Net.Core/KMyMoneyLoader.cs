@@ -32,6 +32,6 @@ public class KMyMoneyLoader
         using var xmlReader = XmlReader.Create(gzipStream, settings);
         var root = (KmyMoneyFileRoot?)serializer.Deserialize(xmlReader) ??
                throw new($"Could not load KMyMoneyFile");
-        return new(uri, root);
+        return new(uri, accessor, root);
     }
 }

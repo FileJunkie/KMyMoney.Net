@@ -1,4 +1,5 @@
 using Dropbox.Api;
+using Dropbox.Api.Files;
 using KMyMoney.Net.Core.FileAccessors;
 
 namespace KMyMoney.Net.Dropbox;
@@ -34,5 +35,13 @@ public class DropboxFileAccessor : IFileAccessor
     {
         var file = await _client.Files.DownloadAsync(uri.AbsolutePath);
         return await file.GetContentAsStreamAsync();
+    }
+
+    public async Task UpdateFileAsync(Uri uri, Stream stream)
+    {
+        await _client.Files.UploadAsync(
+            path: uri.AbsolutePath,
+            mode: WriteMode.Overwrite.Instance,
+            body: stream);
     }
 }

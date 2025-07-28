@@ -2,25 +2,27 @@ using System.IO.Compression;
 using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
+using KMyMoney.Net.Core.FileAccessors;
 using KMyMoney.Net.Models;
 
 namespace KMyMoney.Net.Core;
 
-public class KMyMoneyFile(Uri uri, KmyMoneyFileRoot root)
+public class KMyMoneyFile(Uri uri, IFileAccessor accessor, KmyMoneyFileRoot root)
 {
-    public Uri Uri { get; } = uri;
     public KmyMoneyFileRoot Root { get; } = root;
 
-    // TODO actually get the stream correctly
-    public void Save(Uri uri)
-        => Save(uri.AbsolutePath);
-
-    public void Save(string filePath)
+    public async Task SaveAsync()
     {
-        using var fileStream = new FileStream(filePath, FileMode.Create);
-        using var gzipStream = new GZipStream(fileStream, CompressionMode.Compress);
-        using var streamWriter = new StreamWriter(gzipStream);
-        streamWriter.Write(Dump());
+        await using var memoryStream = new MemoryStream();
+
+        await using (var gzipStream = new GZipStream(memoryStream, CompressionMode.Compress, leaveOpen: true))
+        {
+            await using var streamWriter = new StreamWriter(gzipStream);
+            await streamWriter.WriteAsync(Dump());
+        }
+
+        memoryStream.Position = 0;
+        await accessor.UpdateFileAsync(uri, memoryStream);
     }
 
     public string Dump()
