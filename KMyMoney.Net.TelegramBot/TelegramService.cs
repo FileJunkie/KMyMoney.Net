@@ -2,6 +2,7 @@ using System.Text;
 using Dropbox.Api;
 using KMyMoney.Net.Core;
 using KMyMoney.Net.Dropbox;
+using KMyMoney.Net.TelegramBot.Persistence;
 using Telegram.Bot;
 using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
@@ -9,13 +10,11 @@ using Telegram.Bot.Types.Enums;
 
 namespace KMyMoney.Net.TelegramBot;
 
-public class TelegramTryout(
+public class TelegramService(
     TelegramBotClient telegramBotClient,
-    ILogger<TelegramTryout> logger) : IHostedService
+    ISettingsPersistenceLayer settingsPersistenceLayer,
+    ILogger<TelegramService> logger) : IHostedService
 {
-    // TODO: actually use storage backend
-    private readonly IDictionary<long, string> _dropboxTokens = new Dictionary<long, string>();
-
     public Task StartAsync(CancellationToken cancellationToken)
     {
         telegramBotClient.OnMessage += OnMessageAsync;
@@ -100,12 +99,12 @@ public class TelegramTryout(
         }
 
         await telegramBotClient.SendMessage(message.Chat.Id, $"Okay whatever");
-        _dropboxTokens[message.From!.Id] = token.AccessToken;
+        settingsPersistenceLayer.SetTokenByUserId(message.From!.Id, token.AccessToken);
     }
 
     private async Task ListAccountAsync(Message message)
     {
-        if (!_dropboxTokens.TryGetValue(message.From!.Id, out var token))
+        if (!settingsPersistenceLayer.TryGetTokenByUserId(message.From!.Id, out var token))
         {
             await telegramBotClient.SendMessage(message.Chat.Id, "You fine bro?");
             return;
