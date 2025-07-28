@@ -4,15 +4,10 @@ using KMyMoney.Net.Core.FileAccessors;
 
 namespace KMyMoney.Net.Dropbox;
 
-public class DropboxFileAccessor : IFileAccessor
+public class DropboxFileAccessor(string token) : IFileAccessor
 {
-    private readonly DropboxClient _client;
+    private readonly DropboxClient _client = new(token);
 
-    private DropboxFileAccessor(string token)
-    {
-        _client = new(token);
-    }
-    
     public static async Task<DropboxFileAccessor> CreateAsync(
         string apiKey,
         string apiSecret,
@@ -23,7 +18,7 @@ public class DropboxFileAccessor : IFileAccessor
             clientId: apiKey,
             tokenAccessType: TokenAccessType.Legacy,
             redirectUri: (string?)null);
-        var code = await codeRequester(uri.ToString());
+        var code = await codeRequester(uri);
         var token = await DropboxOAuth2Helper.ProcessCodeFlowAsync(code, apiKey, apiSecret);
         return new (token.AccessToken);
     }

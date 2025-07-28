@@ -4,7 +4,7 @@ namespace KMyMoney.Net.Core;
 
 public class KMyMoneyLoaderBuilder
 {
-    private readonly IList<IFileAccessor> _fileAccessors = [new LocalFileAccessor()];
+    private readonly IList<IFileAccessor> _fileAccessors = [];
 
     public KMyMoneyLoaderBuilder WithFileAccessor(IFileAccessor fileAccessor)
     {

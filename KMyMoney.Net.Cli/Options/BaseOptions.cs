@@ -37,6 +37,7 @@ public static class BaseOptions
             });
 
         var loader = new KMyMoneyLoaderBuilder()
+            .WithFileAccessor(new LocalFileAccessor())
             .WithFileAccessor(dropboxFileAccessor)
             .Build();
         return await loader.LoadFileAsync(new Uri(result.Tokens.Single().Value));
