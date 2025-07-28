@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KMyMoney.Net.Core", "KMyMon
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KMyMoney.Net.Cli", "KMyMoney.Net.Cli\KMyMoney.Net.Cli.csproj", "{3E624ACE-EFC5-4A29-AED9-EDB178C9875A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KMyMoney.Net.Dropbox", "KMyMoney.Net.Dropbox\KMyMoney.Net.Dropbox.csproj", "{75F0F587-6E23-4E18-8C5A-B88DB7C206A6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KMyMoney.Net.Core.FileAccessors.Dropbox", "KMyMoney.Net.Core.FileAccessors.Dropbox\KMyMoney.Net.Core.FileAccessors.Dropbox.csproj", "{75F0F587-6E23-4E18-8C5A-B88DB7C206A6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KMyMoney.Net.Core.FileAccessors", "KMyMoney.Net.Core.FileAccessors\KMyMoney.Net.Core.FileAccessors.csproj", "{035272DE-E11F-46DD-8CDE-D52898FE04F5}"
 EndProject

@@ -2,7 +2,7 @@ using Dropbox.Api;
 using Dropbox.Api.Files;
 using KMyMoney.Net.Core.FileAccessors;
 
-namespace KMyMoney.Net.Dropbox;
+namespace KMyMoney.Net.Core.FileAccessors.Dropbox;
 
 public class DropboxFileAccessor(string token) : IFileAccessor
 {

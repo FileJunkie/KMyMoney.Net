@@ -8,7 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\KMyMoney.Net.Core\KMyMoney.Net.Core.csproj" />
-    <ProjectReference Include="..\KMyMoney.Net.Dropbox\KMyMoney.Net.Dropbox.csproj" />
+    <ProjectReference Include="..\KMyMoney.Net.Core.FileAccessors.Dropbox\KMyMoney.Net.Core.FileAccessors.Dropbox.csproj" />
     <ProjectReference Include="..\KMyMoney.Net.TelegramBot.Persistence.Etcd\KMyMoney.Net.TelegramBot.Persistence.Etcd.csproj" />
     <ProjectReference Include="..\KMyMoney.Net.TelegramBot.Persistence.InMemory\KMyMoney.Net.TelegramBot.Persistence.InMemory.csproj" />
   </ItemGroup>

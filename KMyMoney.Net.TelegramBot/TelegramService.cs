@@ -1,7 +1,7 @@
 using System.Text;
 using Dropbox.Api;
 using KMyMoney.Net.Core;
-using KMyMoney.Net.Dropbox;
+using KMyMoney.Net.Core.FileAccessors.Dropbox;
 using KMyMoney.Net.TelegramBot.Persistence;
 using Telegram.Bot;
 using Telegram.Bot.Polling;

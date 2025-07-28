@@ -1,7 +1,7 @@
 using System.CommandLine;
 using System.CommandLine.Parsing;
 using KMyMoney.Net.Core;
-using KMyMoney.Net.Dropbox;
+using KMyMoney.Net.Core.FileAccessors.Dropbox;
 
 namespace KMyMoney.Net.Cli.Options;
 
