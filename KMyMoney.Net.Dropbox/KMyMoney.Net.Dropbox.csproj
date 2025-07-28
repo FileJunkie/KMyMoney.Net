@@ -10,4 +10,8 @@
     <PackageReference Include="Dropbox.Api" Version="7.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\KMyMoney.Net.Core.FileAccessors\KMyMoney.Net.Core.FileAccessors.csproj" />
+  </ItemGroup>
+
 </Project>

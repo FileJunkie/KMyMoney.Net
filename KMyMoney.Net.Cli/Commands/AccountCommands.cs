@@ -1,6 +1,5 @@
 using System.CommandLine;
 using KMyMoney.Net.Cli.Options;
-using KMyMoney.Net.Core;
 using KMyMoney.Net.Models;
 
 namespace KMyMoney.Net.Cli.Commands;
@@ -32,11 +31,11 @@ public static class AccountCommands
             idOption, nameOption
         };
         
-        result.SetAction(parseResult =>
+        result.SetAction(async parseResult =>
         {
             var id = parseResult.GetValue(idOption);
             var name = parseResult.GetValue(nameOption);
-            var accounts = KmyMoneyFileExtensions.Load(parseResult.GetRequiredValue(BaseOptions.File)).Accounts.Values.AsEnumerable();
+            var accounts = (await parseResult.GetRequiredValue(BaseOptions.File)).Root.Accounts.Values.AsEnumerable();
             if (!string.IsNullOrWhiteSpace(id))
             {
                 accounts = accounts.Where(a => a.Id == id);
@@ -56,9 +55,9 @@ public static class AccountCommands
     private static Command CreateListCommand()
     {
         var result = new Command("list");
-        result.SetAction(parseResult =>
+        result.SetAction(async parseResult =>
         {
-            OutputAccounts(KmyMoneyFileExtensions.Load(parseResult.GetRequiredValue(BaseOptions.File)).Accounts.Values);
+            OutputAccounts((await parseResult.GetRequiredValue(BaseOptions.File)).Root.Accounts.Values);
         });
         
         return result;

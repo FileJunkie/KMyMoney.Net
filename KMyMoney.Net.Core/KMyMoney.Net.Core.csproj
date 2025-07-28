@@ -2,6 +2,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\KMyMoney.Net.Models\KMyMoney.Net.Models.csproj" />
+    <ProjectReference Include="..\KMyMoney.Net.Core.FileAccessors\KMyMoney.Net.Core.FileAccessors.csproj" />
   </ItemGroup>
 
   <ItemGroup>

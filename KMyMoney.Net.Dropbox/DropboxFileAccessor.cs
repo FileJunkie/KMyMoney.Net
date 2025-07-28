@@ -1,17 +1,11 @@
 using Dropbox.Api;
-using Dropbox.Api.Files;
-using Dropbox.Api.Stone;
+using KMyMoney.Net.Core.FileAccessors;
 
 namespace KMyMoney.Net.Dropbox;
 
-public class DropboxFileAccessor
+public class DropboxFileAccessor : IFileAccessor
 {
     private readonly DropboxClient _client;
-
-    private DropboxFileAccessor()
-    {
-        _client = null!;
-    }
 
     private DropboxFileAccessor(string token)
     {
@@ -33,8 +27,12 @@ public class DropboxFileAccessor
         return new (token.AccessToken);
     }
 
-    public async Task<IDownloadResponse<FileMetadata>> GetFileAsync(string path)
+    public bool UriSupported(Uri uri) =>
+        uri.Scheme == "dropbox";
+
+    public async Task<Stream> GetReadStreamAsync(Uri uri)
     {
-        return await _client.Files.DownloadAsync(path) ?? throw new FileNotFoundException(path);
+        var file = await _client.Files.DownloadAsync(uri.AbsolutePath);
+        return await file.GetContentAsStreamAsync();
     }
 }
