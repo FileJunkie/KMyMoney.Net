@@ -1,6 +1,5 @@
 using System.CommandLine;
 using KMyMoney.Net.Cli.Options;
-using KMyMoney.Net.Core;
 
 namespace KMyMoney.Net.Cli.Commands;
 
@@ -11,9 +10,11 @@ public static class DumpCommand
     static DumpCommand()
     {
         Command = new Command("dump");
-        Command.SetAction(parseResult =>
+        Command.SetAction(async parseResult =>
         {
-            Console.WriteLine(KmyMoneyFileExtensions.Load(parseResult.GetRequiredValue(BaseOptions.File)).Dump());
+            var file = await parseResult.GetRequiredValue(BaseOptions.File);
+
+            Console.WriteLine(file.Dump());
         });
     }
 }

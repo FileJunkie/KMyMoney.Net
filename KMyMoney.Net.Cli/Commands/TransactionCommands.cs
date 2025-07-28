@@ -30,10 +30,10 @@ public static class TransactionCommands
             idOption
         };
         
-        result.SetAction(parseResult =>
+        result.SetAction(async parseResult =>
         {
             var id = parseResult.GetValue(idOption);
-            var transactions = KmyMoneyFileExtensions.Load(parseResult.GetRequiredValue(BaseOptions.File)).Transactions.Values.AsEnumerable();
+            var transactions = (await parseResult.GetRequiredValue(BaseOptions.File)).Root.Transactions.Values.AsEnumerable();
             if (!string.IsNullOrWhiteSpace(id))
             {
                 transactions = transactions.Where(a => a.Id == id);
@@ -48,9 +48,9 @@ public static class TransactionCommands
     private static Command CreateListCommand()
     {
         var result = new Command("list");
-        result.SetAction(parseResult =>
+        result.SetAction(async parseResult =>
         {
-            OutputTransactions(KmyMoneyFileExtensions.Load(parseResult.GetRequiredValue(BaseOptions.File)).Transactions.Values);
+            OutputTransactions((await parseResult.GetRequiredValue(BaseOptions.File)).Root.Transactions.Values);
         });
         
         return result;
@@ -87,19 +87,19 @@ public static class TransactionCommands
         {
             from, to, amount, currency, memo
         };
-        result.SetAction(parseResult =>
+        result.SetAction(async parseResult =>
         {
-            var filePath = parseResult.GetRequiredValue(BaseOptions.File);
-            var file = KmyMoneyFileExtensions.Load(filePath);
-            file.AddTransaction(
+            var file = await parseResult.GetRequiredValue(BaseOptions.File);
+
+            file.Root.AddTransaction(
                 parseResult.GetRequiredValue(from),
                 parseResult.GetRequiredValue(to),
                 parseResult.GetRequiredValue(amount),
                 parseResult.GetRequiredValue(currency),
                 parseResult.GetValue(memo));
-            file.Save(filePath);
+            await file.SaveAsync();
         });
-        
+
         return result;
     }
 

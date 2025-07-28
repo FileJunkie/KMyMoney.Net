@@ -3,7 +3,7 @@ namespace KMyMoney.Net.Models;
 using System.Xml.Serialization;
 
 [XmlRoot("KMYMONEY-FILE")]
-public class KmyMoneyFile
+public class KmyMoneyFileRoot
 {
     [XmlElement("FILEINFO")]
     public required FileInfo FileInfo { get; init; }

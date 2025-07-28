@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Xml.Serialization;
 
 namespace KMyMoney.Net.Models;

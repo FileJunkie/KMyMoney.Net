@@ -5,15 +5,15 @@ namespace KMyMoney.Net.Core;
 
 public static class TransactionExtensions
 {
-    public static Transaction AddTransaction(this KmyMoneyFile kmyMoneyFile,
+    public static Transaction AddTransaction(this KmyMoneyFileRoot kmyMoneyFileRoot,
         string from,
         string to,
         decimal amount,
         string currency,
         string? memo)
     {
-        var fromAccount = kmyMoneyFile.Accounts.GetByNameOrId(from);
-        var toAccount = kmyMoneyFile.Accounts.GetByNameOrId(to);
+        var fromAccount = kmyMoneyFileRoot.Accounts.GetByNameOrId(from);
+        var toAccount = kmyMoneyFileRoot.Accounts.GetByNameOrId(to);
 
         if (fromAccount == null)
         {
@@ -26,7 +26,7 @@ public static class TransactionExtensions
         }
 
         var postDate = DateTime.Now;
-        var transactionId = kmyMoneyFile.GenerateNextTransactionId();
+        var transactionId = kmyMoneyFileRoot.GenerateNextTransactionId();
 
         var fromAmount = Fraction.FromDecimal(-amount);
         var fromAmountConverted =  fromAmount; 
@@ -36,12 +36,12 @@ public static class TransactionExtensions
         // Handle currency conversion
         if (fromAccount.Currency != currency)
         {
-            fromAmountConverted = kmyMoneyFile.Prices.ConvertCurrency(amount, currency, fromAccount.Currency);
+            fromAmountConverted = kmyMoneyFileRoot.Prices.ConvertCurrency(amount, currency, fromAccount.Currency);
         }
 
         if (toAccount.Currency != currency)
         {
-            toAmountConverted = kmyMoneyFile.Prices.ConvertCurrency(amount, currency, toAccount.Currency);
+            toAmountConverted = kmyMoneyFileRoot.Prices.ConvertCurrency(amount, currency, toAccount.Currency);
         }
 
         var transaction = new Transaction
@@ -75,16 +75,16 @@ public static class TransactionExtensions
             }
         };
 
-        var transactions = kmyMoneyFile.Transactions.Values.ToList();
+        var transactions = kmyMoneyFileRoot.Transactions.Values.ToList();
         transactions.Add(transaction);
-        kmyMoneyFile.Transactions.Values = transactions.ToArray();
+        kmyMoneyFileRoot.Transactions.Values = transactions.ToArray();
 
         return transaction;
     }
     
-    public static string GenerateNextTransactionId(this KmyMoneyFile kmyMoneyFile)
+    public static string GenerateNextTransactionId(this KmyMoneyFileRoot kmyMoneyFileRoot)
     {
-        var maxId = kmyMoneyFile.Transactions.Values.Select(t => int.Parse(t.Id[1..]))
+        var maxId = kmyMoneyFileRoot.Transactions.Values.Select(t => int.Parse(t.Id[1..]))
             .DefaultIfEmpty(0)
             .Max();
         return $"T{maxId + 1:D18}";
