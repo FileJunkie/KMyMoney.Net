@@ -142,7 +142,7 @@ public class TelegramService(
 
     private Task OnErrorAsync(Exception exception, HandleErrorSource source)
     {
-        logger.LogError(exception, exception.Message);
+        logger.LogError(exception, "Something went wrong in communicating with telegram: {ExceptionMessage}", exception.Message);
         return Task.CompletedTask;
     }
 }
