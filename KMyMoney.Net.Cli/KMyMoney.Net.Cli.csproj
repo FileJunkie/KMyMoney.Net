@@ -6,7 +6,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\KMyMoney.Net.Dropbox\KMyMoney.Net.Dropbox.csproj" />
+    <ProjectReference Include="..\KMyMoney.Net.Core.FileAccessors.Dropbox\KMyMoney.Net.Core.FileAccessors.Dropbox.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

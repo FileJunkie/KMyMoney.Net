@@ -1,7 +1,7 @@
 using System.CommandLine;
 using System.CommandLine.Parsing;
 using KMyMoney.Net.Core;
-using KMyMoney.Net.Dropbox;
+using KMyMoney.Net.Core.FileAccessors.Dropbox;
 
 namespace KMyMoney.Net.Cli.Options;
 
@@ -37,6 +37,7 @@ public static class BaseOptions
             });
 
         var loader = new KMyMoneyLoaderBuilder()
+            .WithFileAccessor(new LocalFileAccessor())
             .WithFileAccessor(dropboxFileAccessor)
             .Build();
         return await loader.LoadFileAsync(new Uri(result.Tokens.Single().Value));

@@ -15,11 +15,16 @@ public class KMyMoneyLoader
         _fileAccessors = fileAccessors;
     }
 
-    public async Task<KMyMoneyFile> LoadFileAsync(Uri uri)
+    public Task<KMyMoneyFile> LoadFileAsync(Uri uri)
     {
         var accessor = _fileAccessors.FirstOrDefault(acc => acc.UriSupported(uri)) 
                        ?? throw new($"Don't know what to do with {uri}");
-        await using var fileStream = await accessor.GetReadStreamAsync(uri);
+        return LoadFileAsync(accessor, uri);
+    }
+
+    public static async Task<KMyMoneyFile> LoadFileAsync(IFileAccessor fileAccessor, Uri uri)
+    {
+        await using var fileStream = await fileAccessor.GetReadStreamAsync(uri);
         var serializer = new XmlSerializer(typeof(KmyMoneyFileRoot));
         await using var gzipStream = new GZipStream(fileStream, CompressionMode.Decompress);
 
@@ -31,7 +36,7 @@ public class KMyMoneyLoader
 
         using var xmlReader = XmlReader.Create(gzipStream, settings);
         var root = (KmyMoneyFileRoot?)serializer.Deserialize(xmlReader) ??
-               throw new($"Could not load KMyMoneyFile");
-        return new(uri, accessor, root);
+                   throw new($"Could not load KMyMoneyFile");
+        return new(uri, fileAccessor, root);
     }
 }
