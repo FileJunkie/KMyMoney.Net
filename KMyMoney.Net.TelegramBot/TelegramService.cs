@@ -3,6 +3,8 @@ using Dropbox.Api;
 using KMyMoney.Net.Core;
 using KMyMoney.Net.Core.FileAccessors.Dropbox;
 using KMyMoney.Net.TelegramBot.Persistence;
+using KMyMoney.Net.TelegramBot.Settings;
+using Microsoft.Extensions.Options;
 using Telegram.Bot;
 using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
@@ -13,6 +15,7 @@ namespace KMyMoney.Net.TelegramBot;
 public class TelegramService(
     TelegramBotClient telegramBotClient,
     ISettingsPersistenceLayer settingsPersistenceLayer,
+    IOptions<DropboxSettings> dropboxSettings,
     ILogger<TelegramService> logger) : IHostedService
 {
     public Task StartAsync(CancellationToken cancellationToken)
@@ -78,7 +81,7 @@ public class TelegramService(
     {
         var uri = DropboxOAuth2Helper.GetAuthorizeUri(
             OAuthResponseType.Code,
-            clientId: Environment.GetEnvironmentVariable("DROPBOX_API_KEY"), // TODO
+            clientId: dropboxSettings.Value.ApiKey,
             tokenAccessType: TokenAccessType.Legacy,
             redirectUri: (string?)null);
         await telegramBotClient.SendMessage(message.Chat.Id, $"Go here: {uri}");
@@ -90,8 +93,8 @@ public class TelegramService(
         var code = message.Text!.Replace("/code ", string.Empty);
         var token = await DropboxOAuth2Helper.ProcessCodeFlowAsync(
             code,
-            Environment.GetEnvironmentVariable("DROPBOX_API_KEY"), // TODO,
-            Environment.GetEnvironmentVariable("DROPBOX_API_SECRET")); // TODO
+            dropboxSettings.Value.ApiKey,
+            dropboxSettings.Value.ApiSecret);
         if (token == null)
         {
             await telegramBotClient.SendMessage(message.Chat.Id, "Naaaaah");
