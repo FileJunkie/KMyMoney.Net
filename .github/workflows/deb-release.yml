@@ -17,6 +17,8 @@ jobs:
 
       - name: Prepare .deb contents
         run: |
+          mkdir .debpkg
+          cp -rv packaging/DEBIAN .debpkg/ 
           mkdir -p .debpkg/usr/bin
           cp -v ./KMyMoney.Net.TelegramBot/bin/Release/net9.0/linux-x64/publish/KMyMoney.Net.TelegramBot .debpkg/usr/bin/
           mkdir -p .debpkg/etc/systemd/system/
