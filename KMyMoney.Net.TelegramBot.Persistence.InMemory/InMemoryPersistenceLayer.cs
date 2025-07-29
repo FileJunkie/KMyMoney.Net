@@ -23,7 +23,7 @@ public class InMemoryPersistenceLayer : ISettingsPersistenceLayer
         return Task.CompletedTask;
     }
 
-    private static Task<TValue?> GetToAsync<TKey, TValue>(IDictionary<TKey, TValue> dictionary, TKey key)
+    private static Task<TValue?> GetToAsync<TKey, TValue>(Dictionary<TKey, TValue> dictionary, TKey key) where TKey : notnull
     {
         return dictionary.TryGetValue(key, out var value) ?
             Task.FromResult<TValue?>(value) :
