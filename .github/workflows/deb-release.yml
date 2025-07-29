@@ -1,0 +1,40 @@
+name: Build .deb release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Build binary
+        run: |
+          dotnet publish ./KMyMoney.Net.TelegramBot
+
+      - name: Prepare .deb contents
+        run: |
+          mkdir -p .debpkg/usr/bin
+          cp -v ./KMyMoney.Net.TelegramBot/bin/Release/net9.0/linux-x64/publish/KMyMoney.Net.TelegramBot .debpkg/usr/bin/
+          mkdir -p .debpkg/etc/systemd/system/
+          cp -v packaging/systemd/KMyMoney.Net.TelegramBot.service .debpkg/etc/systemd/system/
+          mkdir -p .debpkg/etc/KMyMoney.Net.TelegramBot
+          cp packaging/appsettings.json .debpkg/etc/KMyMoney.Net.TelegramBot
+
+      - uses: jiro4989/build-deb-action@v4
+        with:
+          package: KMyMoney.Net.TelegramBot
+          package_root: .debpkg
+          maintainer: Ilia Ershov
+          version: ${{ github.ref }}
+          arch: 'amd64'
+          homepage: 'https://github.com/FileJunkie/KMyMoney.Net'
+        id: build
+
+      - name: Release the Package
+        uses: softprops/action-gh-release@v1
+        with:
+          files: ${{ steps.build.outputs.file_name }}

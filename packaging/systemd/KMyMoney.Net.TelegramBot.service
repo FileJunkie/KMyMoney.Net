@@ -3,7 +3,7 @@ Description=
 
 [Service]
 Type=notify
-ExecStart=/usr/bin/KMyMoney.Net.TelegramBot
+ExecStart=/usr/bin/KMyMoney.Net.TelegramBot --contentRoot /etc/KMyMoney.Net.TelegramBot
 
 [Install]
 WantedBy=multi-user.target
