@@ -1,8 +1,7 @@
-using KMyMoney.Net.TelegramBot;
+using KMyMoney.Net.TelegramBot.Commands;
 using KMyMoney.Net.TelegramBot.Persistence.InMemory;
 using KMyMoney.Net.TelegramBot.Settings;
-using Microsoft.Extensions.Options;
-using Telegram.Bot;
+using TgBotFramework;
 
 var builder = Host.CreateApplicationBuilder(args);
 
@@ -11,20 +10,28 @@ builder.Services.AddOptions<DropboxSettings>()
     .ValidateDataAnnotations()
     .ValidateOnStart();
 
-builder.Services.AddOptions<TelegramSettings>()
+builder.Services.
+    AddOptions<BotSettings>()
     .Bind(builder.Configuration.GetSection("Telegram"))
     .ValidateDataAnnotations()
-    .ValidateOnStart();
+    .ValidateOnStart()
+    .Services
+    .AddBotService<BaseBot, UpdateContext>(botBuilder => botBuilder
+        .UseLongPolling()
+        .SetPipeline(pipelineBuilder => pipelineBuilder
+            .UseCommand<LoginCommand>("login")
+            .UseCommand<LoginCodeCommand>("logincode")
+            .UseCommand<FileCommand>("file")
+            .UseCommand<AccountsCommand>("accounts")));
 
-builder.Services.AddSingleton(sp =>
-{
-    var telegramSettings = sp.GetRequiredService<IOptions<TelegramSettings>>();
-    return new TelegramBotClient(telegramSettings.Value.ApiToken);
-});
+builder.Services
+    .AddSingleton<LoginCommand>()
+    .AddSingleton<LoginCodeCommand>()
+    .AddSingleton<FileCommand>()
+    .AddSingleton<AccountsCommand>();
 
 // TODO local testing only 
 builder.Services.AddInMemoryPersistenceLayer();
-builder.Services.AddHostedService<TelegramService>();
 
 var app = builder.Build();
 

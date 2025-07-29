@@ -1,14 +1,32 @@
-using System.Diagnostics.CodeAnalysis;
-
 namespace KMyMoney.Net.TelegramBot.Persistence.InMemory;
 
 public class InMemoryPersistenceLayer : ISettingsPersistenceLayer
 {
-    private readonly Dictionary<long, string> _settings = new();
+    private readonly Dictionary<long, string> _tokens = new();
+    private readonly Dictionary<long, string> _filePaths = new();
 
-    public bool TryGetTokenByUserId(long userId, [MaybeNullWhen(false)] out string token)
-        => _settings.TryGetValue(userId, out token);
+    public Task<string?> GetTokenByUserIdAsync(long userId) =>
+        GetToAsync(_tokens, userId);
 
-    public void SetTokenByUserId(long userId, string token)
-        => _settings[userId] = token;
+    public Task SetTokenByUserIdAsync(long userId, string token)
+    {
+        _tokens[userId] = token;
+        return Task.CompletedTask;
+    }
+
+    public Task<string?> GetFilePathByUserIdAsync(long userId) =>
+        GetToAsync(_filePaths, userId);
+
+    public Task SetFilePathByUserIdAsync(long userId, string filePath)
+    {
+        _filePaths[userId] = filePath;
+        return Task.CompletedTask;
+    }
+
+    private static Task<TValue?> GetToAsync<TKey, TValue>(IDictionary<TKey, TValue> dictionary, TKey key)
+    {
+        return dictionary.TryGetValue(key, out var value) ?
+            Task.FromResult<TValue?>(value) :
+            Task.FromResult<TValue?>(default);
+    }
 }
