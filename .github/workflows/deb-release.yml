@@ -30,7 +30,7 @@ jobs:
         with:
           package: kmymoney-net-telegrambot
           package_root: .debpkg
-          maintainer: Ilia Ershov
+          maintainer: Ilia Ershov <filejunkie@gmail.com>
           version: ${{ github.ref }}
           arch: 'amd64'
           homepage: 'https://github.com/FileJunkie/KMyMoney.Net'
