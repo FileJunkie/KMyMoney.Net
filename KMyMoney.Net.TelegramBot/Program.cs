@@ -33,6 +33,8 @@ builder.Services
 // TODO local testing only 
 builder.Services.AddInMemoryPersistenceLayer();
 
+builder.Services.AddSystemd();
+
 var app = builder.Build();
 
 await app.RunAsync();

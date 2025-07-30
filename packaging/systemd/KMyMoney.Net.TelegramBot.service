@@ -1,0 +1,10 @@
+[Unit]
+Description=
+
+[Service]
+Type=notify
+ExecStart=/usr/bin/KMyMoney.Net.TelegramBot --contentRoot /etc/KMyMoney.Net.TelegramBot
+User=nobody
+
+[Install]
+WantedBy=multi-user.target
