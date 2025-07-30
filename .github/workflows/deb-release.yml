@@ -28,7 +28,7 @@ jobs:
 
       - uses: jiro4989/build-deb-action@v4
         with:
-          package: KMyMoney.Net.TelegramBot
+          package: kmymoney-net-telegrambot
           package_root: .debpkg
           maintainer: Ilia Ershov
           version: ${{ github.ref }}
