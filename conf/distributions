@@ -1,0 +1,8 @@
+Origin: KMyMoney.Net
+Label: KMyMoney.Net
+Suite: unstable
+Codename: main
+Architectures: amd64
+Components: main
+Description: Debian x64 repository for KMyMoney.Net project
+SignWith: 793D7CBE02065EFF
