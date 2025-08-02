@@ -2,31 +2,26 @@ namespace KMyMoney.Net.TelegramBot.Persistence.InMemory;
 
 public class InMemoryPersistenceLayer : ISettingsPersistenceLayer
 {
-    private readonly Dictionary<long, string> _tokens = new();
-    private readonly Dictionary<long, string> _filePaths = new();
+    private readonly Dictionary<(long, UserSettings), string> _settings = new();
 
-    public Task<string?> GetTokenByUserIdAsync(long userId) =>
-        GetToAsync(_tokens, userId);
-
-    public Task SetTokenByUserIdAsync(long userId, string token)
+    public Task<string?> GetUserSettingByUserIdAsync(long userId, UserSettings setting, CancellationToken cancellationToken)
     {
-        _tokens[userId] = token;
-        return Task.CompletedTask;
+        return _settings.TryGetValue((userId, setting), out var value)
+            ? Task.FromResult<string?>(value)
+            : Task.FromResult<string?>(null);
     }
 
-    public Task<string?> GetFilePathByUserIdAsync(long userId) =>
-        GetToAsync(_filePaths, userId);
-
-    public Task SetFilePathByUserIdAsync(long userId, string filePath)
+    public Task SetUserSettingByUserIdAsync(long userId, UserSettings setting, string? value, CancellationToken cancellationToken)
     {
-        _filePaths[userId] = filePath;
+        if (value == null)
+        {
+            _settings.Remove((userId, setting));
+        }
+        else
+        {
+            _settings[(userId, setting)] = value;
+        }
+
         return Task.CompletedTask;
-    }
-
-    private static Task<TValue?> GetToAsync<TKey, TValue>(Dictionary<TKey, TValue> dictionary, TKey key) where TKey : notnull
-    {
-        return dictionary.TryGetValue(key, out var value) ?
-            Task.FromResult<TValue?>(value) :
-            Task.FromResult<TValue?>(default);
     }
 }

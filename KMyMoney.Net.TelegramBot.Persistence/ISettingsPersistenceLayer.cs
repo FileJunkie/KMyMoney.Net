@@ -2,8 +2,6 @@ namespace KMyMoney.Net.TelegramBot.Persistence;
 
 public interface ISettingsPersistenceLayer
 {
-    Task<string?> GetTokenByUserIdAsync(long userId);
-    Task SetTokenByUserIdAsync(long userId, string token);
-    Task<string?> GetFilePathByUserIdAsync(long userId);
-    Task SetFilePathByUserIdAsync(long userId, string filePath);
+    Task<string?> GetUserSettingByUserIdAsync(long userId, UserSettings setting, CancellationToken cancellationToken);
+    Task SetUserSettingByUserIdAsync(long userId, UserSettings setting, string? value, CancellationToken cancellationToken);
 }

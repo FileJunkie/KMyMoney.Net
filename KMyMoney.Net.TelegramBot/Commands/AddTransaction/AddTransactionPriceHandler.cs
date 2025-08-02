@@ -1,0 +1,102 @@
+using KMyMoney.Net.Core;
+using KMyMoney.Net.TelegramBot.Persistence;
+using KMyMoney.Net.TelegramBot.StatusHandlers;
+using KMyMoney.Net.TelegramBot.Utils;
+using Telegram.Bot;
+using Telegram.Bot.Types;
+using Telegram.Bot.Types.ReplyMarkups;
+
+namespace KMyMoney.Net.TelegramBot.Commands.AddTransaction;
+
+public class AddTransactionPriceHandler(
+    TelegramBotClientWrapper botClient,
+    ISettingsPersistenceLayer settingsPersistenceLayer) : IConditionalStatusHandler
+{
+    public string HandledStatus => "AddTransactionEnteringPrice";
+
+    public async Task HandleAsync(Message message, CancellationToken cancellationToken)
+    {
+        await settingsPersistenceLayer.SetUserSettingByUserIdAsync(
+            message.From!.Id,
+            UserSettings.Status,
+            null,
+            cancellationToken);
+
+        var accountFrom = await settingsPersistenceLayer.GetUserSettingByUserIdAsync(
+            message.From!.Id,
+            UserSettings.AccountFrom,
+            cancellationToken);
+
+        if (accountFrom == null)
+        {
+            await botClient.Bot.SendMessage(
+                message.Chat.Id,
+                "AccountFrom was somehow null?",
+                replyMarkup: new ReplyKeyboardRemove(),
+                cancellationToken: cancellationToken);
+            return;
+        }
+        
+        var accountTo = await settingsPersistenceLayer.GetUserSettingByUserIdAsync(
+            message.From!.Id,
+            UserSettings.AccountTo,
+            cancellationToken);
+
+        if (accountTo == null)
+        {
+            await botClient.Bot.SendMessage(
+                message.Chat.Id,
+                "AccountTo was somehow null?",
+                replyMarkup: new ReplyKeyboardRemove(),
+                cancellationToken: cancellationToken);
+            return;
+        }
+
+        var currency = await settingsPersistenceLayer.GetUserSettingByUserIdAsync(
+            message.From!.Id,
+            UserSettings.Currency,
+            cancellationToken);
+
+        if (currency == null)
+        {
+            await botClient.Bot.SendMessage(
+                message.Chat.Id,
+                "Currency was somehow null?",
+                replyMarkup: new ReplyKeyboardRemove(),
+                cancellationToken: cancellationToken);
+            return;
+        }
+
+        if (!decimal.TryParse(message.Text, out var amount))
+        {
+            await botClient.Bot.SendMessage(
+                message.Chat.Id,
+                "What kind of amount is that?",
+                replyMarkup: new ReplyKeyboardRemove(),
+                cancellationToken: cancellationToken);
+            return;
+        }
+
+        var file = await FileLoaderHelpers.LoadKMyMoneyFileOrSendErrorAsync(
+            settingsPersistenceLayer, botClient.Bot, message, cancellationToken);
+        if (file == null)
+        {
+            return;
+        }
+
+        file.Root.AddTransaction(
+            accountFrom,
+            accountTo,
+            amount,
+            currency,
+            null);
+        await file.SaveAsync();
+
+        await botClient.Bot.SendMessage(
+            message.Chat.Id,
+            "Saved.",
+            replyMarkup: new ReplyKeyboardRemove(),
+            cancellationToken: cancellationToken);
+        return;
+    }
+}

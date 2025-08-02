@@ -1,6 +1,5 @@
 using Dropbox.Api;
 using Dropbox.Api.Files;
-using KMyMoney.Net.Core.FileAccessors;
 
 namespace KMyMoney.Net.Core.FileAccessors.Dropbox;
 
@@ -38,5 +37,13 @@ public class DropboxFileAccessor(string token) : IFileAccessor
             path: uri.AbsolutePath,
             mode: WriteMode.Overwrite.Instance,
             body: stream);
+    }
+
+    public async Task<IEnumerable<string>> ListFilesAsync()
+    {
+        var searchResults = await _client.Files.SearchV2Async(
+            new("*.kmy", options:
+                new(fileExtensions: ["kmy"])));
+        return searchResults.Matches.Select(m => m.Metadata.AsMetadata.Value.PathLower);
     }
 }
