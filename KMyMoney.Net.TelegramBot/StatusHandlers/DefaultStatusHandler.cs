@@ -2,6 +2,7 @@ using System.Text;
 using KMyMoney.Net.TelegramBot.Commands;
 using Telegram.Bot;
 using Telegram.Bot.Types;
+using Telegram.Bot.Types.ReplyMarkups;
 
 namespace KMyMoney.Net.TelegramBot.StatusHandlers;
 
@@ -37,7 +38,7 @@ public class DefaultStatusHandler(
             stringBuilder.AppendLine($"/{cmd.Command}: {cmd.Description}");
         }
 
-        await botWrapper.Bot.SendMessage(chatId, stringBuilder.ToString());
+        await botWrapper.Bot.SendMessage(chatId, stringBuilder.ToString(), replyMarkup: new ReplyKeyboardRemove());
     }
 
     private static string? ExtractCommand(string? message)

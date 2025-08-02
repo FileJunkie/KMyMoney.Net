@@ -4,6 +4,7 @@ using KMyMoney.Net.TelegramBot.Settings;
 using Microsoft.Extensions.Options;
 using Telegram.Bot;
 using Telegram.Bot.Types;
+using Telegram.Bot.Types.ReplyMarkups;
 
 namespace KMyMoney.Net.TelegramBot.Commands.Login;
 
@@ -25,14 +26,16 @@ public class LoginCommand(
             tokenAccessType: TokenAccessType.Legacy,
             redirectUri: (string?)null);
 
-        await settingsLayer.SetStatusByUserIdAsync(
+        await settingsLayer.SetUserSettingByUserIdAsync(
             message.From!.Id,
+            UserSettings.Status,
             loginCodeEntryStatusHandler.HandledStatus,
             cancellationToken);
 
         await botWrapper.Bot.SendMessage(
             message.Chat.Id,
             $"Go here: {uri} and tell me the code",
+            replyMarkup: new ReplyKeyboardRemove(),
             cancellationToken: cancellationToken);
     }
 }

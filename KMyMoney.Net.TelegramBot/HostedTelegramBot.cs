@@ -5,6 +5,7 @@ using Telegram.Bot;
 using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
+using Telegram.Bot.Types.ReplyMarkups;
 
 namespace KMyMoney.Net.TelegramBot;
 
@@ -50,20 +51,32 @@ public sealed class HostedTelegramBot(
             return;
         }
 
-        var userStatus = await settingsPersistenceLayer.GetStatusByUserIdAsync(message.From.Id, cancellationToken);
-        if (!string.IsNullOrWhiteSpace(userStatus))
+        try
         {
-            foreach (var statusHandler in statusHandlers)
+            var userStatus = await settingsPersistenceLayer.GetUserSettingByUserIdAsync(message.From.Id, UserSettings.Status, cancellationToken);
+            if (!string.IsNullOrWhiteSpace(userStatus))
             {
-                if (statusHandler.HandledStatus == userStatus)
+                foreach (var statusHandler in statusHandlers)
                 {
-                    await statusHandler.HandleAsync(message, cancellationToken);
-                    return;
+                    if (statusHandler.HandledStatus == userStatus)
+                    {
+                        await statusHandler.HandleAsync(message, cancellationToken);
+                        return;
+                    }
                 }
             }
-        }
 
-        await defaultStatusHandler.HandleAsync(message, cancellationToken);
+            await defaultStatusHandler.HandleAsync(message, cancellationToken);
+        }
+        catch (Exception e)
+        {
+            logger.LogError(e, "Unhandled exception");
+            await botWrapper.Bot.SendMessage(
+                message.Chat.Id,
+                "Sorry, mate, something went really wrong",
+                replyMarkup: new ReplyKeyboardRemove(),
+                cancellationToken: cancellationToken);
+        }
     }
 
     private Task OnErrorAsync(Exception exception, HandleErrorSource source)

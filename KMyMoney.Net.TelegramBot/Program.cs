@@ -1,5 +1,7 @@
 using KMyMoney.Net.TelegramBot;
 using KMyMoney.Net.TelegramBot.Commands;
+using KMyMoney.Net.TelegramBot.Commands.AddTransaction;
+using KMyMoney.Net.TelegramBot.Commands.File;
 using KMyMoney.Net.TelegramBot.Commands.Login;
 using KMyMoney.Net.TelegramBot.Persistence.InMemory;
 using KMyMoney.Net.TelegramBot.Settings;
@@ -20,10 +22,15 @@ builder.Services.AddOptions<TelegramSettings>()
 builder.Services
     .AddSingleton<IDefaultStatusHandler, DefaultStatusHandler>()
     .AddSingleton<ICommand, LoginCommand>()
-    .AddSingleton<IConditionalStatusHandler, LoginCodeEntryStatusHandler>()
     .AddStatusHandler<LoginCodeEntryStatusHandler>()
     .AddSingleton<ICommand, FileCommand>()
-    .AddSingleton<ICommand, AccountsCommand>();
+    .AddStatusHandler<FileEntryStatusHandler>()
+    .AddSingleton<ICommand, AccountsCommand>()
+    .AddSingleton<ICommand, AddTransactionCommand>()
+    .AddStatusHandler<AddTransactionFromAccountHandler>()
+    .AddStatusHandler<AddTransactionToAccountHandler>()
+    .AddStatusHandler<AddTransactionCurrencyHandler>()
+    .AddStatusHandler<AddTransactionPriceHandler>();
 
 // TODO local testing only 
 builder.Services.AddInMemoryPersistenceLayer();

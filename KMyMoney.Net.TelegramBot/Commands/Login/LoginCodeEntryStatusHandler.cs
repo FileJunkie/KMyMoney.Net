@@ -5,6 +5,7 @@ using KMyMoney.Net.TelegramBot.StatusHandlers;
 using Microsoft.Extensions.Options;
 using Telegram.Bot;
 using Telegram.Bot.Types;
+using Telegram.Bot.Types.ReplyMarkups;
 
 namespace KMyMoney.Net.TelegramBot.Commands.Login;
 
@@ -21,22 +22,24 @@ public class LoginCodeEntryStatusHandler(
         await botWrapper.Bot.SendMessage(
             message.Chat.Id,
             "Got your code, getting and saving token",
+            replyMarkup: new ReplyKeyboardRemove(),
             cancellationToken: cancellationToken);
+        await settingsPersistenceLayer.SetUserSettingByUserIdAsync(message.From!.Id, UserSettings.Status, null, cancellationToken);
         var token = await DropboxOAuth2Helper.ProcessCodeFlowAsync(
             message.Text,
             dropboxSettings.Value.ApiKey,
             dropboxSettings.Value.ApiSecret);
-        await settingsPersistenceLayer.SetStatusByUserIdAsync(message.From!.Id, null, cancellationToken);
 
         if (token == null)
         {
             await botWrapper.Bot.SendMessage(
                 message.Chat.Id,
                 "Something went wrong with getting token",
+                replyMarkup: new ReplyKeyboardRemove(),
                 cancellationToken: cancellationToken);
             return;
         }
 
-        await settingsPersistenceLayer.SetTokenByUserIdAsync(message.From!.Id, token.AccessToken, cancellationToken);
+        await settingsPersistenceLayer.SetUserSettingByUserIdAsync(message.From!.Id, UserSettings.Token, token.AccessToken, cancellationToken);
     }
 }

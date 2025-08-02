@@ -38,4 +38,12 @@ public class DropboxFileAccessor(string token) : IFileAccessor
             mode: WriteMode.Overwrite.Instance,
             body: stream);
     }
+
+    public async Task<IEnumerable<string>> ListFilesAsync()
+    {
+        var searchResults = await _client.Files.SearchV2Async(
+            new("*.kmy", options:
+                new(fileExtensions: ["kmy"])));
+        return searchResults.Matches.Select(m => m.Metadata.AsMetadata.Value.PathLower);
+    }
 }

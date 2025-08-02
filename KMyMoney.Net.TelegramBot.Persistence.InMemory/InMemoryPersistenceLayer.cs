@@ -2,48 +2,26 @@ namespace KMyMoney.Net.TelegramBot.Persistence.InMemory;
 
 public class InMemoryPersistenceLayer : ISettingsPersistenceLayer
 {
-    private readonly Dictionary<long, string> _tokens = new();
-    private readonly Dictionary<long, string> _filePaths = new();
-    private readonly Dictionary<long, string> _statuses = new();
+    private readonly Dictionary<(long, UserSettings), string> _settings = new();
 
-    public Task<string?> GetTokenByUserIdAsync(long userId, CancellationToken cancellationToken) =>
-        GetToAsync(_tokens, userId);
-
-    public Task SetTokenByUserIdAsync(long userId, string token, CancellationToken cancellationToken)
+    public Task<string?> GetUserSettingByUserIdAsync(long userId, UserSettings setting, CancellationToken cancellationToken)
     {
-        _tokens[userId] = token;
-        return Task.CompletedTask;
+        return _settings.TryGetValue((userId, setting), out var value)
+            ? Task.FromResult<string?>(value)
+            : Task.FromResult<string?>(null);
     }
 
-    public Task<string?> GetFilePathByUserIdAsync(long userId, CancellationToken cancellationToken) =>
-        GetToAsync(_filePaths, userId);
-
-    public Task SetFilePathByUserIdAsync(long userId, string filePath, CancellationToken cancellationToken)
+    public Task SetUserSettingByUserIdAsync(long userId, UserSettings setting, string? value, CancellationToken cancellationToken)
     {
-        _filePaths[userId] = filePath;
-        return Task.CompletedTask;
-    }
-
-    public Task<string?> GetStatusByUserIdAsync(long userId, CancellationToken cancellationToken) =>
-        GetToAsync(_statuses, userId);
-
-    public Task SetStatusByUserIdAsync(long userId, string? status, CancellationToken cancellationToken)
-    {
-        if (status == null)
+        if (value == null)
         {
-            _statuses.Remove(userId);
+            _settings.Remove((userId, setting));
         }
         else
         {
-            _statuses[userId] = status;
+            _settings[(userId, setting)] = value;
         }
-        return Task.CompletedTask;
-    }
 
-    private static Task<TValue?> GetToAsync<TKey, TValue>(Dictionary<TKey, TValue> dictionary, TKey key) where TKey : notnull
-    {
-        return dictionary.TryGetValue(key, out var value) ?
-            Task.FromResult<TValue?>(value) :
-            Task.FromResult<TValue?>(default);
+        return Task.CompletedTask;
     }
 }
