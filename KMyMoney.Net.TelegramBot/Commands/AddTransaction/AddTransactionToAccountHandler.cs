@@ -53,6 +53,7 @@ public class AddTransactionToAccountHandler(
         
         var currencies = file.Root.Prices.Values.Select(v => v.From)
             .Concat(file.Root.Prices.Values.Select(v => v.To))
+            .Where(c => c.Length == 3)
             .Distinct();
 
         var keyboard = currencies.SplitBy(5);
