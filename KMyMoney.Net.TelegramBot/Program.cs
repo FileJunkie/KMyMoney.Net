@@ -1,9 +1,9 @@
 using KMyMoney.Net.TelegramBot;
 using KMyMoney.Net.TelegramBot.Commands;
+using KMyMoney.Net.TelegramBot.Commands.Login;
 using KMyMoney.Net.TelegramBot.Persistence.InMemory;
 using KMyMoney.Net.TelegramBot.Settings;
 using KMyMoney.Net.TelegramBot.StatusHandlers;
-using KMyMoney.Net.TelegramBot.StatusHandlers.Login;
 
 var builder = Host.CreateApplicationBuilder(args);
 

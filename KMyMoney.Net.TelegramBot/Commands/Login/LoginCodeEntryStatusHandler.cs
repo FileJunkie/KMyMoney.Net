@@ -1,11 +1,12 @@
 using Dropbox.Api;
 using KMyMoney.Net.TelegramBot.Persistence;
 using KMyMoney.Net.TelegramBot.Settings;
+using KMyMoney.Net.TelegramBot.StatusHandlers;
 using Microsoft.Extensions.Options;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 
-namespace KMyMoney.Net.TelegramBot.StatusHandlers.Login;
+namespace KMyMoney.Net.TelegramBot.Commands.Login;
 
 public class LoginCodeEntryStatusHandler(
     TelegramBotClientWrapper botWrapper,
