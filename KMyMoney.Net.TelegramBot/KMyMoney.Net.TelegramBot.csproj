@@ -19,7 +19,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Hosting.Systemd" Version="9.0.7" />
-    <PackageReference Include="TgBotFramework" Version="0.5.7" />
+    <PackageReference Include="Telegram.Bot" Version="22.6.0" />
   </ItemGroup>
 
 </Project>

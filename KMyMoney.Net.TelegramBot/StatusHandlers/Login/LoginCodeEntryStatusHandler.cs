@@ -1,0 +1,41 @@
+using Dropbox.Api;
+using KMyMoney.Net.TelegramBot.Persistence;
+using KMyMoney.Net.TelegramBot.Settings;
+using Microsoft.Extensions.Options;
+using Telegram.Bot;
+using Telegram.Bot.Types;
+
+namespace KMyMoney.Net.TelegramBot.StatusHandlers.Login;
+
+public class LoginCodeEntryStatusHandler(
+    TelegramBotClientWrapper botWrapper,
+    ISettingsPersistenceLayer settingsPersistenceLayer,
+    IOptions<DropboxSettings> dropboxSettings) : IConditionalStatusHandler
+{
+    public string HandledStatus => "EnteringLoginCode";
+
+    public async Task HandleAsync(Message message, CancellationToken cancellationToken)
+    {
+        await botWrapper.Bot.DeleteMessage(message.Chat.Id, message.Id, cancellationToken);
+        await botWrapper.Bot.SendMessage(
+            message.Chat.Id,
+            "Got your code, getting and saving token",
+            cancellationToken: cancellationToken);
+        var token = await DropboxOAuth2Helper.ProcessCodeFlowAsync(
+            message.Text,
+            dropboxSettings.Value.ApiKey,
+            dropboxSettings.Value.ApiSecret);
+        await settingsPersistenceLayer.SetStatusByUserIdAsync(message.From!.Id, null, cancellationToken);
+
+        if (token == null)
+        {
+            await botWrapper.Bot.SendMessage(
+                message.Chat.Id,
+                "Something went wrong with getting token",
+                cancellationToken: cancellationToken);
+            return;
+        }
+
+        await settingsPersistenceLayer.SetTokenByUserIdAsync(message.From!.Id, token.AccessToken, cancellationToken);
+    }
+}

@@ -1,7 +1,9 @@
+using KMyMoney.Net.TelegramBot;
 using KMyMoney.Net.TelegramBot.Commands;
 using KMyMoney.Net.TelegramBot.Persistence.InMemory;
 using KMyMoney.Net.TelegramBot.Settings;
-using TgBotFramework;
+using KMyMoney.Net.TelegramBot.StatusHandlers;
+using KMyMoney.Net.TelegramBot.StatusHandlers.Login;
 
 var builder = Host.CreateApplicationBuilder(args);
 
@@ -10,30 +12,29 @@ builder.Services.AddOptions<DropboxSettings>()
     .ValidateDataAnnotations()
     .ValidateOnStart();
 
-builder.Services.
-    AddOptions<BotSettings>()
+builder.Services.AddOptions<TelegramSettings>()
     .Bind(builder.Configuration.GetSection("Telegram"))
     .ValidateDataAnnotations()
-    .ValidateOnStart()
-    .Services
-    .AddBotService<BaseBot, UpdateContext>(botBuilder => botBuilder
-        .UseLongPolling()
-        .SetPipeline(pipelineBuilder => pipelineBuilder
-            .UseCommand<LoginCommand>("login")
-            .UseCommand<LoginCodeCommand>("logincode")
-            .UseCommand<FileCommand>("file")
-            .UseCommand<AccountsCommand>("accounts")));
+    .ValidateOnStart();
 
 builder.Services
-    .AddSingleton<LoginCommand>()
-    .AddSingleton<LoginCodeCommand>()
-    .AddSingleton<FileCommand>()
-    .AddSingleton<AccountsCommand>();
+    .AddSingleton<IDefaultStatusHandler, DefaultStatusHandler>()
+    .AddSingleton<ICommand, LoginCommand>()
+    .AddSingleton<IConditionalStatusHandler, LoginCodeEntryStatusHandler>()
+    .AddStatusHandler<LoginCodeEntryStatusHandler>()
+    .AddSingleton<ICommand, FileCommand>()
+    .AddSingleton<ICommand, AccountsCommand>();
 
 // TODO local testing only 
 builder.Services.AddInMemoryPersistenceLayer();
 
 builder.Services.AddSystemd();
+
+builder.Services
+    .AddSingleton<TelegramBotClientWrapper>()
+    .AddHostedService<HostedTelegramBot>();
+
+builder.Services.AddLogging();
 
 var app = builder.Build();
 

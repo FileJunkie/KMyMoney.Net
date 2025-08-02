@@ -44,4 +44,9 @@ public class Account : IHasId, IHasName
 
     [XmlElement("KEYVALUEPAIRS")]
     public KeyValuePairs? KeyValuePairs { get; init; }
+
+    [XmlIgnore]
+    public bool IsClosed =>
+        KeyValuePairs?.Pair
+            .Any(p => p is { Key: "mm-closed", Value: "yes" }) ?? false;
 }
