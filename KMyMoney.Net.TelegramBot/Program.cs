@@ -6,6 +6,7 @@ using KMyMoney.Net.TelegramBot.Persistence.Etcd;
 using KMyMoney.Net.TelegramBot.Persistence.InMemory;
 using KMyMoney.Net.TelegramBot.Settings;
 using KMyMoney.Net.TelegramBot.StatusHandlers;
+using Telegram.Bot.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -42,7 +43,8 @@ builder.Services.AddSystemd();
 
 builder.Services
     .AddSingleton<TelegramBotClientWrapper>()
-    .AddHostedService<HostedTelegramBot>();
+    .AddHostedService<HostedTelegramBot>()
+    .ConfigureTelegramBotMvc();
 
 builder.Services.AddLogging();
 
