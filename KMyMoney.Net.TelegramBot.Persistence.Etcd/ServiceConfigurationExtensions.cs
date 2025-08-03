@@ -4,7 +4,6 @@ using System.Security.Cryptography.X509Certificates;
 using dotnet_etcd;
 using dotnet_etcd.interfaces;
 using Grpc.Core;
-using Grpc.Net.Client;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 

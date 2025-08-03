@@ -53,7 +53,7 @@ public sealed class HostedTelegramBot(
 
         try
         {
-            var userStatus = await settingsPersistenceLayer.GetUserSettingByUserIdAsync(message.From.Id, UserSettings.Status, cancellationToken);
+            var userStatus = await settingsPersistenceLayer.GetUserSettingByUserIdAsync(message.From.Id, UserSettings.Status, cancellationToken: cancellationToken);
             if (!string.IsNullOrWhiteSpace(userStatus))
             {
                 foreach (var statusHandler in statusHandlers)

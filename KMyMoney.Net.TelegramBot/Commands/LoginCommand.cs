@@ -1,3 +1,4 @@
+using System.Security.Cryptography;
 using Dropbox.Api;
 using KMyMoney.Net.TelegramBot.Persistence;
 using KMyMoney.Net.TelegramBot.Settings;
@@ -6,12 +7,11 @@ using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 
-namespace KMyMoney.Net.TelegramBot.Commands.Login;
+namespace KMyMoney.Net.TelegramBot.Commands;
 
 public class LoginCommand(
     TelegramBotClientWrapper botWrapper,
-    ISettingsPersistenceLayer settingsLayer,
-    LoginCodeEntryStatusHandler loginCodeEntryStatusHandler,
+    ISettingsPersistenceLayer settingsPersistenceLayer,
     IOptions<DropboxSettings> dropboxSettings) :
     ICommand
 {
@@ -20,21 +20,23 @@ public class LoginCommand(
 
     public async Task HandleAsync(Message message, CancellationToken cancellationToken)
     {
+        var state = RandomNumberGenerator.GetHexString(16);
+        await settingsPersistenceLayer.SetSavedValueByKeyAsync(
+            $"states/{state}",
+            message.From!.Id.ToString(),
+            TimeSpan.FromMinutes(10),
+            cancellationToken: cancellationToken);
+
         var uri = DropboxOAuth2Helper.GetAuthorizeUri(
             OAuthResponseType.Code,
             clientId: dropboxSettings.Value.ApiKey,
-            tokenAccessType: TokenAccessType.Legacy,
-            redirectUri: (string?)null);
-
-        await settingsLayer.SetUserSettingByUserIdAsync(
-            message.From!.Id,
-            UserSettings.Status,
-            loginCodeEntryStatusHandler.HandledStatus,
-            cancellationToken);
+            tokenAccessType: TokenAccessType.Online,
+            state: state,
+            redirectUri: dropboxSettings.Value.RedirectUri);
 
         await botWrapper.Bot.SendMessage(
             message.Chat.Id,
-            $"Go here: {uri} and tell me the code",
+            $"Go here: {uri} to log in",
             replyMarkup: new ReplyKeyboardRemove(),
             cancellationToken: cancellationToken);
     }

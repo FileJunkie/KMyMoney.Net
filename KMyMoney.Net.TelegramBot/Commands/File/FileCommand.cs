@@ -56,6 +56,6 @@ public class FileCommand(
             message.From!.Id,
             UserSettings.Status,
             fileEntryStatusHandler.HandledStatus,
-            cancellationToken);
+            cancellationToken: cancellationToken);
     }
 }

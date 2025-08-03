@@ -29,7 +29,7 @@ public class AddTransactionCurrencyHandler(
                 message.From!.Id,
                 UserSettings.Status,
                 null,
-                cancellationToken);
+                cancellationToken: cancellationToken);
             return;
         }
 
@@ -37,7 +37,7 @@ public class AddTransactionCurrencyHandler(
             message.From!.Id,
             UserSettings.Currency,
             message.Text,
-            cancellationToken);
+            cancellationToken: cancellationToken);
 
         await botClient
             .Bot
@@ -50,6 +50,6 @@ public class AddTransactionCurrencyHandler(
             message.From!.Id,
             UserSettings.Status,
             addTransactionPriceHandler.HandledStatus,
-            cancellationToken);
+            cancellationToken: cancellationToken);
     }
 }

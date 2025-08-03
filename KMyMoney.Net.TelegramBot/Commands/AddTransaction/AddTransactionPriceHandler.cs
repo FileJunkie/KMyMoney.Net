@@ -20,12 +20,12 @@ public class AddTransactionPriceHandler(
             message.From!.Id,
             UserSettings.Status,
             null,
-            cancellationToken);
+            cancellationToken: cancellationToken);
 
         var accountFrom = await settingsPersistenceLayer.GetUserSettingByUserIdAsync(
             message.From!.Id,
             UserSettings.AccountFrom,
-            cancellationToken);
+            cancellationToken: cancellationToken);
 
         if (accountFrom == null)
         {
@@ -40,7 +40,7 @@ public class AddTransactionPriceHandler(
         var accountTo = await settingsPersistenceLayer.GetUserSettingByUserIdAsync(
             message.From!.Id,
             UserSettings.AccountTo,
-            cancellationToken);
+            cancellationToken: cancellationToken);
 
         if (accountTo == null)
         {
@@ -55,7 +55,7 @@ public class AddTransactionPriceHandler(
         var currency = await settingsPersistenceLayer.GetUserSettingByUserIdAsync(
             message.From!.Id,
             UserSettings.Currency,
-            cancellationToken);
+            cancellationToken: cancellationToken);
 
         if (currency == null)
         {
