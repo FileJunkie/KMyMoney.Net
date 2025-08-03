@@ -41,7 +41,7 @@ public class AddTransactionToAccountHandler(
                 message.From!.Id,
                 UserSettings.Status,
                 null,
-                cancellationToken);
+                cancellationToken: cancellationToken);
             return;
         }
 
@@ -49,7 +49,7 @@ public class AddTransactionToAccountHandler(
             message.From!.Id,
             UserSettings.AccountTo,
             message.Text,
-            cancellationToken);
+            cancellationToken: cancellationToken);
         
         var currencies = file.Root.Prices.Values.Select(v => v.From)
             .Concat(file.Root.Prices.Values.Select(v => v.To))
@@ -69,6 +69,6 @@ public class AddTransactionToAccountHandler(
             message.From!.Id,
             UserSettings.Status,
             addTransactionCurrencyHandler.HandledStatus,
-            cancellationToken);
+            cancellationToken: cancellationToken);
     }
 }

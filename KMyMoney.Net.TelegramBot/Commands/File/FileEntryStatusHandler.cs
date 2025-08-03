@@ -30,9 +30,17 @@ public class FileEntryStatusHandler(
                 replyMarkup: new ReplyKeyboardRemove(),
                 cancellationToken: cancellationToken);
             var path = message.Text.StartsWith('/') ? message.Text : $"/{message.Text}";
-            await settingsPersistenceLayer.SetUserSettingByUserIdAsync(message.From!.Id, UserSettings.FilePath, path, cancellationToken);
+            await settingsPersistenceLayer.SetUserSettingByUserIdAsync(
+                message.From!.Id,
+                UserSettings.FilePath,
+                path,
+                cancellationToken: cancellationToken);
         }
 
-        await settingsPersistenceLayer.SetUserSettingByUserIdAsync(message.From!.Id, UserSettings.Status, null, cancellationToken);
+        await settingsPersistenceLayer.SetUserSettingByUserIdAsync(
+            message.From!.Id,
+            UserSettings.Status,
+            null,
+            cancellationToken: cancellationToken);
     }
 }

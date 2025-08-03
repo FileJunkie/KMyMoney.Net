@@ -15,7 +15,7 @@ public static class FileLoaderHelpers
         Message message,
         CancellationToken cancellationToken)
     {
-        var token = await settingsPersistenceLayer.GetUserSettingByUserIdAsync(message.From!.Id, UserSettings.Token, cancellationToken);
+        var token = await settingsPersistenceLayer.GetUserSettingByUserIdAsync(message.From!.Id, UserSettings.Token, cancellationToken: cancellationToken);
         if (string.IsNullOrWhiteSpace(token))
         {
             await botClient.SendMessage(
@@ -26,7 +26,7 @@ public static class FileLoaderHelpers
             return null;
         }
 
-        var filePath = await settingsPersistenceLayer.GetUserSettingByUserIdAsync(message.From!.Id, UserSettings.FilePath, cancellationToken);
+        var filePath = await settingsPersistenceLayer.GetUserSettingByUserIdAsync(message.From!.Id, UserSettings.FilePath, cancellationToken: cancellationToken);
         if (string.IsNullOrWhiteSpace(filePath))
         {
             await botClient.SendMessage(message.Chat.Id, "Use /file to set file path",

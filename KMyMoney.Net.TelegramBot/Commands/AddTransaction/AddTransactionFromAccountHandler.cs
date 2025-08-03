@@ -39,7 +39,7 @@ public class AddTransactionFromAccountHandler(
                 message.From!.Id,
                 UserSettings.Status,
                 null,
-                cancellationToken);
+                cancellationToken: cancellationToken);
             return;
         }
 
@@ -47,7 +47,7 @@ public class AddTransactionFromAccountHandler(
             message.From!.Id,
             UserSettings.AccountFrom,
             message.Text,
-            cancellationToken);
+            cancellationToken: cancellationToken);
         
         var accounts = file.Root.Accounts.Values
             .Where(acc => !acc.IsClosed)
@@ -66,6 +66,6 @@ public class AddTransactionFromAccountHandler(
             message.From!.Id,
             UserSettings.Status,
             addTransactionToAccountHandler.HandledStatus,
-            cancellationToken);
+            cancellationToken: cancellationToken);
     }
 }

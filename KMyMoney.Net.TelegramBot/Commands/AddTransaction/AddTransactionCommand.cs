@@ -40,6 +40,6 @@ public class AddTransactionCommand(
             message.From!.Id,
             UserSettings.Status,
             addTransactionFromAccountHandler.HandledStatus,
-            cancellationToken);
+            cancellationToken: cancellationToken);
     }
 }

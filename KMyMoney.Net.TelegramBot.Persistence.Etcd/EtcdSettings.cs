@@ -12,4 +12,6 @@ public class EtcdSettings
     public required string Certificate { get; init; }
     [Required]
     public required string Key { get; init; }
+
+    public string KeyPrefix { get; init; } = "/kmymoney.net";
 }
