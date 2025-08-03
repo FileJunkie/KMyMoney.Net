@@ -1,15 +1,15 @@
 Package: kmymoney-net-telegrambot
-Version: 0.0.3
-Installed-Size: 52116
+Version: 0.1.0
+Installed-Size: 52120
 Architecture: amd64
 Maintainer: Ilia Ershov <filejunkie@gmail.com>
 Homepage: https://github.com/FileJunkie/KMyMoney.Net
 Priority: 0
 Section: misc
-Filename: pool/main/k/kmymoney-net-telegrambot/kmymoney-net-telegrambot_0.0.3_amd64.deb
-Size: 46026678
-SHA256: 0d83e659589dde4fb5fce76b8f672bf2542961eb985016615aebb004f6124fb1
-SHA1: 21bbe40e6646ce7e5e8d1a7f80e6020ca5506360
-MD5sum: e629b87b9d73caa5bfd80633a41b5c40
+Filename: pool/main/k/kmymoney-net-telegrambot/kmymoney-net-telegrambot_0.1.0_amd64.deb
+Size: 46030250
+SHA256: 28bb9ba5ae3753ea1787aa7e94c8a98b0dd22a45312544fabed42e26ff30efa2
+SHA1: c4df153300732e3fc5f92db974b7b56d90e60b12
+MD5sum: 3b46969cdd975e75edcbf51e24d1f376
 Description: no description
 
