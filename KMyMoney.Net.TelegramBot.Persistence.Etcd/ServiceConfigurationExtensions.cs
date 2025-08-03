@@ -44,8 +44,8 @@ public static class ServiceConfigurationExtensions
                         }
 
                         var rootCert = X509CertificateLoader.LoadCertificateFromFile(settings.RootCertificate);
-                        chain.ChainPolicy.ExtraStore.Add(rootCert);
-                        chain.ChainPolicy.VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority;
+                        chain.ChainPolicy.CustomTrustStore.Add(rootCert);
+                        chain.ChainPolicy.TrustMode = X509ChainTrustMode.CustomRootTrust;
                         return chain.Build(new X509Certificate2(cert));
                     }
                 }
