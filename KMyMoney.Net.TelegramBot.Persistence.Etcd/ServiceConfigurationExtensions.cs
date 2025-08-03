@@ -1,4 +1,5 @@
 using System.Net.Security;
+using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using dotnet_etcd;
 using dotnet_etcd.interfaces;
@@ -15,10 +16,11 @@ public static class ServiceConfigurationExtensions
         .AddSingleton<IEtcdClient>(sp =>
         {
             var settings = sp.GetRequiredService<IOptions<EtcdSettings>>().Value;
-            var clientCertificate = X509CertificateLoader.LoadPkcs12FromFile(
-                settings.ClientCertificate,
-                string.Empty);
-            var clientCertificateCollection = new X509CertificateCollection { clientCertificate };
+            using var certificate = X509CertificateLoader.LoadCertificateFromFile(settings.Certificate);
+            using var key = RSA.Create();
+            key.ImportFromPem(File.ReadAllText(settings.Key));
+            var certificatePair = certificate.CopyWithPrivateKey(key);
+            var clientCertificateCollection = new X509CertificateCollection { certificatePair };
             var handler = new SocketsHttpHandler
             {
                 KeepAlivePingDelay = TimeSpan.FromSeconds(30),
@@ -27,7 +29,7 @@ public static class ServiceConfigurationExtensions
                 SslOptions = new()
                 {
                     ClientCertificates = clientCertificateCollection,
-                    RemoteCertificateValidationCallback = (sender, certificate, chain, sslPolicyErrors) =>
+                    RemoteCertificateValidationCallback = (sender, cert, chain, sslPolicyErrors) =>
                     {
                         if (sslPolicyErrors == SslPolicyErrors.None)
                         {
@@ -36,7 +38,7 @@ public static class ServiceConfigurationExtensions
 
                         if ((sslPolicyErrors & SslPolicyErrors.RemoteCertificateChainErrors) == 0
                             || chain == null
-                            || certificate == null)
+                            || cert == null)
                         {
                             return false;
                         }
@@ -44,7 +46,7 @@ public static class ServiceConfigurationExtensions
                         var rootCert = X509CertificateLoader.LoadCertificateFromFile(settings.RootCertificate);
                         chain.ChainPolicy.ExtraStore.Add(rootCert);
                         chain.ChainPolicy.VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority;
-                        return chain.Build(new X509Certificate2(certificate));
+                        return chain.Build(new X509Certificate2(cert));
                     }
                 }
             };

@@ -9,9 +9,7 @@ public class EtcdSettings
     [Required]
     public required string RootCertificate { get; init; }
     [Required]
-    public required string ClientCertificate { get; init; }
-    /*[Required]
     public required string Certificate { get; init; }
     [Required]
-    public required string Key { get; init; }*/
+    public required string Key { get; init; }
 }
