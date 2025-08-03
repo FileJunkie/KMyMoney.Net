@@ -3,6 +3,7 @@ using KMyMoney.Net.TelegramBot.Commands;
 using KMyMoney.Net.TelegramBot.Commands.AddTransaction;
 using KMyMoney.Net.TelegramBot.Commands.File;
 using KMyMoney.Net.TelegramBot.Commands.Login;
+using KMyMoney.Net.TelegramBot.Persistence.Etcd;
 using KMyMoney.Net.TelegramBot.Persistence.InMemory;
 using KMyMoney.Net.TelegramBot.Settings;
 using KMyMoney.Net.TelegramBot.StatusHandlers;
@@ -19,6 +20,13 @@ builder.Services.AddOptions<TelegramSettings>()
     .ValidateDataAnnotations()
     .ValidateOnStart();
 
+builder.Services.AddOptions<EtcdSettings>()
+    .Bind(builder.Configuration.GetSection("Etcd"))
+    .ValidateDataAnnotations()
+    .ValidateOnStart()
+    .Services
+    .AddEtcdPersistenceLayer();
+
 builder.Services
     .AddSingleton<IDefaultStatusHandler, DefaultStatusHandler>()
     .AddSingleton<ICommand, LoginCommand>()
@@ -31,9 +39,6 @@ builder.Services
     .AddStatusHandler<AddTransactionToAccountHandler>()
     .AddStatusHandler<AddTransactionCurrencyHandler>()
     .AddStatusHandler<AddTransactionPriceHandler>();
-
-// TODO local testing only 
-builder.Services.AddInMemoryPersistenceLayer();
 
 builder.Services.AddSystemd();
 
