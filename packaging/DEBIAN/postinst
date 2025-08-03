@@ -1,1 +1,9 @@
+#!/bin/sh
+set -e
+
+if ! id -u "kmymoney-net-telegrambot" >/dev/null 2>&1; then
+    echo "Creating user kmymoney-net-telegrambot"
+    adduser --system --group --no-create-home --shell /sbin/nologin kmymoney-net-telegrambot
+fi
+
 systemctl daemon-reload
