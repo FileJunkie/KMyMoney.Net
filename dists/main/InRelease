@@ -5,26 +5,26 @@ Origin: KMyMoney.Net
 Label: KMyMoney.Net
 Suite: unstable
 Codename: main
-Date: Sun, 03 Aug 2025 16:21:47 UTC
+Date: Wed, 06 Aug 2025 19:34:30 UTC
 Architectures: amd64
 Components: main
 Description: Debian x64 repository for KMyMoney.Net project
 MD5Sum:
- 00a1d331d7c58e064664a97f8f3bdc35 510 main/binary-amd64/Packages
- f858df46760535522f243f97f2692256 366 main/binary-amd64/Packages.gz
+ da6051053cd14d04117dd98575873f4f 510 main/binary-amd64/Packages
+ 5a16202f1a3209320cb5a2e75c0a8386 366 main/binary-amd64/Packages.gz
  dbe13014f28a0581ab38b96a0e52c61e 155 main/binary-amd64/Release
 SHA1:
- fd38434e6a79de5612544108f2e30eaf3f158e09 510 main/binary-amd64/Packages
- b07c2bb59b69e87bd35a36128744405a7cf20088 366 main/binary-amd64/Packages.gz
+ 9c496dbffd6097ec1ced8254db2995e37a724834 510 main/binary-amd64/Packages
+ 9de49474364a72cbc0c8f8f8184a49d8b8b783ac 366 main/binary-amd64/Packages.gz
  48b91d45962c04092154d046e96b6a4dcf934fb2 155 main/binary-amd64/Release
 SHA256:
- c148414318e8a15d2cc5db34c665e4c42822f769b8f929fbe4338f34ad81f12d 510 main/binary-amd64/Packages
- f22b3f6f662b532a6afe5c1fcc5132946e1ac66579782a8cf287cfcfd7bdf5d0 366 main/binary-amd64/Packages.gz
+ fef103bc0a6c3a8ca0c4f3c46d971c0f5a709ae4feebcec4cae3e1aa1d53d44c 510 main/binary-amd64/Packages
+ 92fbadb4505aa2c9472b96d5a45e7ef04f38cbae3955b9080499ca3bb9c6bdc6 366 main/binary-amd64/Packages.gz
  d06dbfdd5fea4e94a2dd3cfdcb5b627c3141125b9dc8e4594ea59a65b7bb59cc 155 main/binary-amd64/Release
 -----BEGIN PGP SIGNATURE-----
 
-iHUEARYKAB0WIQRVloIdLJgY982Ntwh5PXy+AgZe/wUCaI+MoAAKCRB5PXy+AgZe
-/xYmAP9gx3b8cdo30ZKsDFGBis3QWXKPcgPqW6vZPd/CgeAafwD7BFVy4lIGhzl+
-Hm6vri+PFQSr4Xc2HsSoC1KP5Aic1gs=
-=FcvJ
+iHUEARYKAB0WIQRVloIdLJgY982Ntwh5PXy+AgZe/wUCaJOuTAAKCRB5PXy+AgZe
+/z9JAQCCtRaaH/UcfJpyZI5uFlUnbXb2LzN+z+P0chnN6I4ucwEAwQZo6OvcB3dF
+At14GKoPl59uAd4m6YFEN/BdLP+6dQw=
+=JnKW
 -----END PGP SIGNATURE-----
