@@ -6,4 +6,6 @@ public class TelegramSettings
 {
     [Required]
     public required string ApiToken { get; init; }
+
+    public Uri? WebhookUri { get; init; }
 }

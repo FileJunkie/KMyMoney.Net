@@ -1,4 +1,3 @@
-using System.Text;
 using dotnet_etcd.interfaces;
 using Etcdserverpb;
 using Google.Protobuf;
