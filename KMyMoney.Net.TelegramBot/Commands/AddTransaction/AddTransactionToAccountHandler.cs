@@ -1,8 +1,6 @@
 using KMyMoney.Net.TelegramBot.Persistence;
-using KMyMoney.Net.TelegramBot.Settings;
 using KMyMoney.Net.TelegramBot.StatusHandlers;
 using KMyMoney.Net.TelegramBot.Utils;
-using Microsoft.Extensions.Options;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
