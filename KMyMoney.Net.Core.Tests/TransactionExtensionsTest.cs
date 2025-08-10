@@ -31,6 +31,38 @@ public class TransactionExtensionsTest
     }
 
     [Fact]
+    public void AddTransaction_ShouldGenerateCorrectId_WhenTransactionsExist()
+    {
+        // Arrange
+        var kmyMoneyFileRoot = CreateMinimalKmyMoneyFileRoot();
+        var fromAccount = new Account { Id = "A000001", Name = "Checking Account", Currency = "USD", Type = "Asset" };
+        var toAccount = new Account { Id = "A000002", Name = "Savings Account", Currency = "USD", Type = "Asset" };
+        kmyMoneyFileRoot.Accounts.Values = [fromAccount, toAccount];
+        kmyMoneyFileRoot.Transactions.Values =
+        [
+            new Transaction
+            {
+                Id = "T000000000000000005",
+                PostDate = "2025-08-10",
+                EntryDate = "2025-08-10",
+                Commodity = "USD",
+                Splits = new Splits { Split = [] }
+            }
+        ];
+
+        // Act
+        var transaction = kmyMoneyFileRoot.AddTransaction(
+            from: fromAccount.Id,
+            to: toAccount.Id,
+            amount: 100.0m,
+            currency: "USD",
+            memo: "Test transaction");
+
+        // Assert
+        transaction.Id.ShouldBe("T000000000000000006");
+    }
+
+    [Fact]
     public void AddTransaction_ShouldThrowException_WhenFromAccountNotFound()
     {
         // Arrange
