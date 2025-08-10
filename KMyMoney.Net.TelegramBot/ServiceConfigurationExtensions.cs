@@ -69,8 +69,10 @@ public static class ServiceConfigurationExtensions
             .ConfigureTelegramBotMvc();
     }
 
-    private static IServiceCollection ConfigureDropbox(this IServiceCollection services) =>
-        services.AddSingleton<IDropboxOAuth2HelperWrapper, DropboxOAuth2HelperWrapper>();
+    private static IServiceCollection ConfigureDropbox(this IServiceCollection services) => services
+        .AddSingleton<IDropboxOAuth2HelperWrapper, DropboxOAuth2HelperWrapper>()
+        .AddSingleton<IFileAccessorFactory, DropboxFileAccessorFactory>()
+        .AddSingleton<IFileLoader, FileLoader>();
 
     private static IServiceCollection ConfigureSystem(this IServiceCollection services) => services
         .AddSystemd()

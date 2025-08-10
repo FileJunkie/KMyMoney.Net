@@ -1,4 +1,5 @@
 using KMyMoney.Net.Core;
+using KMyMoney.Net.TelegramBot.Dropbox;
 using KMyMoney.Net.TelegramBot.Persistence;
 using KMyMoney.Net.TelegramBot.Telegram;
 using KMyMoney.Net.TelegramBot.Utils;
@@ -10,7 +11,8 @@ namespace KMyMoney.Net.TelegramBot.Commands.AddTransaction;
 public class AddTransactionCommand(
     ISettingsPersistenceLayer settingsPersistenceLayer,
     ITelegramBotClientWrapper botClient,
-    AddTransactionFromAccountHandler addTransactionFromAccountHandler)
+    AddTransactionFromAccountHandler addTransactionFromAccountHandler,
+    IFileLoader fileLoader)
     : ICommand
 {
     public string Command => "add_transaction";
@@ -18,8 +20,8 @@ public class AddTransactionCommand(
 
     public async Task HandleAsync(Message message, CancellationToken cancellationToken)
     {
-        var file = await FileLoaderHelpers.LoadKMyMoneyFileOrSendErrorAsync(
-            settingsPersistenceLayer, botClient.Bot, message, cancellationToken);
+        var file = await fileLoader.LoadKMyMoneyFileOrSendErrorAsync(
+            message, cancellationToken);
         if (file == null)
         {
             return;

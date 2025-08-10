@@ -1,4 +1,5 @@
 using System.Text;
+using KMyMoney.Net.TelegramBot.Dropbox;
 using KMyMoney.Net.TelegramBot.Persistence;
 using KMyMoney.Net.TelegramBot.Telegram;
 using KMyMoney.Net.TelegramBot.Utils;
@@ -9,8 +10,8 @@ using Telegram.Bot.Types.ReplyMarkups;
 namespace KMyMoney.Net.TelegramBot.Commands;
 
 public class AccountsCommand(
-    ISettingsPersistenceLayer settingsPersistenceLayer,
-    ITelegramBotClientWrapper botClient) :
+    ITelegramBotClientWrapper botClient,
+    IFileLoader fileLoader) :
     ICommand
 {
     public string Command => "accounts";
@@ -18,8 +19,8 @@ public class AccountsCommand(
 
     public async Task HandleAsync(Message message, CancellationToken cancellationToken)
     {
-        var file = await FileLoaderHelpers.LoadKMyMoneyFileOrSendErrorAsync(
-            settingsPersistenceLayer, botClient.Bot, message, cancellationToken);
+        var file = await fileLoader.LoadKMyMoneyFileOrSendErrorAsync(
+            message, cancellationToken);
         if (file == null)
         {
             return;

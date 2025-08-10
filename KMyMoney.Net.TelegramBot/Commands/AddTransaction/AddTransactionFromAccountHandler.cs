@@ -1,4 +1,5 @@
 using KMyMoney.Net.Core;
+using KMyMoney.Net.TelegramBot.Dropbox;
 using KMyMoney.Net.TelegramBot.Persistence;
 using KMyMoney.Net.TelegramBot.StatusHandlers;
 using KMyMoney.Net.TelegramBot.Telegram;
@@ -12,14 +13,15 @@ namespace KMyMoney.Net.TelegramBot.Commands.AddTransaction;
 public class AddTransactionFromAccountHandler(
     ITelegramBotClientWrapper botClient,
     ISettingsPersistenceLayer settingsPersistenceLayer,
-    AddTransactionToAccountHandler addTransactionToAccountHandler) : IConditionalStatusHandler
+    AddTransactionToAccountHandler addTransactionToAccountHandler,
+    IFileLoader fileLoader) : IConditionalStatusHandler
 {
     public string HandledStatus => "AddTransactionEnteringFromAccount";
 
     public async Task HandleAsync(Message message, CancellationToken cancellationToken)
     {
-        var file = await FileLoaderHelpers.LoadKMyMoneyFileOrSendErrorAsync(
-            settingsPersistenceLayer, botClient.Bot, message, cancellationToken);
+        var file = await fileLoader.LoadKMyMoneyFileOrSendErrorAsync(
+            message, cancellationToken);
         if (file == null)
         {
             return;
