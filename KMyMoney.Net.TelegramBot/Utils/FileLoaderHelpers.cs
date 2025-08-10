@@ -11,7 +11,7 @@ public static class FileLoaderHelpers
 {
     public static async Task<KMyMoneyFile?> LoadKMyMoneyFileOrSendErrorAsync(
         ISettingsPersistenceLayer settingsPersistenceLayer,
-        TelegramBotClient botClient,
+        ITelegramBotClient botClient,
         Message message,
         CancellationToken cancellationToken)
     {

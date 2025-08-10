@@ -33,8 +33,16 @@ public sealed class HostedTelegramBot(
         else
         {
             await botWrapper.Bot.DeleteWebhook(cancellationToken: cancellationToken);
-            botWrapper.Bot.OnMessage += (message, type) => updateHandler.OnMessageAsync(message, type, cancellationToken);
-            botWrapper.Bot.OnError += updateHandler.OnErrorAsync;
+            if (botWrapper.Bot is TelegramBotClient telegramBot)
+            {
+                telegramBot.OnMessage += (message, type) =>
+                    updateHandler.OnMessageAsync(message, type, cancellationToken);
+                telegramBot.OnError += updateHandler.OnErrorAsync;
+            }
+            else
+            {
+                throw new Exception($"What kind of type {botWrapper.Bot.GetType()} is?");
+            }
         }
 
         await botWrapper.Bot.SetMyCommands(

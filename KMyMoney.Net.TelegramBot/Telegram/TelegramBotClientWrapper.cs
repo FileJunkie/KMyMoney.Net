@@ -12,11 +12,11 @@ public sealed class TelegramBotClientWrapper : ITelegramBotClientWrapper, IAsync
 {
     private readonly CancellationTokenSource _stoppingTokenSource = new();
 
-    public TelegramBotClient Bot { get; }
+    public ITelegramBotClient Bot { get; }
 
     public TelegramBotClientWrapper(IOptions<TelegramSettings> options)
     {
-        Bot = new(token: options.Value.ApiToken, cancellationToken: _stoppingTokenSource.Token);
+        Bot = new TelegramBotClient(token: options.Value.ApiToken, cancellationToken: _stoppingTokenSource.Token);
     }
 
     public async Task StopAsync()
