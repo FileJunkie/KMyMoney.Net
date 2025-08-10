@@ -1,11 +1,9 @@
 using KMyMoney.Net.TelegramBot.Persistence;
 using KMyMoney.Net.TelegramBot.StatusHandlers;
 using KMyMoney.Net.TelegramBot.Telegram;
-using Telegram.Bot;
 using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
-using Telegram.Bot.Types.ReplyMarkups;
 
 namespace KMyMoney.Net.TelegramBot.Services;
 

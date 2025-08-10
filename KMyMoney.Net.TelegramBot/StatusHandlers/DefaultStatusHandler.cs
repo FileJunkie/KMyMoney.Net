@@ -1,9 +1,7 @@
 using System.Text;
 using KMyMoney.Net.TelegramBot.Commands;
 using KMyMoney.Net.TelegramBot.Telegram;
-using Telegram.Bot;
 using Telegram.Bot.Types;
-using Telegram.Bot.Types.ReplyMarkups;
 
 namespace KMyMoney.Net.TelegramBot.StatusHandlers;
 

@@ -1,5 +1,4 @@
 using KMyMoney.Net.Core;
-using KMyMoney.Net.TelegramBot.Common;
 using KMyMoney.Net.TelegramBot.Dropbox;
 using KMyMoney.Net.TelegramBot.Persistence;
 using KMyMoney.Net.TelegramBot.StatusHandlers;
@@ -7,7 +6,6 @@ using KMyMoney.Net.TelegramBot.Telegram;
 using KMyMoney.Net.TelegramBot.Utils;
 using Telegram.Bot;
 using Telegram.Bot.Types;
-using Telegram.Bot.Types.ReplyMarkups;
 
 namespace KMyMoney.Net.TelegramBot.Commands.AddTransaction;
 
@@ -16,46 +14,17 @@ public class AddTransactionFromAccountHandler(
     ISettingsPersistenceLayer settingsPersistenceLayer,
     AddTransactionToAccountHandler addTransactionToAccountHandler,
     IFileLoader fileLoader) :
-    AbstractMessageHandlerWithNextStep(settingsPersistenceLayer, addTransactionToAccountHandler), IConditionalStatusHandler
+    AbstractAccountSavingHandler(botClient, settingsPersistenceLayer, addTransactionToAccountHandler, fileLoader), IConditionalStatusHandler
 {
-    private readonly ISettingsPersistenceLayer _settingsPersistenceLayer = settingsPersistenceLayer;
+    private readonly ITelegramBotClientWrapper _botClient = botClient;
     public string HandledStatus => "AddTransactionEnteringFromAccount";
+    protected override UserSettings TargetSetting => UserSettings.AccountFrom;
 
-    protected override async Task HandleInternalAsync(Message message, CancellationToken cancellationToken)
+    protected override async Task ContinueAfterSavingAccount(
+        KMyMoneyFile file,
+        Message message,
+        CancellationToken cancellationToken)
     {
-        var file = await fileLoader.LoadKMyMoneyFileOrSendErrorAsync(
-            message, cancellationToken);
-        if (file == null)
-        {
-            return;
-        }
-
-        if (string.IsNullOrWhiteSpace(message.Text) ||
-            !file.Root.Accounts.Values.Select(acc => acc.Name)
-                .Concat(file.Root.Accounts.Values.Select(acc => acc.Id))
-                .Contains(message.Text))
-        {
-            await botClient
-                .Bot
-                .SendMessage(
-                    message.Chat.Id,
-                    "Wrong account, aborting",
-                    replyMarkup: new ReplyKeyboardRemove(),
-                    cancellationToken: cancellationToken);
-            await _settingsPersistenceLayer.SetUserSettingByUserIdAsync(
-                message.From!.Id,
-                UserSettings.Status,
-                null,
-                cancellationToken: cancellationToken);
-            return;
-        }
-
-        await _settingsPersistenceLayer.SetUserSettingByUserIdAsync(
-            message.From!.Id,
-            UserSettings.AccountFrom,
-            message.Text,
-            cancellationToken: cancellationToken);
-
         var lastTransactionPerAccount = file
             .Root
             .Transactions
@@ -70,7 +39,7 @@ public class AddTransactionFromAccountHandler(
 
         var keyboard = accounts.SplitBy(3);
 
-        await botClient
+        await _botClient
             .Bot
             .SendMessage(
                 message.Chat.Id,
