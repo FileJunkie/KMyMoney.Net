@@ -9,7 +9,7 @@ namespace KMyMoney.Net.TelegramBot.Controllers;
 [Route("[controller]")]
 [ApiController]
 public class WebhookController(
-    UpdateHandler updateHandler,
+    IUpdateHandler updateHandler,
     ISettingsPersistenceLayer settingsPersistenceLayer,
     ILogger<WebhookController> logger) : ControllerBase
 {
@@ -38,7 +38,7 @@ public class WebhookController(
         }
         catch (Exception exception)
         {
-            await updateHandler.OnErrorAsync(exception, Telegram.Bot.Polling.HandleErrorSource.HandleUpdateError);
+            await updateHandler.OnErrorAsync(exception, global::Telegram.Bot.Polling.HandleErrorSource.HandleUpdateError);
         }
 
         return Ok();

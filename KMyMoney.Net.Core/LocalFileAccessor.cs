@@ -18,4 +18,9 @@ public class LocalFileAccessor : IFileAccessor
         await using var fileStream = new FileStream(uri.AbsolutePath, FileMode.Create);
         await stream.CopyToAsync(fileStream);
     }
+
+    public Task<IEnumerable<string>> ListFilesAsync()
+    {
+        throw new NotImplementedException();
+    }
 }

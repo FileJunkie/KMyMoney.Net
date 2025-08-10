@@ -1,5 +1,8 @@
 using KMyMoney.Net.Core;
+using KMyMoney.Net.TelegramBot.Common;
+using KMyMoney.Net.TelegramBot.Dropbox;
 using KMyMoney.Net.TelegramBot.Persistence;
+using KMyMoney.Net.TelegramBot.Telegram;
 using KMyMoney.Net.TelegramBot.Utils;
 using Telegram.Bot;
 using Telegram.Bot.Types;
@@ -8,17 +11,18 @@ namespace KMyMoney.Net.TelegramBot.Commands.AddTransaction;
 
 public class AddTransactionCommand(
     ISettingsPersistenceLayer settingsPersistenceLayer,
-    TelegramBotClientWrapper botClient,
-    AddTransactionFromAccountHandler addTransactionFromAccountHandler)
-    : ICommand
+    ITelegramBotClientWrapper botClient,
+    AddTransactionFromAccountHandler addTransactionFromAccountHandler,
+    IFileLoader fileLoader) :
+    AbstractMessageHandlerWithNextStep(settingsPersistenceLayer, addTransactionFromAccountHandler), ICommand
 {
     public string Command => "add_transaction";
     public string Description => "Adds a new transaction";
 
-    public async Task HandleAsync(Message message, CancellationToken cancellationToken)
+    protected override async Task HandleInternalAsync(Message message, CancellationToken cancellationToken)
     {
-        var file = await FileLoaderHelpers.LoadKMyMoneyFileOrSendErrorAsync(
-            settingsPersistenceLayer, botClient.Bot, message, cancellationToken);
+        var file = await fileLoader.LoadKMyMoneyFileOrSendErrorAsync(
+            message, cancellationToken);
         if (file == null)
         {
             return;
@@ -45,10 +49,5 @@ public class AddTransactionCommand(
                 "Choose account to take money from",
                 replyMarkup: keyboard,
                 cancellationToken: cancellationToken);
-        await settingsPersistenceLayer.SetUserSettingByUserIdAsync(
-            message.From!.Id,
-            UserSettings.Status,
-            addTransactionFromAccountHandler.HandledStatus,
-            cancellationToken: cancellationToken);
     }
 }

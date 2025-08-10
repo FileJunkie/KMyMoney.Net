@@ -1,6 +1,9 @@
 using KMyMoney.Net.Core;
+using KMyMoney.Net.TelegramBot.Common;
+using KMyMoney.Net.TelegramBot.Dropbox;
 using KMyMoney.Net.TelegramBot.Persistence;
 using KMyMoney.Net.TelegramBot.StatusHandlers;
+using KMyMoney.Net.TelegramBot.Telegram;
 using KMyMoney.Net.TelegramBot.Utils;
 using Telegram.Bot;
 using Telegram.Bot.Types;
@@ -9,16 +12,19 @@ using Telegram.Bot.Types.ReplyMarkups;
 namespace KMyMoney.Net.TelegramBot.Commands.AddTransaction;
 
 public class AddTransactionFromAccountHandler(
-    TelegramBotClientWrapper botClient,
+    ITelegramBotClientWrapper botClient,
     ISettingsPersistenceLayer settingsPersistenceLayer,
-    AddTransactionToAccountHandler addTransactionToAccountHandler) : IConditionalStatusHandler
+    AddTransactionToAccountHandler addTransactionToAccountHandler,
+    IFileLoader fileLoader) :
+    AbstractMessageHandlerWithNextStep(settingsPersistenceLayer, addTransactionToAccountHandler), IConditionalStatusHandler
 {
+    private readonly ISettingsPersistenceLayer _settingsPersistenceLayer = settingsPersistenceLayer;
     public string HandledStatus => "AddTransactionEnteringFromAccount";
 
-    public async Task HandleAsync(Message message, CancellationToken cancellationToken)
+    protected override async Task HandleInternalAsync(Message message, CancellationToken cancellationToken)
     {
-        var file = await FileLoaderHelpers.LoadKMyMoneyFileOrSendErrorAsync(
-            settingsPersistenceLayer, botClient.Bot, message, cancellationToken);
+        var file = await fileLoader.LoadKMyMoneyFileOrSendErrorAsync(
+            message, cancellationToken);
         if (file == null)
         {
             return;
@@ -36,7 +42,7 @@ public class AddTransactionFromAccountHandler(
                     "Wrong account, aborting",
                     replyMarkup: new ReplyKeyboardRemove(),
                     cancellationToken: cancellationToken);
-            await settingsPersistenceLayer.SetUserSettingByUserIdAsync(
+            await _settingsPersistenceLayer.SetUserSettingByUserIdAsync(
                 message.From!.Id,
                 UserSettings.Status,
                 null,
@@ -44,7 +50,7 @@ public class AddTransactionFromAccountHandler(
             return;
         }
 
-        await settingsPersistenceLayer.SetUserSettingByUserIdAsync(
+        await _settingsPersistenceLayer.SetUserSettingByUserIdAsync(
             message.From!.Id,
             UserSettings.AccountFrom,
             message.Text,
@@ -71,10 +77,5 @@ public class AddTransactionFromAccountHandler(
                 "Choose account to put money into",
                 replyMarkup: keyboard,
                 cancellationToken: cancellationToken);
-        await settingsPersistenceLayer.SetUserSettingByUserIdAsync(
-            message.From!.Id,
-            UserSettings.Status,
-            addTransactionToAccountHandler.HandledStatus,
-            cancellationToken: cancellationToken);
     }
 }

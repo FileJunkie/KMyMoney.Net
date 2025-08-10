@@ -1,5 +1,7 @@
 using System.Text;
+using KMyMoney.Net.TelegramBot.Dropbox;
 using KMyMoney.Net.TelegramBot.Persistence;
+using KMyMoney.Net.TelegramBot.Telegram;
 using KMyMoney.Net.TelegramBot.Utils;
 using Telegram.Bot;
 using Telegram.Bot.Types;
@@ -8,8 +10,8 @@ using Telegram.Bot.Types.ReplyMarkups;
 namespace KMyMoney.Net.TelegramBot.Commands;
 
 public class AccountsCommand(
-    ISettingsPersistenceLayer settingsPersistenceLayer,
-    TelegramBotClientWrapper botClient) :
+    ITelegramBotClientWrapper botClient,
+    IFileLoader fileLoader) :
     ICommand
 {
     public string Command => "accounts";
@@ -17,8 +19,8 @@ public class AccountsCommand(
 
     public async Task HandleAsync(Message message, CancellationToken cancellationToken)
     {
-        var file = await FileLoaderHelpers.LoadKMyMoneyFileOrSendErrorAsync(
-            settingsPersistenceLayer, botClient.Bot, message, cancellationToken);
+        var file = await fileLoader.LoadKMyMoneyFileOrSendErrorAsync(
+            message, cancellationToken);
         if (file == null)
         {
             return;
@@ -36,8 +38,7 @@ public class AccountsCommand(
             if (i % 10 == 0)
             {
                 var answer = sb.ToString();
-                await botClient.Bot.SendMessage(message.Chat.Id, answer,
-                    replyMarkup: new ReplyKeyboardRemove(),
+                await botClient.Bot.SendMessageAsync(message.Chat.Id, answer,
                     cancellationToken: cancellationToken);
                 sb.Clear();
             }
@@ -45,8 +46,7 @@ public class AccountsCommand(
 
         if (sb.Length > 0)
         {
-            await botClient.Bot.SendMessage(message.Chat.Id, sb.ToString(),
-                replyMarkup: new ReplyKeyboardRemove(),
+            await botClient.Bot.SendMessageAsync(message.Chat.Id, sb.ToString(),
                 cancellationToken: cancellationToken);
         }
     }

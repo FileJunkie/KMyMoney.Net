@@ -1,7 +1,9 @@
 using System.Security.Cryptography;
 using Dropbox.Api;
+using KMyMoney.Net.TelegramBot.Dropbox;
 using KMyMoney.Net.TelegramBot.Persistence;
 using KMyMoney.Net.TelegramBot.Settings;
+using KMyMoney.Net.TelegramBot.Telegram;
 using Microsoft.Extensions.Options;
 using Telegram.Bot;
 using Telegram.Bot.Types;
@@ -10,8 +12,9 @@ using Telegram.Bot.Types.ReplyMarkups;
 namespace KMyMoney.Net.TelegramBot.Commands;
 
 public class LoginCommand(
-    TelegramBotClientWrapper botWrapper,
+    ITelegramBotClientWrapper botWrapper,
     ISettingsPersistenceLayer settingsPersistenceLayer,
+    IDropboxOAuth2HelperWrapper dropboxOAuth2HelperWrapper,
     IOptions<DropboxSettings> dropboxSettings) :
     ICommand
 {
@@ -27,17 +30,16 @@ public class LoginCommand(
             TimeSpan.FromMinutes(10),
             cancellationToken: cancellationToken);
 
-        var uri = DropboxOAuth2Helper.GetAuthorizeUri(
+        var uri = dropboxOAuth2HelperWrapper.GetAuthorizeUri(
             OAuthResponseType.Code,
             clientId: dropboxSettings.Value.ApiKey,
             tokenAccessType: TokenAccessType.Online,
             state: state,
             redirectUri: dropboxSettings.Value.RedirectUri);
 
-        await botWrapper.Bot.SendMessage(
+        await botWrapper.Bot.SendMessageAsync(
             message.Chat.Id,
             $"Go here: {uri} to log in",
-            replyMarkup: new ReplyKeyboardRemove(),
             cancellationToken: cancellationToken);
     }
 }

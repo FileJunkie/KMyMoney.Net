@@ -1,16 +1,18 @@
 using KMyMoney.Net.Core;
+using KMyMoney.Net.TelegramBot.Dropbox;
 using KMyMoney.Net.TelegramBot.Persistence;
 using KMyMoney.Net.TelegramBot.StatusHandlers;
+using KMyMoney.Net.TelegramBot.Telegram;
 using KMyMoney.Net.TelegramBot.Utils;
 using Telegram.Bot;
 using Telegram.Bot.Types;
-using Telegram.Bot.Types.ReplyMarkups;
 
 namespace KMyMoney.Net.TelegramBot.Commands.AddTransaction;
 
 public class AddTransactionPriceHandler(
-    TelegramBotClientWrapper botClient,
-    ISettingsPersistenceLayer settingsPersistenceLayer) : IConditionalStatusHandler
+    ITelegramBotClientWrapper botClient,
+    ISettingsPersistenceLayer settingsPersistenceLayer,
+    IFileLoader fileLoader) : IConditionalStatusHandler
 {
     public string HandledStatus => "AddTransactionEnteringPrice";
 
@@ -29,10 +31,9 @@ public class AddTransactionPriceHandler(
 
         if (accountFrom == null)
         {
-            await botClient.Bot.SendMessage(
+            await botClient.Bot.SendMessageAsync(
                 message.Chat.Id,
                 "AccountFrom was somehow null?",
-                replyMarkup: new ReplyKeyboardRemove(),
                 cancellationToken: cancellationToken);
             return;
         }
@@ -44,10 +45,9 @@ public class AddTransactionPriceHandler(
 
         if (accountTo == null)
         {
-            await botClient.Bot.SendMessage(
+            await botClient.Bot.SendMessageAsync(
                 message.Chat.Id,
                 "AccountTo was somehow null?",
-                replyMarkup: new ReplyKeyboardRemove(),
                 cancellationToken: cancellationToken);
             return;
         }
@@ -59,26 +59,24 @@ public class AddTransactionPriceHandler(
 
         if (currency == null)
         {
-            await botClient.Bot.SendMessage(
+            await botClient.Bot.SendMessageAsync(
                 message.Chat.Id,
                 "Currency was somehow null?",
-                replyMarkup: new ReplyKeyboardRemove(),
                 cancellationToken: cancellationToken);
             return;
         }
 
         if (!decimal.TryParse(message.Text, out var amount))
         {
-            await botClient.Bot.SendMessage(
+            await botClient.Bot.SendMessageAsync(
                 message.Chat.Id,
                 "What kind of amount is that?",
-                replyMarkup: new ReplyKeyboardRemove(),
                 cancellationToken: cancellationToken);
             return;
         }
 
-        var file = await FileLoaderHelpers.LoadKMyMoneyFileOrSendErrorAsync(
-            settingsPersistenceLayer, botClient.Bot, message, cancellationToken);
+        var file = await fileLoader.LoadKMyMoneyFileOrSendErrorAsync(
+            message, cancellationToken);
         if (file == null)
         {
             return;
@@ -92,11 +90,9 @@ public class AddTransactionPriceHandler(
             null);
         await file.SaveAsync();
 
-        await botClient.Bot.SendMessage(
+        await botClient.Bot.SendMessageAsync(
             message.Chat.Id,
             "Saved.",
-            replyMarkup: new ReplyKeyboardRemove(),
             cancellationToken: cancellationToken);
-        return;
     }
 }

@@ -1,9 +1,10 @@
+using System.IO;
 using System.IO.Compression;
 using System.Text;
 using System.Xml.Serialization;
 using KMyMoney.Net.Models;
 
-namespace KMyMoney.Net.Core.Tests;
+namespace KMyMoney.Net.Tests.Common;
 
 public static class TestUtils
 {

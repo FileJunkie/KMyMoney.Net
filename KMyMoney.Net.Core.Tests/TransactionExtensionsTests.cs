@@ -1,5 +1,6 @@
 using System.Globalization;
 using KMyMoney.Net.Models;
+using KMyMoney.Net.Tests.Common;
 using Shouldly;
 
 namespace KMyMoney.Net.Core.Tests;

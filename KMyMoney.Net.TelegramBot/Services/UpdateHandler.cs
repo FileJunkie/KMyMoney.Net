@@ -1,5 +1,6 @@
 using KMyMoney.Net.TelegramBot.Persistence;
 using KMyMoney.Net.TelegramBot.StatusHandlers;
+using KMyMoney.Net.TelegramBot.Telegram;
 using Telegram.Bot;
 using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
@@ -9,11 +10,11 @@ using Telegram.Bot.Types.ReplyMarkups;
 namespace KMyMoney.Net.TelegramBot.Services;
 
 public class UpdateHandler(
-    TelegramBotClientWrapper botWrapper,
+    ITelegramBotClientWrapper botWrapper,
     ISettingsPersistenceLayer settingsPersistenceLayer,
     IEnumerable<IConditionalStatusHandler> statusHandlers,
     IDefaultStatusHandler defaultStatusHandler,
-    ILogger<UpdateHandler> logger)
+    ILogger<UpdateHandler> logger) : IUpdateHandler
 {
     public async Task OnMessageAsync(Message message, UpdateType type, CancellationToken cancellationToken)
     {
@@ -55,10 +56,9 @@ public class UpdateHandler(
         catch (Exception e)
         {
             logger.LogError(e, "Unhandled exception");
-            await botWrapper.Bot.SendMessage(
+            await botWrapper.Bot.SendMessageAsync(
                 message.Chat.Id,
                 "Sorry, mate, something went really wrong",
-                replyMarkup: new ReplyKeyboardRemove(),
                 cancellationToken: cancellationToken);
         }
     }

@@ -23,6 +23,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\KMyMoney.Net.Core\KMyMoney.Net.Core.csproj" />
+    <ProjectReference Include="..\KMyMoney.Net.Tests.Common\KMyMoney.Net.Tests.Common.csproj" />
   </ItemGroup>
 
 </Project>
