@@ -25,7 +25,7 @@ public class DropboxOAuth2HelperWrapper : IDropboxOAuth2HelperWrapper
             includeGrantedScopes: includeGrantedScopes,
             codeChallenge: codeChallenge);
 
-    public Task<OAuth2Response> ProcessCodeFlowAsync(string code, string appKey, string? appSecret = null,
+    public Task<OAuth2Response?> ProcessCodeFlowAsync(string code, string appKey, string? appSecret = null,
         string? redirectUri = null, HttpClient? client = null, string? codeVerifier = null) =>
         DropboxOAuth2Helper.ProcessCodeFlowAsync(
             code: code,
