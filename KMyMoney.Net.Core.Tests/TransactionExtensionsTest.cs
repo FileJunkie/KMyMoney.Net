@@ -63,6 +63,49 @@ public class TransactionExtensionsTest
     }
 
     [Fact]
+    public void AddTransaction_ShouldHandleDifferentCurrencies()
+    {
+        // Arrange
+        var kmyMoneyFileRoot = CreateMinimalKmyMoneyFileRoot();
+        var fromAccount = new Account { Id = "A000001", Name = "Checking Account", Currency = "USD", Type = "Asset" };
+        var toAccount = new Account { Id = "A000002", Name = "Savings Account", Currency = "EUR", Type = "Asset" };
+        kmyMoneyFileRoot.Accounts.Values = [fromAccount, toAccount];
+        kmyMoneyFileRoot.Prices.Values =
+        [
+            new PricePair
+            {
+                From = "EUR",
+                To = "USD",
+                Price =
+                [
+                    new PriceObj
+                    {
+                        Date = "2025-08-10",
+                        Source = "user",
+                        Price = "13/10"
+                    }
+                ]
+            }
+        ];
+
+        // Act
+        var transaction = kmyMoneyFileRoot.AddTransaction(
+            from: fromAccount.Id,
+            to: toAccount.Id,
+            amount: 130m,
+            currency: "USD",
+            memo: "Cross-currency transaction");
+
+        // Assert
+        transaction.Splits.Split[0].Account.ShouldBe(fromAccount.Id);
+        transaction.Splits.Split[0].Value.ShouldBe("-130");
+        transaction.Splits.Split[0].Shares.ShouldBe("-130");
+        transaction.Splits.Split[1].Account.ShouldBe(toAccount.Id);
+        transaction.Splits.Split[1].Value.ShouldBe("130");
+        transaction.Splits.Split[1].Shares.ShouldBe("100");
+    }
+
+    [Fact]
     public void AddTransaction_ShouldThrowException_WhenFromAccountNotFound()
     {
         // Arrange
