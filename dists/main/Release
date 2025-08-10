@@ -2,19 +2,19 @@ Origin: KMyMoney.Net
 Label: KMyMoney.Net
 Suite: unstable
 Codename: main
-Date: Wed, 06 Aug 2025 19:34:30 UTC
+Date: Sun, 10 Aug 2025 10:34:54 UTC
 Architectures: amd64
 Components: main
 Description: Debian x64 repository for KMyMoney.Net project
 MD5Sum:
- da6051053cd14d04117dd98575873f4f 510 main/binary-amd64/Packages
- 5a16202f1a3209320cb5a2e75c0a8386 366 main/binary-amd64/Packages.gz
+ 904f5f7add38ae4f31ded819aa9ff3a3 510 main/binary-amd64/Packages
+ ec2d45ca4158edb28cfab1da269c6d2e 364 main/binary-amd64/Packages.gz
  dbe13014f28a0581ab38b96a0e52c61e 155 main/binary-amd64/Release
 SHA1:
- 9c496dbffd6097ec1ced8254db2995e37a724834 510 main/binary-amd64/Packages
- 9de49474364a72cbc0c8f8f8184a49d8b8b783ac 366 main/binary-amd64/Packages.gz
+ 404d426bceb4894843c4ac92b8384f739bd0c9b5 510 main/binary-amd64/Packages
+ 9ea1110e6c34d953e41fe84ccd638a11263cd3f6 364 main/binary-amd64/Packages.gz
  48b91d45962c04092154d046e96b6a4dcf934fb2 155 main/binary-amd64/Release
 SHA256:
- fef103bc0a6c3a8ca0c4f3c46d971c0f5a709ae4feebcec4cae3e1aa1d53d44c 510 main/binary-amd64/Packages
- 92fbadb4505aa2c9472b96d5a45e7ef04f38cbae3955b9080499ca3bb9c6bdc6 366 main/binary-amd64/Packages.gz
+ 4920ba6ca94b1dd0a23e8e303094176ac7316ee76b577596ee5d2036d47591fa 510 main/binary-amd64/Packages
+ a7d56dc356bc34c38463b272e49b68c5169ddbed239605f0a79bcac07f44dff0 364 main/binary-amd64/Packages.gz
  d06dbfdd5fea4e94a2dd3cfdcb5b627c3141125b9dc8e4594ea59a65b7bb59cc 155 main/binary-amd64/Release
