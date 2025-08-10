@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Net.Security;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
@@ -13,11 +14,14 @@ public static class ServiceConfigurationExtensions
 {
     public static IServiceCollection TryAddEtcdPersistenceLayer(this IServiceCollection services)
     {
-        if (services.Any(sd => sd.ServiceType == typeof(ISettingsPersistenceLayer)))
-        {
-            return services;
-        }
+        return services.Any(sd => sd.ServiceType == typeof(ISettingsPersistenceLayer)) ?
+            services :
+            AddEtcdPersistenceLayer(services);
+    }
 
+    [ExcludeFromCodeCoverage(Justification = "It actually tries to connect to service")]
+    private static IServiceCollection AddEtcdPersistenceLayer(IServiceCollection services)
+    {
         return services
             .AddSingleton<IEtcdClient>(sp =>
             {
