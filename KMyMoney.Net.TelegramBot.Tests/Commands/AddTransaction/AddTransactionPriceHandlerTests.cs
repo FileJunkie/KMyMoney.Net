@@ -82,4 +82,124 @@ public class AddTransactionPriceHandlerTests
                 r => r.Text.Contains("What kind of amount is that?")), 
             CancellationToken.None);
     }
+
+    [Fact]
+    public async Task HandleAsync_ShouldSendError_WhenAccountFromIsNull()
+    {
+        // Arrange
+        var botClient = Substitute.For<ITelegramBotClient>();
+        var botWrapper = Substitute.For<ITelegramBotClientWrapper>();
+        botWrapper.Bot.Returns(botClient);
+        var settingsPersistenceLayer = Substitute.For<ISettingsPersistenceLayer>();
+        var fileLoader = Substitute.For<IFileLoader>();
+        var handler = new AddTransactionPriceHandler(botWrapper, 
+            settingsPersistenceLayer, fileLoader);
+
+        var message = new Message 
+            { From = new User { Id = 123 }, Chat = new Chat { Id = 456 }, Text = "123.45" };
+
+        settingsPersistenceLayer.GetUserSettingByUserIdAsync(123, UserSettings.AccountFrom)
+            .Returns((string?)null);
+
+        // Act
+        await handler.HandleAsync(message, CancellationToken.None);
+
+        // Assert
+        await botClient.Received(1).SendRequest(
+            Arg.Is<SendMessageRequest>(r => r.Text.Contains("AccountFrom was somehow null?")), 
+            CancellationToken.None);
+    }
+
+    [Fact]
+    public async Task HandleAsync_ShouldSendError_WhenAccountToIsNull()
+    {
+        // Arrange
+        var botClient = Substitute.For<ITelegramBotClient>();
+        var botWrapper = Substitute.For<ITelegramBotClientWrapper>();
+        botWrapper.Bot.Returns(botClient);
+        var settingsPersistenceLayer = Substitute.For<ISettingsPersistenceLayer>();
+        var fileLoader = Substitute.For<IFileLoader>();
+        var handler = new AddTransactionPriceHandler(botWrapper, 
+            settingsPersistenceLayer, fileLoader);
+
+        var message = new Message 
+            { From = new User { Id = 123 }, Chat = new Chat { Id = 456 }, Text = "123.45" };
+
+        settingsPersistenceLayer.GetUserSettingByUserIdAsync(123, UserSettings.AccountFrom)
+            .Returns("A1");
+        settingsPersistenceLayer.GetUserSettingByUserIdAsync(123, UserSettings.AccountTo)
+            .Returns((string?)null);
+
+        // Act
+        await handler.HandleAsync(message, CancellationToken.None);
+
+        // Assert
+        await botClient.Received(1).SendRequest(
+            Arg.Is<SendMessageRequest>(r => r.Text.Contains("AccountTo was somehow null?")), 
+            CancellationToken.None);
+    }
+
+    [Fact]
+    public async Task HandleAsync_ShouldSendError_WhenCurrencyIsNull()
+    {
+        // Arrange
+        var botClient = Substitute.For<ITelegramBotClient>();
+        var botWrapper = Substitute.For<ITelegramBotClientWrapper>();
+        botWrapper.Bot.Returns(botClient);
+        var settingsPersistenceLayer = Substitute.For<ISettingsPersistenceLayer>();
+        var fileLoader = Substitute.For<IFileLoader>();
+        var handler = new AddTransactionPriceHandler(botWrapper, 
+            settingsPersistenceLayer, fileLoader);
+
+        var message = new Message 
+            { From = new User { Id = 123 }, Chat = new Chat { Id = 456 }, Text = "123.45" };
+
+        settingsPersistenceLayer.GetUserSettingByUserIdAsync(123, UserSettings.AccountFrom)
+            .Returns("A1");
+        settingsPersistenceLayer.GetUserSettingByUserIdAsync(123, UserSettings.AccountTo)
+            .Returns("A2");
+        settingsPersistenceLayer.GetUserSettingByUserIdAsync(123, UserSettings.Currency)
+            .Returns((string?)null);
+
+        // Act
+        await handler.HandleAsync(message, CancellationToken.None);
+
+        // Assert
+        await botClient.Received(1).SendRequest(
+            Arg.Is<SendMessageRequest>(r => r.Text.Contains("Currency was somehow null?")), 
+            CancellationToken.None);
+    }
+
+    [Fact]
+    public async Task HandleAsync_ShouldDoNothing_WhenFileIsNotLoaded()
+    {
+        // Arrange
+        var botClient = Substitute.For<ITelegramBotClient>();
+        var botWrapper = Substitute.For<ITelegramBotClientWrapper>();
+        botWrapper.Bot.Returns(botClient);
+        var settingsPersistenceLayer = Substitute.For<ISettingsPersistenceLayer>();
+        var fileLoader = Substitute.For<IFileLoader>();
+        var handler = new AddTransactionPriceHandler(botWrapper, 
+            settingsPersistenceLayer, fileLoader);
+
+        var message = new Message 
+            { From = new User { Id = 123 }, Chat = new Chat { Id = 456 }, Text = "123.45" };
+
+        settingsPersistenceLayer.GetUserSettingByUserIdAsync(123, UserSettings.AccountFrom)
+            .Returns("A1");
+        settingsPersistenceLayer.GetUserSettingByUserIdAsync(123, UserSettings.AccountTo)
+            .Returns("A2");
+        settingsPersistenceLayer.GetUserSettingByUserIdAsync(123, UserSettings.Currency)
+            .Returns("USD");
+        fileLoader.LoadKMyMoneyFileOrSendErrorAsync(message, CancellationToken.None)
+            .Returns((KMyMoneyFile?)null);
+
+        // Act
+        await handler.HandleAsync(message, CancellationToken.None);
+
+        // Assert
+        await botClient.DidNotReceiveWithAnyArgs().SendRequest(
+            Arg.Any<SendMessageRequest>(), 
+            CancellationToken.None);
+    }
 }

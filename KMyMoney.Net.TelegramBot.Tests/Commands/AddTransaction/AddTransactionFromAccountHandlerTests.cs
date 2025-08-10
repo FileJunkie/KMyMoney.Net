@@ -89,4 +89,37 @@ public class AddTransactionFromAccountHandlerTests
             Arg.Is<SendMessageRequest>(r => r.Text.Contains("Wrong account, aborting")), 
             CancellationToken.None);
     }
+
+    [Fact]
+    public async Task HandleAsync_ShouldAbort_WhenFileIsNotLoaded()
+    {
+        // Arrange
+        var botClient = Substitute.For<ITelegramBotClient>();
+        var botWrapper = Substitute.For<ITelegramBotClientWrapper>();
+        botWrapper.Bot.Returns(botClient);
+        var settingsPersistenceLayer = Substitute.For<ISettingsPersistenceLayer>();
+        var addTransactionToAccountHandler = new AddTransactionToAccountHandler(
+            null!, null!, null!, null!);
+        var fileLoader = Substitute.For<IFileLoader>();
+        var handler = new AddTransactionFromAccountHandler(botWrapper, 
+            settingsPersistenceLayer, addTransactionToAccountHandler, fileLoader);
+
+        var message = new Message 
+        { 
+            From = new User { Id = 123 }, 
+            Chat = new Chat { Id = 456 }, 
+            Text = "Checking Account" 
+        };
+
+        fileLoader.LoadKMyMoneyFileOrSendErrorAsync(message, CancellationToken.None)
+            .Returns((KMyMoneyFile?)null);
+
+        // Act
+        await handler.HandleAsync(message, CancellationToken.None);
+
+        // Assert
+        await botClient.DidNotReceiveWithAnyArgs().SendRequest(
+            Arg.Any<SendMessageRequest>(), 
+            CancellationToken.None);
+    }
 }
