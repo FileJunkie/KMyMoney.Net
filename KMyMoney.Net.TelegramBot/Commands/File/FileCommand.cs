@@ -1,4 +1,5 @@
 using KMyMoney.Net.Core.FileAccessors.Dropbox;
+using KMyMoney.Net.TelegramBot.Common;
 using KMyMoney.Net.TelegramBot.Persistence;
 using KMyMoney.Net.TelegramBot.Telegram;
 using Telegram.Bot;
@@ -11,11 +12,11 @@ public class FileCommand(
     ISettingsPersistenceLayer settingsPersistenceLayer,
     FileEntryStatusHandler fileEntryStatusHandler,
     ITelegramBotClientWrapper botClient) :
-    AbstractCommandWithStatus(settingsPersistenceLayer, fileEntryStatusHandler)
+    AbstractMessageHandlerWithNextStep(settingsPersistenceLayer, fileEntryStatusHandler), ICommand
 {
     private readonly ISettingsPersistenceLayer _settingsPersistenceLayer = settingsPersistenceLayer;
-    public override string Command => "file";
-    public override string Description => "Setting path do the file inside Dropbox";
+    public string Command => "file";
+    public string Description => "Setting path do the file inside Dropbox";
 
     protected override async Task HandleInternalAsync(Message message, CancellationToken cancellationToken)
     {

@@ -1,3 +1,4 @@
+using KMyMoney.Net.TelegramBot.Common;
 using KMyMoney.Net.TelegramBot.Persistence;
 using KMyMoney.Net.TelegramBot.StatusHandlers;
 using KMyMoney.Net.TelegramBot.Telegram;
@@ -10,11 +11,13 @@ namespace KMyMoney.Net.TelegramBot.Commands.AddTransaction;
 public class AddTransactionCurrencyHandler(
     ITelegramBotClientWrapper botClient,
     ISettingsPersistenceLayer settingsPersistenceLayer,
-    AddTransactionPriceHandler addTransactionPriceHandler) : IConditionalStatusHandler
+    AddTransactionPriceHandler addTransactionPriceHandler) :
+    AbstractMessageHandlerWithNextStep(settingsPersistenceLayer, addTransactionPriceHandler), IConditionalStatusHandler
 {
+    private readonly ISettingsPersistenceLayer _settingsPersistenceLayer = settingsPersistenceLayer;
     public string HandledStatus => "AddTransactionEnteringCurrency";
 
-    public async Task HandleAsync(Message message, CancellationToken cancellationToken)
+    protected override async Task HandleInternalAsync(Message message, CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(message.Text))
         {
@@ -25,7 +28,7 @@ public class AddTransactionCurrencyHandler(
                     "Currency no chosen, aborting",
                     replyMarkup: new ReplyKeyboardRemove(),
                     cancellationToken: cancellationToken);
-            await settingsPersistenceLayer.SetUserSettingByUserIdAsync(
+            await _settingsPersistenceLayer.SetUserSettingByUserIdAsync(
                 message.From!.Id,
                 UserSettings.Status,
                 null,
@@ -33,7 +36,7 @@ public class AddTransactionCurrencyHandler(
             return;
         }
 
-        await settingsPersistenceLayer.SetUserSettingByUserIdAsync(
+        await _settingsPersistenceLayer.SetUserSettingByUserIdAsync(
             message.From!.Id,
             UserSettings.Currency,
             message.Text,
@@ -46,10 +49,5 @@ public class AddTransactionCurrencyHandler(
                 "Enter transaction amount",
                 replyMarkup: new ReplyKeyboardRemove(),
                 cancellationToken: cancellationToken);
-        await settingsPersistenceLayer.SetUserSettingByUserIdAsync(
-            message.From!.Id,
-            UserSettings.Status,
-            addTransactionPriceHandler.HandledStatus,
-            cancellationToken: cancellationToken);
     }
 }

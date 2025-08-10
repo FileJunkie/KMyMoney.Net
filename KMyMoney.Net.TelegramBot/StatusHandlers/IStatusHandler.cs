@@ -1,8 +1,5 @@
-using Telegram.Bot.Types;
+using KMyMoney.Net.TelegramBot.Common;
 
 namespace KMyMoney.Net.TelegramBot.StatusHandlers;
 
-public interface IStatusHandler
-{
-    Task HandleAsync(Message message, CancellationToken cancellationToken);
-}
+public interface IStatusHandler : IMessageHandler;

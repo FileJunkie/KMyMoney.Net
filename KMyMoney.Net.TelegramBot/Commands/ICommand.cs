@@ -1,11 +1,9 @@
-using Telegram.Bot.Types;
+using KMyMoney.Net.TelegramBot.Common;
 
 namespace KMyMoney.Net.TelegramBot.Commands;
 
-public interface ICommand
+public interface ICommand : IMessageHandler
 {
     string Command { get; }
     string Description { get; }
-
-    Task HandleAsync(Message message, CancellationToken cancellationToken);
 }

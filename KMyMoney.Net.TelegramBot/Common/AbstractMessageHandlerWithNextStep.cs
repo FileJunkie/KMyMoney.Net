@@ -2,15 +2,12 @@ using KMyMoney.Net.TelegramBot.Persistence;
 using KMyMoney.Net.TelegramBot.StatusHandlers;
 using Telegram.Bot.Types;
 
-namespace KMyMoney.Net.TelegramBot.Commands;
+namespace KMyMoney.Net.TelegramBot.Common;
 
-public abstract class AbstractCommandWithStatus(
+public abstract class AbstractMessageHandlerWithNextStep(
     ISettingsPersistenceLayer settingsPersistenceLayer,
-    IConditionalStatusHandler nextStatusHandler) : ICommand
+    IConditionalStatusHandler nextStatusHandler) : IMessageHandler
 {
-    public abstract string Command { get; }
-    public abstract string Description { get; }
-
     public async Task HandleAsync(Message message, CancellationToken cancellationToken)
     {
         await HandleInternalAsync(message, cancellationToken);
