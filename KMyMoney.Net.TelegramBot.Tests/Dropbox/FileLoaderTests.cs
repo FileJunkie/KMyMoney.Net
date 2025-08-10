@@ -64,7 +64,8 @@ public class FileLoaderTests
 
         // Assert
         result.ShouldBeNull();
-        await botClient.Received(1).SendRequest(Arg.Is<SendMessageRequest>(r => r.Text.Contains("Use /login")), CancellationToken.None);
+        await botClient.Received(1).SendRequest(Arg.Is<SendMessageRequest>(r =>
+            r.Text.Contains("Use /login")), CancellationToken.None);
     }
 
     [Fact]
@@ -89,6 +90,7 @@ public class FileLoaderTests
 
         // Assert
         result.ShouldBeNull();
-        await botClient.Received(1).SendRequest(Arg.Is<SendMessageRequest>(r => r.Text.Contains("Use /file")), CancellationToken.None);
+        await botClient.Received(1).SendRequest(Arg.Is<SendMessageRequest>(r =>
+            r.Text.Contains("Use /file")), CancellationToken.None);
     }
 }
