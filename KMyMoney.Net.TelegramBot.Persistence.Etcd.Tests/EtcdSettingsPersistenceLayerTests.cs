@@ -131,7 +131,8 @@ public class EtcdSettingsPersistenceLayerTests
         await persistence.SetUserSettingByUserIdAsync(userId, setting, value, expiresIn);
 
         // Assert
-        await etcdClient.Received(1).LeaseGrantAsync(Arg.Is<LeaseGrantRequest>(r => r.TTL == expiresIn.TotalSeconds));
+        await etcdClient.Received(1).LeaseGrantAsync(Arg.Is<LeaseGrantRequest>(r =>
+            r.TTL == (long)expiresIn.TotalSeconds));
         await etcdClient.Received(1).PutAsync(Arg.Is<PutRequest>(p =>
             p.Key.ToStringUtf8() == key &&
             p.Value.ToStringUtf8() == value &&
