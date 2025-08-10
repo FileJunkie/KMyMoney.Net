@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Dropbox.Api;
 using Dropbox.Api.Files;
 
@@ -7,6 +8,7 @@ public class DropboxFileAccessor(string token) : IFileAccessor
 {
     private readonly DropboxClient _client = new(token);
 
+    [ExcludeFromCodeCoverage(Justification = "Makes a call to the real API")]
     public static async Task<DropboxFileAccessor> CreateAsync(
         string apiKey,
         string apiSecret,
@@ -25,12 +27,14 @@ public class DropboxFileAccessor(string token) : IFileAccessor
     public bool UriSupported(Uri uri) =>
         uri.Scheme == "dropbox";
 
+    [ExcludeFromCodeCoverage(Justification = "Requires mocking too much code")]
     public async Task<Stream> GetReadStreamAsync(Uri uri)
     {
         var file = await _client.Files.DownloadAsync(uri.AbsolutePath);
         return await file.GetContentAsStreamAsync();
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Requires mocking too much code")]
     public async Task UpdateFileAsync(Uri uri, Stream stream)
     {
         await _client.Files.UploadAsync(
@@ -39,6 +43,7 @@ public class DropboxFileAccessor(string token) : IFileAccessor
             body: stream);
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Requires mocking too much code")]
     public async Task<IEnumerable<string>> ListFilesAsync()
     {
         var searchResults = await _client.Files.SearchV2Async(

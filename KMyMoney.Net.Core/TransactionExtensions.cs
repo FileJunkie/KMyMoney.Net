@@ -30,14 +30,14 @@ public static class TransactionExtensions
         var transactionId = kmyMoneyFileRoot.GenerateNextTransactionId();
 
         var fromAmount = Fraction.FromDecimal(-amount);
-        var fromAmountConverted =  fromAmount; 
+        var fromAmountConverted = fromAmount;
         var toAmount = Fraction.FromDecimal(amount);
         var toAmountConverted = toAmount;
 
         // Handle currency conversion
         if (fromAccount.Currency != currency)
         {
-            fromAmountConverted = kmyMoneyFileRoot.Prices.ConvertCurrency(amount, currency, fromAccount.Currency);
+            fromAmountConverted = kmyMoneyFileRoot.Prices.ConvertCurrency(-amount, currency, fromAccount.Currency);
         }
 
         if (toAccount.Currency != currency)
