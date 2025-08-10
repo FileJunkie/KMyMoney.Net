@@ -37,10 +37,9 @@ public class LoginCommand(
             state: state,
             redirectUri: dropboxSettings.Value.RedirectUri);
 
-        await botWrapper.Bot.SendMessage(
+        await botWrapper.Bot.SendMessageAsync(
             message.Chat.Id,
             $"Go here: {uri} to log in",
-            replyMarkup: new ReplyKeyboardRemove(),
             cancellationToken: cancellationToken);
     }
 }

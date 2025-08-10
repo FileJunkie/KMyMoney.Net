@@ -17,18 +17,16 @@ public class FileEntryStatusHandler(
     {
         if (string.IsNullOrWhiteSpace(message.Text))
         {
-            await botClient.Bot.SendMessage(
+            await botClient.Bot.SendMessageAsync(
                 message.Chat.Id,
                 "Empty path, really?",
-                replyMarkup: new ReplyKeyboardRemove(),
                 cancellationToken: cancellationToken);
         }
         else
         {
-            await botClient.Bot.SendMessage(
+            await botClient.Bot.SendMessageAsync(
                 message.Chat.Id,
                 "Got your file path, saving",
-                replyMarkup: new ReplyKeyboardRemove(),
                 cancellationToken: cancellationToken);
             var path = message.Text.StartsWith('/') ? message.Text : $"/{message.Text}";
             await settingsPersistenceLayer.SetUserSettingByUserIdAsync(

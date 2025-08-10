@@ -56,10 +56,9 @@ public class UpdateHandler(
         catch (Exception e)
         {
             logger.LogError(e, "Unhandled exception");
-            await botWrapper.Bot.SendMessage(
+            await botWrapper.Bot.SendMessageAsync(
                 message.Chat.Id,
                 "Sorry, mate, something went really wrong",
-                replyMarkup: new ReplyKeyboardRemove(),
                 cancellationToken: cancellationToken);
         }
     }

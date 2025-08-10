@@ -39,7 +39,7 @@ public class DefaultStatusHandler(
             stringBuilder.AppendLine($"/{cmd.Command}: {cmd.Description}");
         }
 
-        await botClientWrapper.Bot.SendMessage(chatId, stringBuilder.ToString(), replyMarkup: new ReplyKeyboardRemove());
+        await botClientWrapper.Bot.SendMessageAsync(chatId, stringBuilder.ToString());
     }
 
     private static string? ExtractCommand(string? message)

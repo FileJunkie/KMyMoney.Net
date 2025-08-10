@@ -24,10 +24,9 @@ public class FileCommand(
             cancellationToken);
         if (string.IsNullOrWhiteSpace(token))
         {
-            await botClient.Bot.SendMessage(
+            await botClient.Bot.SendMessageAsync(
                 message.Chat.Id,
                 "Log in with /login command first",
-                replyMarkup: new ReplyKeyboardRemove(),
                 cancellationToken: cancellationToken);
             return;
         }
@@ -36,15 +35,14 @@ public class FileCommand(
         var fileList = (await dropboxFileAccessor.ListFilesAsync()).ToList();
         if (fileList.Count == 0)
         {
-            await botClient.Bot.SendMessage(
+            await botClient.Bot.SendMessageAsync(
                 message.Chat.Id,
                 text: "You have no .kmy files, mate",
-                replyMarkup: new ReplyKeyboardRemove(),
                 cancellationToken: cancellationToken);
             return;
         }
 
-        await botClient.Bot.SendMessage(
+        await botClient.Bot.SendMessageAsync(
             message.Chat.Id,
             text: "Choose .kmy file",
             replyMarkup: new[]

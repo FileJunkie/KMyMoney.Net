@@ -37,8 +37,7 @@ public class AccountsCommand(
             if (i % 10 == 0)
             {
                 var answer = sb.ToString();
-                await botClient.Bot.SendMessage(message.Chat.Id, answer,
-                    replyMarkup: new ReplyKeyboardRemove(),
+                await botClient.Bot.SendMessageAsync(message.Chat.Id, answer,
                     cancellationToken: cancellationToken);
                 sb.Clear();
             }
@@ -46,8 +45,7 @@ public class AccountsCommand(
 
         if (sb.Length > 0)
         {
-            await botClient.Bot.SendMessage(message.Chat.Id, sb.ToString(),
-                replyMarkup: new ReplyKeyboardRemove(),
+            await botClient.Bot.SendMessageAsync(message.Chat.Id, sb.ToString(),
                 cancellationToken: cancellationToken);
         }
     }
