@@ -106,5 +106,10 @@
   &lt;Assembly Path="/home/filejunkie/.nuget/packages/grpc.net.client/2.71.0/lib/net8.0/Grpc.Net.Client.dll" /&gt;
 &lt;/AssemblyExplorer&gt;</s:String>
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=2e39674e_002Dcea5_002D47ee_002D8add_002D5f99cbd835e1/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="TransactionExtensionsTest" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
-  &lt;Project Location="/home/filejunkie/git/KMyMoney.Net/KMyMoney.Net.Core.Tests" Presentation="&amp;lt;KMyMoney.Net.Core.Tests&amp;gt;" /&gt;
+  &lt;Or&gt;
+    &lt;Project Location="/home/filejunkie/git/KMyMoney.Net/KMyMoney.Net.Core.Tests" Presentation="&amp;lt;KMyMoney.Net.Core.Tests&amp;gt;" /&gt;
+    &lt;TestAncestor&gt;
+      &lt;TestId&gt;xUnit::81454239-677D-4653-A78A-0D7FABCEE074::net9.0::KMyMoney.Net.TelegramBot.Persistence.Etcd.Tests.EtcdSettingsPersistenceLayerTests&lt;/TestId&gt;
+    &lt;/TestAncestor&gt;
+  &lt;/Or&gt;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>
