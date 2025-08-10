@@ -19,6 +19,7 @@ public class LocalFileAccessor : IFileAccessor
         await stream.CopyToAsync(fileStream);
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Irrelevant for real-life usecases")]
     public Task<IEnumerable<string>> ListFilesAsync()
     {
         throw new NotImplementedException();
