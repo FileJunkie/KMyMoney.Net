@@ -29,6 +29,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KMyMoney.Net.TelegramBot.Pe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KMyMoney.Net.TelegramBot.Persistence.InMemory.Tests", "KMyMoney.Net.TelegramBot.Persistence.InMemory.Tests\KMyMoney.Net.TelegramBot.Persistence.InMemory.Tests.csproj", "{A1CC8352-3936-4032-8723-C8B7791F3499}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KMyMoney.Net.TelegramBot.Tests", "KMyMoney.Net.TelegramBot.Tests\KMyMoney.Net.TelegramBot.Tests.csproj", "{D8B5258A-850D-4318-B60F-4F4BCFFE2BC1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -195,6 +197,18 @@ Global
 		{A1CC8352-3936-4032-8723-C8B7791F3499}.Release|x64.Build.0 = Release|Any CPU
 		{A1CC8352-3936-4032-8723-C8B7791F3499}.Release|x86.ActiveCfg = Release|Any CPU
 		{A1CC8352-3936-4032-8723-C8B7791F3499}.Release|x86.Build.0 = Release|Any CPU
+		{D8B5258A-850D-4318-B60F-4F4BCFFE2BC1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D8B5258A-850D-4318-B60F-4F4BCFFE2BC1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D8B5258A-850D-4318-B60F-4F4BCFFE2BC1}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{D8B5258A-850D-4318-B60F-4F4BCFFE2BC1}.Debug|x64.Build.0 = Debug|Any CPU
+		{D8B5258A-850D-4318-B60F-4F4BCFFE2BC1}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{D8B5258A-850D-4318-B60F-4F4BCFFE2BC1}.Debug|x86.Build.0 = Debug|Any CPU
+		{D8B5258A-850D-4318-B60F-4F4BCFFE2BC1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D8B5258A-850D-4318-B60F-4F4BCFFE2BC1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D8B5258A-850D-4318-B60F-4F4BCFFE2BC1}.Release|x64.ActiveCfg = Release|Any CPU
+		{D8B5258A-850D-4318-B60F-4F4BCFFE2BC1}.Release|x64.Build.0 = Release|Any CPU
+		{D8B5258A-850D-4318-B60F-4F4BCFFE2BC1}.Release|x86.ActiveCfg = Release|Any CPU
+		{D8B5258A-850D-4318-B60F-4F4BCFFE2BC1}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

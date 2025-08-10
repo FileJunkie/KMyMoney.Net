@@ -7,10 +7,10 @@ using Microsoft.Extensions.Options;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 
-namespace KMyMoney.Net.TelegramBot;
+namespace KMyMoney.Net.TelegramBot.Telegram;
 
 public sealed class HostedTelegramBot(
-    TelegramBotClientWrapper botWrapper,
+    ITelegramBotClientWrapper botWrapper,
     IEnumerable<ICommand> commands,
     UpdateHandler updateHandler,
     IOptions<TelegramSettings> telegramSettings,

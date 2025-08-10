@@ -1,5 +1,6 @@
 using KMyMoney.Net.Core.FileAccessors.Dropbox;
 using KMyMoney.Net.TelegramBot.Persistence;
+using KMyMoney.Net.TelegramBot.Telegram;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
@@ -9,7 +10,7 @@ namespace KMyMoney.Net.TelegramBot.Commands.File;
 public class FileCommand(
     ISettingsPersistenceLayer settingsPersistenceLayer,
     FileEntryStatusHandler fileEntryStatusHandler,
-    TelegramBotClientWrapper botClient) :
+    ITelegramBotClientWrapper botClient) :
     ICommand
 {
     public string Command => "file";

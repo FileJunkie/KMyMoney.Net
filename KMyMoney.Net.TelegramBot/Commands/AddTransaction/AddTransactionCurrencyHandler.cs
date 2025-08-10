@@ -1,5 +1,6 @@
 using KMyMoney.Net.TelegramBot.Persistence;
 using KMyMoney.Net.TelegramBot.StatusHandlers;
+using KMyMoney.Net.TelegramBot.Telegram;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
@@ -7,7 +8,7 @@ using Telegram.Bot.Types.ReplyMarkups;
 namespace KMyMoney.Net.TelegramBot.Commands.AddTransaction;
 
 public class AddTransactionCurrencyHandler(
-    TelegramBotClientWrapper botClient,
+    ITelegramBotClientWrapper botClient,
     ISettingsPersistenceLayer settingsPersistenceLayer,
     AddTransactionPriceHandler addTransactionPriceHandler) : IConditionalStatusHandler
 {

@@ -2,6 +2,7 @@ using System.Security.Cryptography;
 using Dropbox.Api;
 using KMyMoney.Net.TelegramBot.Persistence;
 using KMyMoney.Net.TelegramBot.Settings;
+using KMyMoney.Net.TelegramBot.Telegram;
 using Microsoft.Extensions.Options;
 using Telegram.Bot;
 using Telegram.Bot.Types;
@@ -10,7 +11,7 @@ using Telegram.Bot.Types.ReplyMarkups;
 namespace KMyMoney.Net.TelegramBot.Commands;
 
 public class LoginCommand(
-    TelegramBotClientWrapper botWrapper,
+    ITelegramBotClientWrapper botWrapper,
     ISettingsPersistenceLayer settingsPersistenceLayer,
     IOptions<DropboxSettings> dropboxSettings) :
     ICommand

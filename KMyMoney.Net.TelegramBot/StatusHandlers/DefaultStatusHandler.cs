@@ -1,5 +1,6 @@
 using System.Text;
 using KMyMoney.Net.TelegramBot.Commands;
+using KMyMoney.Net.TelegramBot.Telegram;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
@@ -7,7 +8,7 @@ using Telegram.Bot.Types.ReplyMarkups;
 namespace KMyMoney.Net.TelegramBot.StatusHandlers;
 
 public class DefaultStatusHandler(
-    TelegramBotClientWrapper botWrapper,
+    ITelegramBotClientWrapper botClientWrapper,
     IEnumerable<ICommand> commands) : IDefaultStatusHandler
 {
     public async Task HandleAsync(Message message, CancellationToken cancellationToken)
@@ -38,7 +39,7 @@ public class DefaultStatusHandler(
             stringBuilder.AppendLine($"/{cmd.Command}: {cmd.Description}");
         }
 
-        await botWrapper.Bot.SendMessage(chatId, stringBuilder.ToString(), replyMarkup: new ReplyKeyboardRemove());
+        await botClientWrapper.Bot.SendMessage(chatId, stringBuilder.ToString(), replyMarkup: new ReplyKeyboardRemove());
     }
 
     private static string? ExtractCommand(string? message)
