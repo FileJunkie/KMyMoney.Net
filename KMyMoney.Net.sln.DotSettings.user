@@ -112,6 +112,7 @@
     &lt;TestAncestor&gt;
       &lt;TestId&gt;xUnit::81454239-677D-4653-A78A-0D7FABCEE074::net9.0::KMyMoney.Net.TelegramBot.Persistence.Etcd.Tests.EtcdSettingsPersistenceLayerTests&lt;/TestId&gt;
       &lt;TestId&gt;xUnit::D8B5258A-850D-4318-B60F-4F4BCFFE2BC1::net9.0::KMyMoney.Net.TelegramBot.Tests.ServiceConfigurationTests&lt;/TestId&gt;
+      &lt;TestId&gt;xUnit::D8B5258A-850D-4318-B60F-4F4BCFFE2BC1::net9.0::KMyMoney.Net.TelegramBot.Tests.HostedTelegramBotTests&lt;/TestId&gt;
     &lt;/TestAncestor&gt;
   &lt;/Or&gt;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>

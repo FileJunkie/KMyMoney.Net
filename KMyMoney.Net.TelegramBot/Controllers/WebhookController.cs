@@ -9,7 +9,7 @@ namespace KMyMoney.Net.TelegramBot.Controllers;
 [Route("[controller]")]
 [ApiController]
 public class WebhookController(
-    UpdateHandler updateHandler,
+    IUpdateHandler updateHandler,
     ISettingsPersistenceLayer settingsPersistenceLayer,
     ILogger<WebhookController> logger) : ControllerBase
 {

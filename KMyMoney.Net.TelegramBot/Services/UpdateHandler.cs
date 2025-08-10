@@ -14,7 +14,7 @@ public class UpdateHandler(
     ISettingsPersistenceLayer settingsPersistenceLayer,
     IEnumerable<IConditionalStatusHandler> statusHandlers,
     IDefaultStatusHandler defaultStatusHandler,
-    ILogger<UpdateHandler> logger)
+    ILogger<UpdateHandler> logger) : IUpdateHandler
 {
     public async Task OnMessageAsync(Message message, UpdateType type, CancellationToken cancellationToken)
     {

@@ -12,7 +12,7 @@ namespace KMyMoney.Net.TelegramBot.Telegram;
 public sealed class HostedTelegramBot(
     ITelegramBotClientWrapper botWrapper,
     IEnumerable<ICommand> commands,
-    UpdateHandler updateHandler,
+    IUpdateHandler updateHandler,
     IOptions<TelegramSettings> telegramSettings,
     ISettingsPersistenceLayer settingsPersistenceLayer) : IHostedService
 {

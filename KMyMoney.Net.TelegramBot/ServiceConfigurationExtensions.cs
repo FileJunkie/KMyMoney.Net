@@ -63,7 +63,7 @@ public static class ServiceConfigurationExtensions
 
         return services
             .AddHostedService<HostedTelegramBot>()
-            .AddSingleton<UpdateHandler>()
+            .AddSingleton<IUpdateHandler, UpdateHandler>()
             .ConfigureTelegramBotMvc();
     }
 
