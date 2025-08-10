@@ -11,14 +11,15 @@ public class FileCommand(
     ISettingsPersistenceLayer settingsPersistenceLayer,
     FileEntryStatusHandler fileEntryStatusHandler,
     ITelegramBotClientWrapper botClient) :
-    ICommand
+    AbstractCommandWithStatus(settingsPersistenceLayer, fileEntryStatusHandler)
 {
-    public string Command => "file";
-    public string Description => "Setting path do the file inside Dropbox";
+    private readonly ISettingsPersistenceLayer _settingsPersistenceLayer = settingsPersistenceLayer;
+    public override string Command => "file";
+    public override string Description => "Setting path do the file inside Dropbox";
 
-    public async Task HandleAsync(Message message, CancellationToken cancellationToken)
+    protected override async Task HandleInternalAsync(Message message, CancellationToken cancellationToken)
     {
-        var token = await settingsPersistenceLayer.GetUserSettingByUserIdAsync(
+        var token = await _settingsPersistenceLayer.GetUserSettingByUserIdAsync(
             message.From!.Id,
             UserSettings.Token,
             cancellationToken);
@@ -50,11 +51,5 @@ public class FileCommand(
                 fileList.Select(file => new KeyboardButton(file)).ToArray()
             },
             cancellationToken:cancellationToken);
-
-        await settingsPersistenceLayer.SetUserSettingByUserIdAsync(
-            message.From!.Id,
-            UserSettings.Status,
-            fileEntryStatusHandler.HandledStatus,
-            cancellationToken: cancellationToken);
     }
 }

@@ -13,12 +13,12 @@ public class AddTransactionCommand(
     ITelegramBotClientWrapper botClient,
     AddTransactionFromAccountHandler addTransactionFromAccountHandler,
     IFileLoader fileLoader)
-    : ICommand
+    : AbstractCommandWithStatus(settingsPersistenceLayer, addTransactionFromAccountHandler)
 {
-    public string Command => "add_transaction";
-    public string Description => "Adds a new transaction";
+    public override string Command => "add_transaction";
+    public override string Description => "Adds a new transaction";
 
-    public async Task HandleAsync(Message message, CancellationToken cancellationToken)
+    protected override async Task HandleInternalAsync(Message message, CancellationToken cancellationToken)
     {
         var file = await fileLoader.LoadKMyMoneyFileOrSendErrorAsync(
             message, cancellationToken);
@@ -48,10 +48,5 @@ public class AddTransactionCommand(
                 "Choose account to take money from",
                 replyMarkup: keyboard,
                 cancellationToken: cancellationToken);
-        await settingsPersistenceLayer.SetUserSettingByUserIdAsync(
-            message.From!.Id,
-            UserSettings.Status,
-            addTransactionFromAccountHandler.HandledStatus,
-            cancellationToken: cancellationToken);
     }
 }
