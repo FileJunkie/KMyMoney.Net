@@ -9,7 +9,7 @@ public class TransactionExtensionsTests
     public void AddTransaction_ShouldAddTransaction()
     {
         // Arrange
-        var kmyMoneyFileRoot = CreateMinimalKmyMoneyFileRoot();
+        var kmyMoneyFileRoot = TestUtils.CreateTestKmyMoneyFileRoot();
         var fromAccount = new Account { Id = "A000001", Name = "Checking Account", Currency = "USD", Type = "Asset" };
         var toAccount = new Account { Id = "A000002", Name = "Savings Account", Currency = "USD", Type = "Asset" };
         kmyMoneyFileRoot.Accounts.Values = [fromAccount, toAccount];
@@ -34,7 +34,7 @@ public class TransactionExtensionsTests
     public void AddTransaction_ShouldGenerateCorrectId_WhenTransactionsExist()
     {
         // Arrange
-        var kmyMoneyFileRoot = CreateMinimalKmyMoneyFileRoot();
+        var kmyMoneyFileRoot = TestUtils.CreateTestKmyMoneyFileRoot();
         var fromAccount = new Account { Id = "A000001", Name = "Checking Account", Currency = "USD", Type = "Asset" };
         var toAccount = new Account { Id = "A000002", Name = "Savings Account", Currency = "USD", Type = "Asset" };
         kmyMoneyFileRoot.Accounts.Values = [fromAccount, toAccount];
@@ -66,7 +66,7 @@ public class TransactionExtensionsTests
     public void AddTransaction_ShouldHandleDifferentCurrencies()
     {
         // Arrange
-        var kmyMoneyFileRoot = CreateMinimalKmyMoneyFileRoot();
+        var kmyMoneyFileRoot = TestUtils.CreateTestKmyMoneyFileRoot();
         var fromAccount = new Account { Id = "A000001", Name = "Checking Account", Currency = "USD", Type = "Asset" };
         var toAccount = new Account { Id = "A000002", Name = "Savings Account", Currency = "EUR", Type = "Asset" };
         kmyMoneyFileRoot.Accounts.Values = [fromAccount, toAccount];
@@ -109,7 +109,7 @@ public class TransactionExtensionsTests
     public void AddTransaction_ShouldThrowException_WhenFromAccountNotFound()
     {
         // Arrange
-        var kmyMoneyFileRoot = CreateMinimalKmyMoneyFileRoot();
+        var kmyMoneyFileRoot = TestUtils.CreateTestKmyMoneyFileRoot();
         var toAccount = new Account { Id = "A000002", Name = "Savings Account", Currency = "USD", Type = "Asset" };
         kmyMoneyFileRoot.Accounts.Values = [toAccount];
 
@@ -129,7 +129,7 @@ public class TransactionExtensionsTests
     public void AddTransaction_ShouldThrowException_WhenToAccountNotFound()
     {
         // Arrange
-        var kmyMoneyFileRoot = CreateMinimalKmyMoneyFileRoot();
+        var kmyMoneyFileRoot = TestUtils.CreateTestKmyMoneyFileRoot();
         var fromAccount = new Account { Id = "A000001", Name = "Checking Account", Currency = "USD", Type = "Asset" };
         kmyMoneyFileRoot.Accounts.Values = [fromAccount];
 
@@ -143,32 +143,5 @@ public class TransactionExtensionsTests
                 memo: "Test transaction"));
 
         exception.Message.ShouldBe("Destination account 'A000002' not found.");
-    }
-
-    private static KmyMoneyFileRoot CreateMinimalKmyMoneyFileRoot()
-    {
-        return new KmyMoneyFileRoot
-        {
-            FileInfo = new(),
-            User = new()
-            {
-                Name = "name",
-                Email = "email"
-            },
-            Institutions = new() { Values = [], },
-            Payees = new() { Values = [], },
-            CostCenters = new(),
-            Tags = new(),
-            Accounts = new() { Values = [], },
-            Transactions = new() { Values = [], },
-            KeyValuePairs = new() { Pair = [], },
-            Schedules = new() { Values = [], },
-            Securities = new() { Values = [], },
-            Currencies = new() { Values = [], },
-            Prices = new() { Values = [], },
-            Reports = new() { Values = [], },
-            Budgets = new(),
-            OnlineJobs = new()
-        };
     }
 }
