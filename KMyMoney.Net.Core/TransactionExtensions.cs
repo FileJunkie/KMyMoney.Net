@@ -1,3 +1,4 @@
+using System.Globalization;
 using Fractions;
 using KMyMoney.Net.Models;
 
@@ -89,4 +90,20 @@ public static class TransactionExtensions
             .Max();
         return $"T{maxId + 1:D18}";
     }
+
+    public static IDictionary<string, DateTimeOffset>
+        GetLatestTransactionsByAccountId(this Transactions transactions) =>
+        transactions.Values
+            .SelectMany(transaction =>
+                transaction.Splits.Split
+                    .Select(s => (AccountId: s.Account, TransactionDate: transaction.EntryDate)))
+            .GroupBy(account => account.AccountId)
+            .Select(kv =>
+                (AccountId: kv.Key,
+                    LatestTransaction: kv.Select(v => DateTimeOffset.ParseExact(
+                            v.TransactionDate, ["yyyy-MM-dd"], CultureInfo.InvariantCulture))
+                        .OrderDescending()
+                        .First()))
+            .OrderByDescending(t => t.LatestTransaction)
+            .ToDictionary(t => t.AccountId, t => t.LatestTransaction);
 }

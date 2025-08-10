@@ -1,3 +1,4 @@
+using KMyMoney.Net.Core;
 using KMyMoney.Net.TelegramBot.Persistence;
 using KMyMoney.Net.TelegramBot.Utils;
 using Telegram.Bot;
@@ -23,8 +24,16 @@ public class AddTransactionCommand(
             return;
         }
 
+        var lastTransactionPerAccount = file
+            .Root
+            .Transactions
+            .GetLatestTransactionsByAccountId();
+
         var accounts = file.Root.Accounts.Values
             .Where(acc => !acc.IsClosed)
+            .OrderByDescending(acc =>
+                lastTransactionPerAccount.TryGetValue(acc.Id, out var lastTransaction) ?
+                    lastTransaction : DateTimeOffset.MinValue)
             .Select(acc => acc.Name);
 
         var keyboard = accounts.SplitBy(3);
