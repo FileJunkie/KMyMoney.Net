@@ -1,3 +1,6 @@
+using System.IO.Compression;
+using System.Text;
+using System.Xml.Serialization;
 using KMyMoney.Net.Models;
 
 namespace KMyMoney.Net.Core.Tests;
@@ -39,4 +42,17 @@ public static class TestUtils
         Budgets = new(),
         OnlineJobs = new()
     };
+    
+    public static MemoryStream CreateCompressedStream(KmyMoneyFileRoot fileRoot)
+    {
+        var serializer = new XmlSerializer(typeof(KmyMoneyFileRoot));
+        var memoryStream = new MemoryStream();
+        using (var gzipStream = new GZipStream(memoryStream, CompressionMode.Compress, leaveOpen: true))
+        using (var streamWriter = new StreamWriter(gzipStream, Encoding.UTF8))
+        {
+            serializer.Serialize(streamWriter, fileRoot);
+        }
+        memoryStream.Position = 0;
+        return memoryStream;
+    }
 }

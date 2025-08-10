@@ -104,9 +104,5 @@
   &lt;Assembly Path="/home/filejunkie/.nuget/packages/grpc.net.client/2.71.0/lib/net8.0/Grpc.Net.Client.dll" /&gt;
 &lt;/AssemblyExplorer&gt;</s:String>
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=2e39674e_002Dcea5_002D47ee_002D8add_002D5f99cbd835e1/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="TransactionExtensionsTest" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
-  &lt;TestAncestor&gt;
-    &lt;TestId&gt;xUnit::7FCF4ED5-9CE0-4F06-BE09-240FA6DDE1EF::net9.0::KMyMoney.Net.Core.Tests.KMyMoneyFileTests&lt;/TestId&gt;
-    &lt;TestId&gt;xUnit::7FCF4ED5-9CE0-4F06-BE09-240FA6DDE1EF::net9.0::KMyMoney.Net.Core.Tests.TransactionExtensionsTests&lt;/TestId&gt;
-    &lt;TestId&gt;xUnit::7FCF4ED5-9CE0-4F06-BE09-240FA6DDE1EF::net9.0::KMyMoney.Net.Core.Tests.KMyMoneyLoaderTests&lt;/TestId&gt;
-  &lt;/TestAncestor&gt;
+  &lt;Project Location="/home/filejunkie/git/KMyMoney.Net/KMyMoney.Net.Core.Tests" Presentation="&amp;lt;KMyMoney.Net.Core.Tests&amp;gt;" /&gt;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>

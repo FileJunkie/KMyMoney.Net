@@ -1,7 +1,4 @@
-using System.IO.Compression;
-using System.Xml.Serialization;
 using KMyMoney.Net.Core.FileAccessors;
-using KMyMoney.Net.Models;
 using NSubstitute;
 using Shouldly;
 
@@ -15,7 +12,7 @@ public class KMyMoneyLoaderTests
         // Arrange
         var uri = new Uri("file:///test.kmy");
         var fileRoot = TestUtils.CreateTestKmyMoneyFileRoot();
-        var compressedStream = CreateCompressedStream(fileRoot);
+        var compressedStream = TestUtils.CreateCompressedStream(fileRoot);
 
         var unsupportedAccessor = Substitute.For<IFileAccessor>();
         unsupportedAccessor.UriSupported(uri).Returns(false);
@@ -62,7 +59,7 @@ public class KMyMoneyLoaderTests
         // Arrange
         var uri = new Uri("file:///test.kmy");
         var fileRoot = TestUtils.CreateTestKmyMoneyFileRoot();
-        var compressedStream = CreateCompressedStream(fileRoot);
+        var compressedStream = TestUtils.CreateCompressedStream(fileRoot);
         var accessor = Substitute.For<IFileAccessor>();
         accessor.GetReadStreamAsync(uri).Returns(compressedStream);
 
@@ -72,18 +69,5 @@ public class KMyMoneyLoaderTests
         // Assert
         kmyFile.ShouldNotBeNull();
         kmyFile.Root.ShouldBeEquivalentTo(fileRoot);
-    }
-
-    private static MemoryStream CreateCompressedStream(KmyMoneyFileRoot fileRoot)
-    {
-        var serializer = new XmlSerializer(typeof(KmyMoneyFileRoot));
-        var memoryStream = new MemoryStream();
-        using (var gzipStream = new GZipStream(memoryStream, CompressionMode.Compress, leaveOpen: true))
-        using (var streamWriter = new StreamWriter(gzipStream))
-        {
-            serializer.Serialize(streamWriter, fileRoot);
-        }
-        memoryStream.Position = 0;
-        return memoryStream;
     }
 }
