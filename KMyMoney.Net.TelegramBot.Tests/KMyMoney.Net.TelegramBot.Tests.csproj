@@ -25,10 +25,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\KMyMoney.Net.TelegramBot\KMyMoney.Net.TelegramBot.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Dropbox\" />
+    <ProjectReference Include="..\KMyMoney.Net.Tests.Common\KMyMoney.Net.Tests.Common.csproj" />
   </ItemGroup>
 
 </Project>
