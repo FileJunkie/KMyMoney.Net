@@ -21,6 +21,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KMyMoney.Net.TelegramBot.Pe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KMyMoney.Net.TelegramBot.Persistence.Etcd", "KMyMoney.Net.TelegramBot.Persistence.Etcd\KMyMoney.Net.TelegramBot.Persistence.Etcd.csproj", "{5E57ED08-8B17-476D-AAF6-CE89620D4807}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KMyMoney.Net.Core.Tests", "KMyMoney.Net.Core.Tests\KMyMoney.Net.Core.Tests.csproj", "{7FCF4ED5-9CE0-4F06-BE09-240FA6DDE1EF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -139,6 +141,18 @@ Global
 		{5E57ED08-8B17-476D-AAF6-CE89620D4807}.Release|x64.Build.0 = Release|Any CPU
 		{5E57ED08-8B17-476D-AAF6-CE89620D4807}.Release|x86.ActiveCfg = Release|Any CPU
 		{5E57ED08-8B17-476D-AAF6-CE89620D4807}.Release|x86.Build.0 = Release|Any CPU
+		{7FCF4ED5-9CE0-4F06-BE09-240FA6DDE1EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7FCF4ED5-9CE0-4F06-BE09-240FA6DDE1EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7FCF4ED5-9CE0-4F06-BE09-240FA6DDE1EF}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{7FCF4ED5-9CE0-4F06-BE09-240FA6DDE1EF}.Debug|x64.Build.0 = Debug|Any CPU
+		{7FCF4ED5-9CE0-4F06-BE09-240FA6DDE1EF}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{7FCF4ED5-9CE0-4F06-BE09-240FA6DDE1EF}.Debug|x86.Build.0 = Debug|Any CPU
+		{7FCF4ED5-9CE0-4F06-BE09-240FA6DDE1EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7FCF4ED5-9CE0-4F06-BE09-240FA6DDE1EF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7FCF4ED5-9CE0-4F06-BE09-240FA6DDE1EF}.Release|x64.ActiveCfg = Release|Any CPU
+		{7FCF4ED5-9CE0-4F06-BE09-240FA6DDE1EF}.Release|x64.Build.0 = Release|Any CPU
+		{7FCF4ED5-9CE0-4F06-BE09-240FA6DDE1EF}.Release|x86.ActiveCfg = Release|Any CPU
+		{7FCF4ED5-9CE0-4F06-BE09-240FA6DDE1EF}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
