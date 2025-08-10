@@ -23,12 +23,7 @@ public class LoginCommandTests
         botWrapper.Bot.Returns(botClient);
         var settingsPersistenceLayer = Substitute.For<ISettingsPersistenceLayer>();
         var dropboxOAuth2HelperWrapper = Substitute.For<IDropboxOAuth2HelperWrapper>();
-        var dropboxSettings = Options.Create(new DropboxSettings
-        {
-            ApiKey = "key",
-            ApiSecret = "secret",
-            RedirectUri = "https://redirect"
-        });
+        var dropboxSettings = Options.Create(new DropboxSettings { ApiKey = "key", ApiSecret = "secret", RedirectUri = "https://redirect" });
         var command = new LoginCommand(botWrapper, settingsPersistenceLayer, dropboxOAuth2HelperWrapper, dropboxSettings);
 
         var message = new Message { From = new User { Id = 123 }, Chat = new Chat { Id = 456 } };

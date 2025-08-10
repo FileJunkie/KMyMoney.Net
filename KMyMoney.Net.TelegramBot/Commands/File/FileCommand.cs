@@ -1,5 +1,6 @@
 using KMyMoney.Net.Core.FileAccessors.Dropbox;
 using KMyMoney.Net.TelegramBot.Common;
+using KMyMoney.Net.TelegramBot.Dropbox;
 using KMyMoney.Net.TelegramBot.Persistence;
 using KMyMoney.Net.TelegramBot.Telegram;
 using Telegram.Bot;
@@ -11,6 +12,7 @@ namespace KMyMoney.Net.TelegramBot.Commands.File;
 public class FileCommand(
     ISettingsPersistenceLayer settingsPersistenceLayer,
     FileEntryStatusHandler fileEntryStatusHandler,
+    IFileAccessorFactory fileAccessorFactory,
     ITelegramBotClientWrapper botClient) :
     AbstractMessageHandlerWithNextStep(settingsPersistenceLayer, fileEntryStatusHandler), ICommand
 {
@@ -33,7 +35,7 @@ public class FileCommand(
             return;
         }
 
-        var dropboxFileAccessor = new DropboxFileAccessor(token);
+        var dropboxFileAccessor = fileAccessorFactory.CreateFileAccessor(token);
         var fileList = (await dropboxFileAccessor.ListFilesAsync()).ToList();
         if (fileList.Count == 0)
         {
