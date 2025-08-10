@@ -1,7 +1,4 @@
-using System.Diagnostics.CodeAnalysis;
 using KMyMoney.Net.TelegramBot;
-using KMyMoney.Net.TelegramBot.Persistence.Etcd;
-using KMyMoney.Net.TelegramBot.Telegram;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +15,3 @@ if (!app.Environment.IsDevelopment())
 
 app.MapControllers();
 await app.RunAsync();
-
-[ExcludeFromCodeCoverage(Justification = "Program class, nothing to test")]
-public partial class Program { }
