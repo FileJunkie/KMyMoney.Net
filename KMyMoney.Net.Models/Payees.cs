@@ -5,5 +5,9 @@ using System.Xml.Serialization;
 public class Payees : ArrayWithCount<Payee>
 {
     [XmlElement("PAYEE")]
-    public override required Payee[] Values { get; set; } = [];
+    public override required Payee[] Values
+    {
+        get;
+        set => field = value ?? [];
+    } = [];
 }

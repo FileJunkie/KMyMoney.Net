@@ -5,5 +5,9 @@ using System.Xml.Serialization;
 public class Securities : ArrayWithCount<Security>
 {
     [XmlElement("SECURITY")]
-    public override required Security[] Values { get; set; } = [];
+    public override required Security[] Values
+    {
+        get;
+        set => field = value ?? [];
+    } = [];
 }

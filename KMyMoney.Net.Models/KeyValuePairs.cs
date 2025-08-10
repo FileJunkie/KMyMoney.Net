@@ -5,5 +5,9 @@ using System.Xml.Serialization;
 public class KeyValuePairs
 {
     [XmlElement("PAIR")]
-    public required KeyValuePair[] Pair { get; init; } = [];
+    public required KeyValuePair[] Pair
+    {
+        get;
+        set => field = value ?? [];
+    } = [];
 }
