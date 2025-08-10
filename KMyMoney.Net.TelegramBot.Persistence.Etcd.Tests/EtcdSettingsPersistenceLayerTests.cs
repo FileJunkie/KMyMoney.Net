@@ -103,6 +103,43 @@ public class EtcdSettingsPersistenceLayerTests
     }
 
     [Fact]
+    public async Task SetUserSetting_WithExpiration_ShouldCallLeaseGrantAndPutAsync()
+    {
+        // Arrange
+        var etcdClient = Substitute.For<IEtcdClient>();
+        var etcdSettings = Options.Create(new EtcdSettings
+        {
+            KeyPrefix = "kmymoney-test",
+            ConnectionString = "http://localhost:2379",
+            RootCertificate = "",
+            Certificate = "",
+            Key = ""
+        });
+        var persistence = new EtcdSettingsPersistenceLayer(etcdClient, etcdSettings);
+
+        const long userId = 12345;
+        const UserSettings setting = UserSettings.FilePath;
+        const string value = "/path/to/file.kmy";
+        var key = $"kmymoney-test/users/{userId}/{setting}";
+        var expiresIn = TimeSpan.FromMinutes(5);
+        const long leaseId = 98765;
+
+        etcdClient.LeaseGrantAsync(Arg.Any<LeaseGrantRequest>())
+            .Returns(Task.FromResult(new LeaseGrantResponse { ID = leaseId }));
+
+        // Act
+        await persistence.SetUserSettingByUserIdAsync(userId, setting, value, expiresIn);
+
+        // Assert
+        await etcdClient.Received(1).LeaseGrantAsync(Arg.Is<LeaseGrantRequest>(r => r.TTL == expiresIn.TotalSeconds));
+        await etcdClient.Received(1).PutAsync(Arg.Is<PutRequest>(p =>
+            p.Key.ToStringUtf8() == key &&
+            p.Value.ToStringUtf8() == value &&
+            p.Lease == leaseId
+        ));
+    }
+
+    [Fact]
     public async Task SetUserSetting_WithNullValue_ShouldCallDeleteAsync()
     {
         // Arrange
