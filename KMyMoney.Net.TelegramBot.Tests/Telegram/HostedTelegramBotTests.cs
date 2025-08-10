@@ -10,9 +10,8 @@ using NSubstitute;
 using Shouldly;
 using Telegram.Bot;
 using Telegram.Bot.Requests;
-using Telegram.Bot.Types;
 
-namespace KMyMoney.Net.TelegramBot.Tests;
+namespace KMyMoney.Net.TelegramBot.Tests.Telegram;
 
 public class HostedTelegramBotTests
 {
