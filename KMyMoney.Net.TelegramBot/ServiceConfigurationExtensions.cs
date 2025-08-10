@@ -1,6 +1,7 @@
 using KMyMoney.Net.TelegramBot.Commands;
 using KMyMoney.Net.TelegramBot.Commands.AddTransaction;
 using KMyMoney.Net.TelegramBot.Commands.File;
+using KMyMoney.Net.TelegramBot.Dropbox;
 using KMyMoney.Net.TelegramBot.Persistence.Etcd;
 using KMyMoney.Net.TelegramBot.Services;
 using KMyMoney.Net.TelegramBot.Settings;
@@ -21,6 +22,7 @@ public static class ServiceConfigurationExtensions
             .ConfigurePersistenceLayer()
             .ConfigureCommandsAndHandlers()
             .ConfigureTelegram()
+            .ConfigureDropbox()
             .ConfigureSystem();
 
     private static IServiceCollection ConfigureSettings(
@@ -66,6 +68,9 @@ public static class ServiceConfigurationExtensions
             .AddSingleton<IUpdateHandler, UpdateHandler>()
             .ConfigureTelegramBotMvc();
     }
+
+    private static IServiceCollection ConfigureDropbox(this IServiceCollection services) =>
+        services.AddSingleton<IDropboxOAuth2HelperWrapper, DropboxOAuth2HelperWrapper>();
 
     private static IServiceCollection ConfigureSystem(this IServiceCollection services) => services
         .AddSystemd()

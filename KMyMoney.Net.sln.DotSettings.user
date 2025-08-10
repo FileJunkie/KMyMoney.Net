@@ -114,5 +114,8 @@
       &lt;TestId&gt;xUnit::D8B5258A-850D-4318-B60F-4F4BCFFE2BC1::net9.0::KMyMoney.Net.TelegramBot.Tests.ServiceConfigurationTests&lt;/TestId&gt;
       &lt;TestId&gt;xUnit::D8B5258A-850D-4318-B60F-4F4BCFFE2BC1::net9.0::KMyMoney.Net.TelegramBot.Tests.HostedTelegramBotTests&lt;/TestId&gt;
     &lt;/TestAncestor&gt;
+    &lt;ProjectFile&gt;D8B5258A-850D-4318-B60F-4F4BCFFE2BC1/d:Controllers/f:DropboxControllerTests.cs&lt;/ProjectFile&gt;
+    &lt;ProjectFile&gt;D8B5258A-850D-4318-B60F-4F4BCFFE2BC1/d:Controllers/f:WebhookControllerTests.cs&lt;/ProjectFile&gt;
+    &lt;ProjectFile&gt;D8B5258A-850D-4318-B60F-4F4BCFFE2BC1/d:StatusHandlers/f:DefaultStatusHandlerTests.cs&lt;/ProjectFile&gt;
   &lt;/Or&gt;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>

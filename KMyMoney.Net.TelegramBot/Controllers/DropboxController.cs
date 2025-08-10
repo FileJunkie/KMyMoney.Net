@@ -1,5 +1,5 @@
 using System.ComponentModel.DataAnnotations;
-using Dropbox.Api;
+using KMyMoney.Net.TelegramBot.Dropbox;
 using KMyMoney.Net.TelegramBot.Persistence;
 using KMyMoney.Net.TelegramBot.Settings;
 using Microsoft.AspNetCore.Mvc;
@@ -12,6 +12,7 @@ namespace KMyMoney.Net.TelegramBot.Controllers;
 public class DropboxController(
     ISettingsPersistenceLayer settingsPersistenceLayer,
     IOptions<DropboxSettings> dropboxSettings,
+    IDropboxOAuth2HelperWrapper dropboxOAuth2HelperWrapper,
     ILogger<DropboxController> logger) : ControllerBase
 {
     [HttpGet("callback")]
@@ -29,7 +30,7 @@ public class DropboxController(
             return BadRequest();
         }
 
-        var token = await DropboxOAuth2Helper.ProcessCodeFlowAsync(
+        var token = await dropboxOAuth2HelperWrapper.ProcessCodeFlowAsync(
             code,
             dropboxSettings.Value.ApiKey,
             appSecret: dropboxSettings.Value.ApiSecret,

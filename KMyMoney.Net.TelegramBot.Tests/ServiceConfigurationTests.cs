@@ -1,4 +1,3 @@
-using KMyMoney.Net.TelegramBot.Persistence.Etcd;
 using KMyMoney.Net.TelegramBot.Persistence.InMemory;
 using KMyMoney.Net.TelegramBot.Settings;
 using KMyMoney.Net.TelegramBot.Telegram;
