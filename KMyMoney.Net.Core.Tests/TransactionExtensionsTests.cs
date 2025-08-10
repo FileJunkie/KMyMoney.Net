@@ -3,7 +3,7 @@ using Shouldly;
 
 namespace KMyMoney.Net.Core.Tests;
 
-public class TransactionExtensionsTest
+public class TransactionExtensionsTests
 {
     [Fact]
     public void AddTransaction_ShouldAddTransaction()

@@ -82,8 +82,8 @@ public static class TransactionExtensions
 
         return transaction;
     }
-    
-    public static string GenerateNextTransactionId(this KmyMoneyFileRoot kmyMoneyFileRoot)
+
+    private static string GenerateNextTransactionId(this KmyMoneyFileRoot kmyMoneyFileRoot)
     {
         var maxId = kmyMoneyFileRoot.Transactions.Values.Select(t => int.Parse(t.Id[1..]))
             .DefaultIfEmpty(0)
