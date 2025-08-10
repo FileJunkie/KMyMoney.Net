@@ -1,11 +1,7 @@
 using System.Text;
 using KMyMoney.Net.TelegramBot.Dropbox;
-using KMyMoney.Net.TelegramBot.Persistence;
 using KMyMoney.Net.TelegramBot.Telegram;
-using KMyMoney.Net.TelegramBot.Utils;
-using Telegram.Bot;
 using Telegram.Bot.Types;
-using Telegram.Bot.Types.ReplyMarkups;
 
 namespace KMyMoney.Net.TelegramBot.Commands;
 
