@@ -134,6 +134,46 @@ public class TransactionExtensionsTests
     }
 
     [Fact]
+    public void AddTransaction_ShouldThrowException_WhenFromAccountNotFound()
+    {
+        // Arrange
+        var kmyMoneyFileRoot = TestUtils.CreateTestKmyMoneyFileRoot();
+        var toAccount = new Account { Id = "A000002", Name = "Savings Account", Currency = "USD", Type = "Asset" };
+        kmyMoneyFileRoot.Accounts.Values = [toAccount];
+
+        // Act & Assert
+        var exception = Should.Throw<Exception>(() =>
+            kmyMoneyFileRoot.AddTransaction(
+                from: "A000001",
+                to: toAccount.Id,
+                amount: 100.0m,
+                currency: "USD",
+                memo: "Test transaction"));
+
+        exception.Message.ShouldBe("Source account 'A000001' not found.");
+    }
+
+    [Fact]
+    public void AddTransaction_ShouldThrowException_WhenToAccountNotFound()
+    {
+        // Arrange
+        var kmyMoneyFileRoot = TestUtils.CreateTestKmyMoneyFileRoot();
+        var fromAccount = new Account { Id = "A000001", Name = "Checking Account", Currency = "USD", Type = "Asset" };
+        kmyMoneyFileRoot.Accounts.Values = [fromAccount];
+
+        // Act & Assert
+        var exception = Should.Throw<Exception>(() =>
+            kmyMoneyFileRoot.AddTransaction(
+                from: fromAccount.Id,
+                to: "A000002",
+                amount: 100.0m,
+                currency: "USD",
+                memo: "Test transaction"));
+
+        exception.Message.ShouldBe("Destination account 'A000002' not found.");
+    }
+
+    [Fact]
     public void GetLatestTransactionsByAccountId_ShouldReturnLatestDates()
     {
         // Arrange
