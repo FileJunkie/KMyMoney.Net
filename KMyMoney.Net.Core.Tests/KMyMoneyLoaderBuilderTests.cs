@@ -37,7 +37,7 @@ public class KMyMoneyLoaderBuilderTests
         var loader = builder
             .WithFileAccessor(accessor)
             .Build();
-        
+
         var kmyFile = await loader.LoadFileAsync(uri);
 
         // Assert
@@ -68,7 +68,7 @@ public class KMyMoneyLoaderBuilderTests
             .WithFileAccessor(accessor1)
             .WithFileAccessor(accessor2)
             .Build();
-        
+
         await loader.LoadFileAsync(uri1);
         await loader.LoadFileAsync(uri2);
 

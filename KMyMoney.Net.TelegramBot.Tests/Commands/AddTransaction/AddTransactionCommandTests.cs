@@ -22,17 +22,17 @@ public class AddTransactionCommandTests
         var botClient = Substitute.For<ITelegramBotClient>();
         var botWrapper = Substitute.For<ITelegramBotClientWrapper>();
         botWrapper.Bot.Returns(botClient);
-        var addTransactionFromAccountHandler = 
+        var addTransactionFromAccountHandler =
             new AddTransactionFromAccountHandler(
                 null!, null!, null!, null!);
         var fileLoader = Substitute.For<IFileLoader>();
-        var command = new AddTransactionCommand(settingsPersistenceLayer, 
+        var command = new AddTransactionCommand(settingsPersistenceLayer,
             botWrapper, addTransactionFromAccountHandler, fileLoader);
 
-        var message = new Message 
+        var message = new Message
             { From = new User { Id = 123 }, Chat = new Chat { Id = 456 } };
-        var kmyFile = new KMyMoneyFile(new Uri("file:///test.kmy"), 
-            Substitute.For<IFileAccessor>(), 
+        var kmyFile = new KMyMoneyFile(new Uri("file:///test.kmy"),
+            Substitute.For<IFileAccessor>(),
             TestUtils.CreateTestKmyMoneyFileRoot());
 
         fileLoader.LoadKMyMoneyFileOrSendErrorAsync(message, CancellationToken.None)
@@ -44,7 +44,7 @@ public class AddTransactionCommandTests
         // Assert
         await botClient.Received(1).SendRequest(
             Arg.Is<SendMessageRequest>(
-                r => r.Text.Contains("Choose account to take money from")), 
+                r => r.Text.Contains("Choose account to take money from")),
             CancellationToken.None);
     }
 }

@@ -30,7 +30,7 @@ public static class AccountCommands
         {
             idOption, nameOption
         };
-        
+
         result.SetAction(async parseResult =>
         {
             var id = parseResult.GetValue(idOption);
@@ -45,13 +45,13 @@ public static class AccountCommands
             {
                 accounts = accounts.Where(a => a.Name == name);
             }
-            
+
             OutputAccounts(accounts.ToArray());
         });
-        
+
         return result;
     }
-    
+
     private static Command CreateListCommand()
     {
         var result = new Command("list");
@@ -59,7 +59,7 @@ public static class AccountCommands
         {
             OutputAccounts((await parseResult.GetRequiredValue(BaseOptions.File)).Root.Accounts.Values);
         });
-        
+
         return result;
     }
 

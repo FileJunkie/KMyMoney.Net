@@ -17,11 +17,11 @@ public class DefaultStatusHandlerTests
         var botClient = Substitute.For<ITelegramBotClient>();
         var botWrapper = Substitute.For<ITelegramBotClientWrapper>();
         botWrapper.Bot.Returns(botClient);
-        
+
         var command = Substitute.For<ICommand>();
         command.Command.Returns("test");
         var commands = new[] { command };
-        
+
         var handler = new DefaultStatusHandler(botWrapper, commands);
         var message = new Message { Text = "/test with args", Chat = new Chat { Id = 123 } };
 
@@ -39,7 +39,7 @@ public class DefaultStatusHandlerTests
         var botClient = Substitute.For<ITelegramBotClient>();
         var botWrapper = Substitute.For<ITelegramBotClientWrapper>();
         botWrapper.Bot.Returns(botClient);
-        
+
         var handler = new DefaultStatusHandler(botWrapper, []);
         var message = new Message { Text = "/unknown", Chat = new Chat { Id = 123 } };
 
@@ -57,7 +57,7 @@ public class DefaultStatusHandlerTests
         var botClient = Substitute.For<ITelegramBotClient>();
         var botWrapper = Substitute.For<ITelegramBotClientWrapper>();
         botWrapper.Bot.Returns(botClient);
-        
+
         var handler = new DefaultStatusHandler(botWrapper, []);
         var message = new Message { Text = "just some text", Chat = new Chat { Id = 123 } };
 
@@ -75,7 +75,7 @@ public class DefaultStatusHandlerTests
         var botClient = Substitute.For<ITelegramBotClient>();
         var botWrapper = Substitute.For<ITelegramBotClientWrapper>();
         botWrapper.Bot.Returns(botClient);
-        
+
         var handler = new DefaultStatusHandler(botWrapper, []);
         var message = new Message { Text = "", Chat = new Chat { Id = 123 } };
 

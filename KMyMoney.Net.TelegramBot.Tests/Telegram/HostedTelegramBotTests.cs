@@ -31,7 +31,7 @@ public class HostedTelegramBotTests
             "telegramSecret",
             Arg.Any<string>(),
             cancellationToken: CancellationToken.None);
-        
+
         await context.BotClient.Received(1)
             .SendRequest(
                 Arg.Is<SetWebhookRequest>(r =>
@@ -45,7 +45,7 @@ public class HostedTelegramBotTests
         // Arrange
         var settings = new TelegramSettings { ApiToken = "dummy_token", WebhookUri = null };
         var context = new TestContext(settings);
-        
+
         // Act
         var action = async () => await context.HostedTelegramBot.StartAsync(CancellationToken.None);
 

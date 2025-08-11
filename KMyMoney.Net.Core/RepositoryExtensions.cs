@@ -19,12 +19,12 @@ public static class RepositoryExtensions
     public static T? GetByName<T>(this ArrayWithCount<T> arr, string name)
         where T : IHasName
         => arr.Values.GetByName(name);
-    
+
     public static T? GetByNameOrId<T>(this IList<T> arr, string nameOrId)
         where T : IHasName, IHasId
         => arr.FirstOrDefault(x => x.Name == nameOrId) ??
            arr.FirstOrDefault(x => x.Id == nameOrId);
-    
+
     public static T? GetByNameOrId<T>(this ArrayWithCount<T> arr, string nameOrId)
         where T : IHasName, IHasId
         => arr.Values.GetByNameOrId(nameOrId);

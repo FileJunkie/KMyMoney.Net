@@ -17,7 +17,7 @@ public static class TransactionCommands
         List = CreateListCommand();
         Add = CreateAddCommand();
     }
-    
+
     private static Command CreateGetCommand()
     {
         var idOption = new Option<string>("--id")
@@ -29,7 +29,7 @@ public static class TransactionCommands
         {
             idOption
         };
-        
+
         result.SetAction(async parseResult =>
         {
             var id = parseResult.GetValue(idOption);
@@ -41,10 +41,10 @@ public static class TransactionCommands
 
             OutputTransactions(transactions.ToArray());
         });
-        
+
         return result;
     }
-    
+
     private static Command CreateListCommand()
     {
         var result = new Command("list");
@@ -52,7 +52,7 @@ public static class TransactionCommands
         {
             OutputTransactions((await parseResult.GetRequiredValue(BaseOptions.File)).Root.Transactions.Values);
         });
-        
+
         return result;
     }
 
@@ -82,7 +82,7 @@ public static class TransactionCommands
         {
             Required = false,
         };
-        
+
         var result = new Command("add")
         {
             from, to, amount, currency, memo

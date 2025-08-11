@@ -35,7 +35,7 @@ public class AddTransactionPriceHandler(
                 cancellationToken: cancellationToken);
             return;
         }
-        
+
         var accountTo = await settingsPersistenceLayer.GetUserSettingByUserIdAsync(
             message.From!.Id,
             UserSettings.AccountTo,

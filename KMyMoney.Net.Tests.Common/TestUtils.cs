@@ -43,7 +43,7 @@ public static class TestUtils
         Budgets = new(),
         OnlineJobs = new()
     };
-    
+
     public static MemoryStream CreateCompressedStream(KmyMoneyFileRoot fileRoot)
     {
         var serializer = new XmlSerializer(typeof(KmyMoneyFileRoot));

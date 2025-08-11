@@ -32,7 +32,7 @@ public class DropboxControllerTests
         const string code = "valid_code";
         const string state = "valid_state";
         const long userId = 12345;
-        
+
         var constructor = typeof(OAuth2Response).GetConstructors(
             BindingFlags.Instance | BindingFlags.NonPublic)[0];
         var oauth2Response = (OAuth2Response)constructor.Invoke(

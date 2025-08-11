@@ -62,7 +62,7 @@ public class AccountsCommandTests
         // Assert
         await botClient.DidNotReceiveWithAnyArgs().SendRequest(Arg.Any<IRequest<Message>>(), CancellationToken.None);
     }
-    
+
     private static KmyMoneyFileRoot CreateTestKmyMoneyFileRootWithData() => new()
     {
         FileInfo = new(),

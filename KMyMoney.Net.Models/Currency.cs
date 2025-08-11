@@ -9,7 +9,7 @@ public class Currency : IHasId, IHasName
 
     [XmlAttribute("name")]
     public required string Name { get; init; }
-    
+
     [XmlAttribute("type")]
     public required string Type { get; init; }
 

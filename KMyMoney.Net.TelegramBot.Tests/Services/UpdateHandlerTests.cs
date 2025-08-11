@@ -23,10 +23,10 @@ public class UpdateHandlerTests
         var conditionalHandler = Substitute.For<IConditionalStatusHandler>();
         var defaultStatusHandler = Substitute.For<IDefaultStatusHandler>();
         var logger = Substitute.For<ILogger<UpdateHandler>>();
-        var handler = new UpdateHandler(botWrapper, settingsPersistenceLayer, 
+        var handler = new UpdateHandler(botWrapper, settingsPersistenceLayer,
             [conditionalHandler], defaultStatusHandler, logger);
 
-        var message = new Message 
+        var message = new Message
             { From = new User { Id = 123 }, Chat = new Chat { Id = 456, Type = ChatType.Private } };
         const string userStatus = "TestStatus";
 
@@ -53,10 +53,10 @@ public class UpdateHandlerTests
         var conditionalHandler = Substitute.For<IConditionalStatusHandler>();
         var defaultStatusHandler = Substitute.For<IDefaultStatusHandler>();
         var logger = Substitute.For<ILogger<UpdateHandler>>();
-        var handler = new UpdateHandler(botWrapper, settingsPersistenceLayer, 
+        var handler = new UpdateHandler(botWrapper, settingsPersistenceLayer,
             [conditionalHandler], defaultStatusHandler, logger);
 
-        var message = new Message 
+        var message = new Message
             { From = new User { Id = 123 }, Chat = new Chat { Id = 456, Type = ChatType.Private } };
 
         settingsPersistenceLayer.GetUserSettingByUserIdAsync(123, UserSettings.Status)
@@ -80,12 +80,12 @@ public class UpdateHandlerTests
         var settingsPersistenceLayer = Substitute.For<ISettingsPersistenceLayer>();
         var defaultStatusHandler = Substitute.For<IDefaultStatusHandler>();
         var logger = Substitute.For<ILogger<UpdateHandler>>();
-        var handler = new UpdateHandler(botWrapper, settingsPersistenceLayer, 
+        var handler = new UpdateHandler(botWrapper, settingsPersistenceLayer,
             [], defaultStatusHandler, logger);
 
-        var message = new Message 
+        var message = new Message
             { From = new User { Id = 123 }, Chat = new Chat { Id = 456, Type = ChatType.Private } };
-        
+
         defaultStatusHandler.HandleAsync(message, CancellationToken.None)
             .Throws(new Exception("Test exception"));
 
@@ -94,7 +94,7 @@ public class UpdateHandlerTests
 
         // Assert
         await botClient.Received(1).SendRequest(
-            Arg.Is<SendMessageRequest>(r => r.Text.Contains("Sorry, mate")), 
+            Arg.Is<SendMessageRequest>(r => r.Text.Contains("Sorry, mate")),
             CancellationToken.None);
     }
 
@@ -107,7 +107,7 @@ public class UpdateHandlerTests
         // Arrange
         var defaultStatusHandler = Substitute.For<IDefaultStatusHandler>();
         var logger = Substitute.For<ILogger<UpdateHandler>>();
-        var handler = new UpdateHandler(null!, null!, null!, defaultStatusHandler, 
+        var handler = new UpdateHandler(null!, null!, null!, defaultStatusHandler,
             logger);
         var message = new Message();
 
@@ -125,12 +125,12 @@ public class UpdateHandlerTests
         // Arrange
         var defaultStatusHandler = Substitute.For<IDefaultStatusHandler>();
         var logger = Substitute.For<ILogger<UpdateHandler>>();
-        var handler = new UpdateHandler(null!, null!, null!, defaultStatusHandler, 
+        var handler = new UpdateHandler(null!, null!, null!, defaultStatusHandler,
             logger);
         var message = new Message { Chat = new Chat { Type = ChatType.Group } };
 
         // Act
-        await handler.OnMessageAsync(message, UpdateType.Message, 
+        await handler.OnMessageAsync(message, UpdateType.Message,
             CancellationToken.None);
 
         // Assert
@@ -144,13 +144,13 @@ public class UpdateHandlerTests
         // Arrange
         var defaultStatusHandler = Substitute.For<IDefaultStatusHandler>();
         var logger = Substitute.For<ILogger<UpdateHandler>>();
-        var handler = new UpdateHandler(null!, null!, null!, defaultStatusHandler, 
+        var handler = new UpdateHandler(null!, null!, null!, defaultStatusHandler,
             logger);
-        var message = new Message 
+        var message = new Message
             { From = null, Chat = new Chat { Type = ChatType.Private } };
 
         // Act
-        await handler.OnMessageAsync(message, UpdateType.Message, 
+        await handler.OnMessageAsync(message, UpdateType.Message,
             CancellationToken.None);
 
         // Assert

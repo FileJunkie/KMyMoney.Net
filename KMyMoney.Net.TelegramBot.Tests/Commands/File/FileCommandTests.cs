@@ -23,12 +23,12 @@ public class FileCommandTests
         var fileAccessorFactory = Substitute.For<IFileAccessorFactory>();
         botWrapper.Bot.Returns(botClient);
         var command = new FileCommand(
-            settingsPersistenceLayer, 
+            settingsPersistenceLayer,
             fileEntryStatusHandler,
             fileAccessorFactory,
             botWrapper);
 
-        var message = new Message 
+        var message = new Message
             { From = new User { Id = 123 }, Chat = new Chat { Id = 456 } };
         const string token = "valid_token";
 
@@ -44,7 +44,7 @@ public class FileCommandTests
 
         // Assert
         await botClient.Received(1).SendRequest(
-            Arg.Is<SendMessageRequest>(r => r.Text.Contains("Choose .kmy file")), 
+            Arg.Is<SendMessageRequest>(r => r.Text.Contains("Choose .kmy file")),
             CancellationToken.None);
         fileAccessorFactory.Received(1).CreateFileAccessor(Arg.Any<string>());
         await fileAccessor.Received(1).ListFilesAsync();
@@ -60,10 +60,10 @@ public class FileCommandTests
         var botWrapper = Substitute.For<ITelegramBotClientWrapper>();
         var fileAccessorFactory = Substitute.For<IFileAccessorFactory>();
         botWrapper.Bot.Returns(botClient);
-        var command = new FileCommand(settingsPersistenceLayer, 
+        var command = new FileCommand(settingsPersistenceLayer,
             fileEntryStatusHandler, fileAccessorFactory, botWrapper);
 
-        var message = new Message 
+        var message = new Message
             { From = new User { Id = 123 }, Chat = new Chat { Id = 456 } };
 
         settingsPersistenceLayer.GetUserSettingByUserIdAsync(123, UserSettings.Token)
@@ -75,7 +75,7 @@ public class FileCommandTests
         // Assert
         await botClient.Received(1).SendRequest(
             Arg.Is<SendMessageRequest>(
-                r => r.Text.Contains("Log in with /login command first")), 
+                r => r.Text.Contains("Log in with /login command first")),
             CancellationToken.None);
     }
 
@@ -89,16 +89,16 @@ public class FileCommandTests
         var botWrapper = Substitute.For<ITelegramBotClientWrapper>();
         var fileAccessorFactory = Substitute.For<IFileAccessorFactory>();
         botWrapper.Bot.Returns(botClient);
-        var command = new FileCommand(settingsPersistenceLayer, 
+        var command = new FileCommand(settingsPersistenceLayer,
             fileEntryStatusHandler, fileAccessorFactory, botWrapper);
 
-        var message = new Message 
+        var message = new Message
             { From = new User { Id = 123 }, Chat = new Chat { Id = 456 } };
         const string token = "valid_token";
 
         settingsPersistenceLayer.GetUserSettingByUserIdAsync(123, UserSettings.Token)
             .Returns(token);
-        
+
         var fileAccessor = Substitute.For<IFileAccessor>();
         fileAccessorFactory.CreateFileAccessor(Arg.Any<string>()).Returns(fileAccessor);
         fileAccessor.ListFilesAsync().Returns([]);
@@ -109,7 +109,7 @@ public class FileCommandTests
         // Assert
         await botClient.Received(1).SendRequest(
             Arg.Is<SendMessageRequest>(
-                r => r.Text.Contains("You have no .kmy files, mate")), 
+                r => r.Text.Contains("You have no .kmy files, mate")),
             CancellationToken.None);
     }
 }
