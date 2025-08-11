@@ -23,7 +23,7 @@ public class PricesExtensionsTests
                 }
             ]
         };
-        
+
         // Act
         var result = prices.ConvertCurrency(100m, "EUR", "USD");
 

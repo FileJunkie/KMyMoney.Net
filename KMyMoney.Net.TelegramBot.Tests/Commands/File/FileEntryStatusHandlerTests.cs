@@ -20,19 +20,19 @@ public class FileEntryStatusHandlerTests
         var settingsPersistenceLayer = Substitute.For<ISettingsPersistenceLayer>();
         var handler = new FileEntryStatusHandler(botWrapper, settingsPersistenceLayer);
 
-        var message = new Message 
+        var message = new Message
             { From = new User { Id = 123 }, Chat = new Chat { Id = 456 }, Text = "test.kmy" };
 
         // Act
         await handler.HandleAsync(message, CancellationToken.None);
 
         // Assert
-        await settingsPersistenceLayer.Received(1).SetUserSettingByUserIdAsync(123, 
-            UserSettings.FilePath, "/test.kmy", 
+        await settingsPersistenceLayer.Received(1).SetUserSettingByUserIdAsync(123,
+            UserSettings.FilePath, "/test.kmy",
             cancellationToken: CancellationToken.None);
         await botClient.Received(1).SendRequest(
             Arg.Is<SendMessageRequest>(
-                r => r.Text.Contains("Got your file path, saving")), 
+                r => r.Text.Contains("Got your file path, saving")),
             CancellationToken.None);
     }
 
@@ -46,7 +46,7 @@ public class FileEntryStatusHandlerTests
         var settingsPersistenceLayer = Substitute.For<ISettingsPersistenceLayer>();
         var handler = new FileEntryStatusHandler(botWrapper, settingsPersistenceLayer);
 
-        var message = new Message 
+        var message = new Message
             { From = new User { Id = 123 }, Chat = new Chat { Id = 456 }, Text = "" };
 
         // Act
@@ -54,7 +54,7 @@ public class FileEntryStatusHandlerTests
 
         // Assert
         await botClient.Received(1).SendRequest(
-            Arg.Is<SendMessageRequest>(r => r.Text.Contains("Empty path, really?")), 
+            Arg.Is<SendMessageRequest>(r => r.Text.Contains("Empty path, really?")),
             CancellationToken.None);
     }
 }

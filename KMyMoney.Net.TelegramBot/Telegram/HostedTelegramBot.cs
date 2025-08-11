@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography;
 using KMyMoney.Net.TelegramBot.Commands;
 using KMyMoney.Net.TelegramBot.Persistence;
@@ -33,16 +34,7 @@ public sealed class HostedTelegramBot(
         else
         {
             await botWrapper.Bot.DeleteWebhook(cancellationToken: cancellationToken);
-            if (botWrapper.Bot is TelegramBotClient telegramBot)
-            {
-                telegramBot.OnMessage += (message, type) =>
-                    updateHandler.OnMessageAsync(message, type, cancellationToken);
-                telegramBot.OnError += updateHandler.OnErrorAsync;
-            }
-            else
-            {
-                throw new Exception($"What kind of type {botWrapper.Bot.GetType()} is?");
-            }
+            SetupEventHandling(cancellationToken);
         }
 
         await botWrapper.Bot.SetMyCommands(
@@ -54,4 +46,20 @@ public sealed class HostedTelegramBot(
     {
         await botWrapper.StopAsync();
     }
+
+    [ExcludeFromCodeCoverage(Justification = "Only testable on real telegram bot client")]
+    private void SetupEventHandling(CancellationToken cancellationToken)
+    {
+        if (botWrapper.Bot is TelegramBotClient telegramBot)
+        {
+            telegramBot.OnMessage += (message, type) =>
+                updateHandler.OnMessageAsync(message, type, cancellationToken);
+            telegramBot.OnError += updateHandler.OnErrorAsync;
+        }
+        else
+        {
+            throw new Exception($"What kind of type {botWrapper.Bot.GetType()} is?");
+        }
+    }
+
 }

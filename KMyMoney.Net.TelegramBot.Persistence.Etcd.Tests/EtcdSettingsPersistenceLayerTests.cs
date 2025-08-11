@@ -29,7 +29,7 @@ public class EtcdSettingsPersistenceLayerTests
         const UserSettings setting = UserSettings.FilePath;
         const string expectedValue = "/path/to/file.kmy";
         var key = $"kmymoney-test/users/{userId}/{setting}";
-        
+
         var response = new RangeResponse
         {
             Kvs = { new KeyValue { Value = ByteString.CopyFromUtf8(expectedValue) } },
@@ -62,7 +62,7 @@ public class EtcdSettingsPersistenceLayerTests
         const long userId = 12345;
         const UserSettings setting = UserSettings.FilePath;
         var key = $"kmymoney-test/users/{userId}/{setting}";
-        
+
         etcdClient.GetAsync(key).Returns(Task.FromResult(new RangeResponse()));
 
         // Act

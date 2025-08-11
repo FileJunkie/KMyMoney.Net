@@ -46,7 +46,7 @@ public class LoginCommandTests
             "123",
             TimeSpan.FromMinutes(10),
             CancellationToken.None);
-        
+
         await botClient.Received(1).SendRequest(
             Arg.Is<SendMessageRequest>(r => r.Text.Contains(authUri.ToString())),
             CancellationToken.None);

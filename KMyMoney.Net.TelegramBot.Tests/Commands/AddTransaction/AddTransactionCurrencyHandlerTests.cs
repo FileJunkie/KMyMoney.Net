@@ -18,23 +18,23 @@ public class AddTransactionCurrencyHandlerTests
         var botWrapper = Substitute.For<ITelegramBotClientWrapper>();
         botWrapper.Bot.Returns(botClient);
         var settingsPersistenceLayer = Substitute.For<ISettingsPersistenceLayer>();
-        var addTransactionPriceHandler = 
+        var addTransactionPriceHandler =
             new AddTransactionPriceHandler(null!, null!, null!);
-        var handler = new AddTransactionCurrencyHandler(botWrapper, 
+        var handler = new AddTransactionCurrencyHandler(botWrapper,
             settingsPersistenceLayer, addTransactionPriceHandler);
 
-        var message = new Message 
+        var message = new Message
             { From = new User { Id = 123 }, Chat = new Chat { Id = 456 }, Text = "USD" };
 
         // Act
         await handler.HandleAsync(message, CancellationToken.None);
 
         // Assert
-        await settingsPersistenceLayer.Received(1).SetUserSettingByUserIdAsync(123, 
+        await settingsPersistenceLayer.Received(1).SetUserSettingByUserIdAsync(123,
             UserSettings.Currency, "USD", cancellationToken: CancellationToken.None);
         await botClient.Received(1).SendRequest(
             Arg.Is<SendMessageRequest>(
-                r => r.Text.Contains("Enter transaction amount")), 
+                r => r.Text.Contains("Enter transaction amount")),
             CancellationToken.None);
     }
 
@@ -46,12 +46,12 @@ public class AddTransactionCurrencyHandlerTests
         var botWrapper = Substitute.For<ITelegramBotClientWrapper>();
         botWrapper.Bot.Returns(botClient);
         var settingsPersistenceLayer = Substitute.For<ISettingsPersistenceLayer>();
-        var addTransactionPriceHandler = 
+        var addTransactionPriceHandler =
             new AddTransactionPriceHandler(null!, null!, null!);
-        var handler = new AddTransactionCurrencyHandler(botWrapper, 
+        var handler = new AddTransactionCurrencyHandler(botWrapper,
             settingsPersistenceLayer, addTransactionPriceHandler);
 
-        var message = new Message 
+        var message = new Message
             { From = new User { Id = 123 }, Chat = new Chat { Id = 456 }, Text = "" };
 
         // Act
@@ -59,7 +59,7 @@ public class AddTransactionCurrencyHandlerTests
 
         // Assert
         await botClient.Received(1).SendRequest(
-            Arg.Is<SendMessageRequest>(r => r.Text.Contains("Currency no chosen")), 
+            Arg.Is<SendMessageRequest>(r => r.Text.Contains("Currency no chosen")),
             CancellationToken.None);
     }
 }

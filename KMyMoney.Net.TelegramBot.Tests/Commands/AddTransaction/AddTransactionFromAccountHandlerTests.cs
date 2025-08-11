@@ -25,17 +25,17 @@ public class AddTransactionFromAccountHandlerTests
         var addTransactionToAccountHandler = new AddTransactionToAccountHandler(
             null!, null!, null!, null!);
         var fileLoader = Substitute.For<IFileLoader>();
-        var handler = new AddTransactionFromAccountHandler(botWrapper, 
+        var handler = new AddTransactionFromAccountHandler(botWrapper,
             settingsPersistenceLayer, addTransactionToAccountHandler, fileLoader);
 
-        var message = new Message 
-        { 
-            From = new User { Id = 123 }, 
-            Chat = new Chat { Id = 456 }, 
-            Text = "Checking Account" 
+        var message = new Message
+        {
+            From = new User { Id = 123 },
+            Chat = new Chat { Id = 456 },
+            Text = "Checking Account"
         };
-        var kmyFile = new KMyMoneyFile(new Uri("file:///test.kmy"), 
-            Substitute.For<IFileAccessor>(), 
+        var kmyFile = new KMyMoneyFile(new Uri("file:///test.kmy"),
+            Substitute.For<IFileAccessor>(),
             TestUtils.CreateTestKmyMoneyFileRoot());
 
         fileLoader.LoadKMyMoneyFileOrSendErrorAsync(message, CancellationToken.None)
@@ -45,12 +45,12 @@ public class AddTransactionFromAccountHandlerTests
         await handler.HandleAsync(message, CancellationToken.None);
 
         // Assert
-        await settingsPersistenceLayer.Received(1).SetUserSettingByUserIdAsync(123, 
-            UserSettings.AccountFrom, "Checking Account", 
+        await settingsPersistenceLayer.Received(1).SetUserSettingByUserIdAsync(123,
+            UserSettings.AccountFrom, "Checking Account",
             cancellationToken: CancellationToken.None);
         await botClient.Received(1).SendRequest(
             Arg.Is<SendMessageRequest>(
-                r => r.Text.Contains("Choose account to put money into")), 
+                r => r.Text.Contains("Choose account to put money into")),
             CancellationToken.None);
     }
 
@@ -65,17 +65,17 @@ public class AddTransactionFromAccountHandlerTests
         var addTransactionToAccountHandler = new AddTransactionToAccountHandler(
             null!, null!, null!, null!);
         var fileLoader = Substitute.For<IFileLoader>();
-        var handler = new AddTransactionFromAccountHandler(botWrapper, 
+        var handler = new AddTransactionFromAccountHandler(botWrapper,
             settingsPersistenceLayer, addTransactionToAccountHandler, fileLoader);
 
-        var message = new Message 
-        { 
-            From = new User { Id = 123 }, 
-            Chat = new Chat { Id = 456 }, 
-            Text = "Invalid Account" 
+        var message = new Message
+        {
+            From = new User { Id = 123 },
+            Chat = new Chat { Id = 456 },
+            Text = "Invalid Account"
         };
-        var kmyFile = new KMyMoneyFile(new Uri("file:///test.kmy"), 
-            Substitute.For<IFileAccessor>(), 
+        var kmyFile = new KMyMoneyFile(new Uri("file:///test.kmy"),
+            Substitute.For<IFileAccessor>(),
             TestUtils.CreateTestKmyMoneyFileRoot());
 
         fileLoader.LoadKMyMoneyFileOrSendErrorAsync(message, CancellationToken.None)
@@ -86,7 +86,40 @@ public class AddTransactionFromAccountHandlerTests
 
         // Assert
         await botClient.Received(1).SendRequest(
-            Arg.Is<SendMessageRequest>(r => r.Text.Contains("Wrong account, aborting")), 
+            Arg.Is<SendMessageRequest>(r => r.Text.Contains("Wrong account, aborting")),
+            CancellationToken.None);
+    }
+
+    [Fact]
+    public async Task HandleAsync_ShouldAbort_WhenFileIsNotLoaded()
+    {
+        // Arrange
+        var botClient = Substitute.For<ITelegramBotClient>();
+        var botWrapper = Substitute.For<ITelegramBotClientWrapper>();
+        botWrapper.Bot.Returns(botClient);
+        var settingsPersistenceLayer = Substitute.For<ISettingsPersistenceLayer>();
+        var addTransactionToAccountHandler = new AddTransactionToAccountHandler(
+            null!, null!, null!, null!);
+        var fileLoader = Substitute.For<IFileLoader>();
+        var handler = new AddTransactionFromAccountHandler(botWrapper,
+            settingsPersistenceLayer, addTransactionToAccountHandler, fileLoader);
+
+        var message = new Message
+        {
+            From = new User { Id = 123 },
+            Chat = new Chat { Id = 456 },
+            Text = "Checking Account"
+        };
+
+        fileLoader.LoadKMyMoneyFileOrSendErrorAsync(message, CancellationToken.None)
+            .Returns((KMyMoneyFile?)null);
+
+        // Act
+        await handler.HandleAsync(message, CancellationToken.None);
+
+        // Assert
+        await botClient.DidNotReceiveWithAnyArgs().SendRequest(
+            Arg.Any<SendMessageRequest>(),
             CancellationToken.None);
     }
 }

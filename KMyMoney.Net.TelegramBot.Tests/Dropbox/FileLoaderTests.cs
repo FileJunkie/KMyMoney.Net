@@ -1,4 +1,3 @@
-using KMyMoney.Net.Core;
 using KMyMoney.Net.Core.FileAccessors;
 using KMyMoney.Net.TelegramBot.Dropbox;
 using KMyMoney.Net.TelegramBot.Persistence;

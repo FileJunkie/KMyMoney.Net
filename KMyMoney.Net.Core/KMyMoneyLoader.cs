@@ -17,7 +17,7 @@ public class KMyMoneyLoader
 
     public Task<KMyMoneyFile> LoadFileAsync(Uri uri)
     {
-        var accessor = _fileAccessors.FirstOrDefault(acc => acc.UriSupported(uri)) 
+        var accessor = _fileAccessors.FirstOrDefault(acc => acc.UriSupported(uri))
                        ?? throw new($"Don't know what to do with {uri}");
         return LoadFileAsync(accessor, uri);
     }
