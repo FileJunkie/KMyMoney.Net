@@ -1,5 +1,6 @@
 using System.Security.Cryptography;
 using Dropbox.Api;
+using KMyMoney.Net.TelegramBot.Common;
 using KMyMoney.Net.TelegramBot.Dropbox;
 using KMyMoney.Net.TelegramBot.Persistence;
 using KMyMoney.Net.TelegramBot.Settings;
@@ -14,15 +15,16 @@ public class LoginCommand(
     ISettingsPersistenceLayer settingsPersistenceLayer,
     IDropboxOAuth2HelperWrapper dropboxOAuth2HelperWrapper,
     IOptions<DropboxSettings> dropboxSettings) :
-    ICommand
+    AbstractMessageHandler(settingsPersistenceLayer), ICommand
 {
+    private readonly ISettingsPersistenceLayer _settingsPersistenceLayer = settingsPersistenceLayer;
     public string Command => "login";
     public string Description => "Log in into Dropbox";
 
-    public async Task HandleAsync(Message message, CancellationToken cancellationToken)
+    protected override async Task HandleAfterResettingStatusAsync(Message message, CancellationToken cancellationToken)
     {
         var state = RandomNumberGenerator.GetHexString(16);
-        await settingsPersistenceLayer.SetSavedValueByKeyAsync(
+        await _settingsPersistenceLayer.SetSavedValueByKeyAsync(
             $"states/{state}",
             message.From!.Id.ToString(),
             TimeSpan.FromMinutes(10),

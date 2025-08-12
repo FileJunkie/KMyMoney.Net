@@ -1,15 +1,18 @@
 using System.Text;
 using KMyMoney.Net.TelegramBot.Commands;
+using KMyMoney.Net.TelegramBot.Common;
+using KMyMoney.Net.TelegramBot.Persistence;
 using KMyMoney.Net.TelegramBot.Telegram;
 using Telegram.Bot.Types;
 
 namespace KMyMoney.Net.TelegramBot.StatusHandlers;
 
 public class DefaultStatusHandler(
+    ISettingsPersistenceLayer settingsPersistenceLayer,
     ITelegramBotClientWrapper botClientWrapper,
-    IEnumerable<ICommand> commands) : IDefaultStatusHandler
+    IEnumerable<ICommand> commands) : AbstractMessageHandler(settingsPersistenceLayer), IDefaultStatusHandler
 {
-    public async Task HandleAsync(Message message, CancellationToken cancellationToken)
+    protected override async Task HandleAfterResettingStatusAsync(Message message, CancellationToken cancellationToken)
     {
         var command = ExtractCommand(message.Text);
 

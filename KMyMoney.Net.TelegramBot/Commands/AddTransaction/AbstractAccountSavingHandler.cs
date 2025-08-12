@@ -39,11 +39,6 @@ public abstract class AbstractAccountSavingHandler(
                     message.Chat.Id,
                     "Wrong account, aborting",
                     cancellationToken: cancellationToken);
-            await _settingsPersistenceLayer.SetUserSettingByUserIdAsync(
-                message.From!.Id,
-                UserSettings.Status,
-                null,
-                cancellationToken: cancellationToken);
             return;
         }
 

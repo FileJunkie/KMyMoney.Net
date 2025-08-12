@@ -6,12 +6,14 @@ namespace KMyMoney.Net.TelegramBot.Common;
 
 public abstract class AbstractMessageHandlerWithNextStep(
     ISettingsPersistenceLayer settingsPersistenceLayer,
-    IConditionalStatusHandler nextStatusHandler) : IMessageHandler
+    IConditionalStatusHandler nextStatusHandler) : AbstractMessageHandler(settingsPersistenceLayer)
 {
-    public async Task HandleAsync(Message message, CancellationToken cancellationToken)
+    private readonly ISettingsPersistenceLayer _settingsPersistenceLayer = settingsPersistenceLayer;
+
+    protected override async Task HandleAfterResettingStatusAsync(Message message, CancellationToken cancellationToken)
     {
         await HandleInternalAsync(message, cancellationToken);
-        await settingsPersistenceLayer.SetUserSettingByUserIdAsync(
+        await _settingsPersistenceLayer.SetUserSettingByUserIdAsync(
             message.From!.Id,
             UserSettings.Status,
             nextStatusHandler.HandledStatus,

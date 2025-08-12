@@ -28,11 +28,6 @@ public class AddTransactionCurrencyHandler(
                     "Currency no chosen, aborting",
                     replyMarkup: new ReplyKeyboardRemove(),
                     cancellationToken: cancellationToken);
-            await _settingsPersistenceLayer.SetUserSettingByUserIdAsync(
-                message.From!.Id,
-                UserSettings.Status,
-                null,
-                cancellationToken: cancellationToken);
             return;
         }
 

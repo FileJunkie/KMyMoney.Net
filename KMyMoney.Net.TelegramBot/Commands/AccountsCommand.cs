@@ -1,5 +1,7 @@
 using System.Text;
+using KMyMoney.Net.TelegramBot.Common;
 using KMyMoney.Net.TelegramBot.Dropbox;
+using KMyMoney.Net.TelegramBot.Persistence;
 using KMyMoney.Net.TelegramBot.Telegram;
 using Telegram.Bot.Types;
 
@@ -7,13 +9,14 @@ namespace KMyMoney.Net.TelegramBot.Commands;
 
 public class AccountsCommand(
     ITelegramBotClientWrapper botClient,
+    ISettingsPersistenceLayer settingsPersistenceLayer,
     IFileLoader fileLoader) :
-    ICommand
+    AbstractMessageHandler(settingsPersistenceLayer), ICommand
 {
     public string Command => "accounts";
     public string Description => "Get accounts from .kmy file";
 
-    public async Task HandleAsync(Message message, CancellationToken cancellationToken)
+    protected override async Task HandleAfterResettingStatusAsync(Message message, CancellationToken cancellationToken)
     {
         var file = await fileLoader.LoadKMyMoneyFileOrSendErrorAsync(
             message, cancellationToken);
