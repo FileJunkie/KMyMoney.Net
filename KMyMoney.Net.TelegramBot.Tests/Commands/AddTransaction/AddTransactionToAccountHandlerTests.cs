@@ -23,7 +23,10 @@ public class AddTransactionToAccountHandlerTests
         botWrapper.Bot.Returns(botClient);
         var settingsPersistenceLayer = Substitute.For<ISettingsPersistenceLayer>();
         var addTransactionCurrencyHandler = new AddTransactionCurrencyHandler(
-            null!, null!, null!);
+            Substitute.For<ITelegramBotClientWrapper>(),
+            Substitute.For<ISettingsPersistenceLayer>(),
+            new AddTransactionPriceHandler(null!, null!, null!),
+            Substitute.For<IFileLoader>());
         var fileLoader = Substitute.For<IFileLoader>();
         var handler = new AddTransactionToAccountHandler(botWrapper,
             settingsPersistenceLayer, addTransactionCurrencyHandler, fileLoader);
@@ -65,7 +68,10 @@ public class AddTransactionToAccountHandlerTests
         botWrapper.Bot.Returns(botClient);
         var settingsPersistenceLayer = Substitute.For<ISettingsPersistenceLayer>();
         var addTransactionCurrencyHandler = new AddTransactionCurrencyHandler(
-            null!, null!, null!);
+            Substitute.For<ITelegramBotClientWrapper>(),
+            Substitute.For<ISettingsPersistenceLayer>(),
+            new AddTransactionPriceHandler(null!, null!, null!),
+            Substitute.For<IFileLoader>());
         var fileLoader = Substitute.For<IFileLoader>();
         var handler = new AddTransactionToAccountHandler(botWrapper,
             settingsPersistenceLayer, addTransactionCurrencyHandler, fileLoader);
@@ -101,7 +107,10 @@ public class AddTransactionToAccountHandlerTests
         botWrapper.Bot.Returns(botClient);
         var settingsPersistenceLayer = Substitute.For<ISettingsPersistenceLayer>();
         var addTransactionCurrencyHandler = new AddTransactionCurrencyHandler(
-            null!, null!, null!);
+            Substitute.For<ITelegramBotClientWrapper>(),
+            Substitute.For<ISettingsPersistenceLayer>(),
+            new AddTransactionPriceHandler(null!, null!, null!),
+            Substitute.For<IFileLoader>());
         var fileLoader = Substitute.For<IFileLoader>();
         var handler = new AddTransactionToAccountHandler(botWrapper,
             settingsPersistenceLayer, addTransactionCurrencyHandler, fileLoader);
