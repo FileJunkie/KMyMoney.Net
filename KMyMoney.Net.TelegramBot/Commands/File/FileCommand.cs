@@ -18,7 +18,7 @@ public class FileCommand(
     public string Command => "file";
     public string Description => "Setting path do the file inside Dropbox";
 
-    protected override async Task HandleInternalAsync(Message message, CancellationToken cancellationToken)
+    protected override async Task<bool> HandleInternalAsync(Message message, CancellationToken cancellationToken)
     {
         var token = await _settingsPersistenceLayer.GetUserSettingByUserIdAsync(
             message.From!.Id,
@@ -30,7 +30,7 @@ public class FileCommand(
                 message.Chat.Id,
                 "Log in with /login command first",
                 cancellationToken: cancellationToken);
-            return;
+            return false;
         }
 
         var dropboxFileAccessor = fileAccessorFactory.CreateFileAccessor(token);
@@ -41,7 +41,7 @@ public class FileCommand(
                 message.Chat.Id,
                 text: "You have no .kmy files, mate",
                 cancellationToken: cancellationToken);
-            return;
+            return false;
         }
 
         await botClient.Bot.SendMessageAsync(
@@ -52,5 +52,7 @@ public class FileCommand(
                 fileList.Select(file => new KeyboardButton(file)).ToArray()
             },
             cancellationToken:cancellationToken);
+
+        return true;
     }
 }

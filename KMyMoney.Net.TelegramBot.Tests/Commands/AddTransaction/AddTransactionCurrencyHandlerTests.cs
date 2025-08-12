@@ -59,7 +59,7 @@ public class AddTransactionCurrencyHandlerTests
 
         // Assert
         await botClient.Received(1).SendRequest(
-            Arg.Is<SendMessageRequest>(r => r.Text.Contains("Currency no chosen")),
+            Arg.Is<SendMessageRequest>(r => r.Text.Contains("Currency not chosen")),
             CancellationToken.None);
     }
 }

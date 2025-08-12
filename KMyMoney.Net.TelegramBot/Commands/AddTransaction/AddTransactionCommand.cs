@@ -19,13 +19,13 @@ public class AddTransactionCommand(
     public string Command => "add_transaction";
     public string Description => "Adds a new transaction";
 
-    protected override async Task HandleInternalAsync(Message message, CancellationToken cancellationToken)
+    protected override async Task<bool> HandleInternalAsync(Message message, CancellationToken cancellationToken)
     {
         var file = await fileLoader.LoadKMyMoneyFileOrSendErrorAsync(
             message, cancellationToken);
         if (file == null)
         {
-            return;
+            return false;
         }
 
         var lastTransactionPerAccount = file
@@ -49,5 +49,6 @@ public class AddTransactionCommand(
                 "Choose account to take money from",
                 replyMarkup: keyboard,
                 cancellationToken: cancellationToken);
+        return true;
     }
 }
