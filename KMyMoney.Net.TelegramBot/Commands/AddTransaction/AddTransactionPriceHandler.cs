@@ -1,4 +1,5 @@
 using KMyMoney.Net.Core;
+using KMyMoney.Net.TelegramBot.Common;
 using KMyMoney.Net.TelegramBot.Dropbox;
 using KMyMoney.Net.TelegramBot.Persistence;
 using KMyMoney.Net.TelegramBot.StatusHandlers;
@@ -10,19 +11,14 @@ namespace KMyMoney.Net.TelegramBot.Commands.AddTransaction;
 public class AddTransactionPriceHandler(
     ITelegramBotClientWrapper botClient,
     ISettingsPersistenceLayer settingsPersistenceLayer,
-    IFileLoader fileLoader) : IConditionalStatusHandler
+    IFileLoader fileLoader) : AbstractMessageHandler(settingsPersistenceLayer), IConditionalStatusHandler
 {
+    private readonly ISettingsPersistenceLayer _settingsPersistenceLayer = settingsPersistenceLayer;
     public string HandledStatus => "AddTransactionEnteringPrice";
 
-    public async Task HandleAsync(Message message, CancellationToken cancellationToken)
+    protected override async Task HandleAfterResettingStatusAsync(Message message, CancellationToken cancellationToken)
     {
-        await settingsPersistenceLayer.SetUserSettingByUserIdAsync(
-            message.From!.Id,
-            UserSettings.Status,
-            null,
-            cancellationToken: cancellationToken);
-
-        var accountFrom = await settingsPersistenceLayer.GetUserSettingByUserIdAsync(
+        var accountFrom = await _settingsPersistenceLayer.GetUserSettingByUserIdAsync(
             message.From!.Id,
             UserSettings.AccountFrom,
             cancellationToken: cancellationToken);
@@ -36,7 +32,7 @@ public class AddTransactionPriceHandler(
             return;
         }
 
-        var accountTo = await settingsPersistenceLayer.GetUserSettingByUserIdAsync(
+        var accountTo = await _settingsPersistenceLayer.GetUserSettingByUserIdAsync(
             message.From!.Id,
             UserSettings.AccountTo,
             cancellationToken: cancellationToken);
@@ -50,7 +46,7 @@ public class AddTransactionPriceHandler(
             return;
         }
 
-        var currency = await settingsPersistenceLayer.GetUserSettingByUserIdAsync(
+        var currency = await _settingsPersistenceLayer.GetUserSettingByUserIdAsync(
             message.From!.Id,
             UserSettings.Currency,
             cancellationToken: cancellationToken);

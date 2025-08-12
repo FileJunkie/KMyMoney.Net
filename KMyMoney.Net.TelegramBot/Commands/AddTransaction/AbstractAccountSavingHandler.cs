@@ -17,7 +17,7 @@ public abstract class AbstractAccountSavingHandler(
 {
     private readonly ISettingsPersistenceLayer _settingsPersistenceLayer = settingsPersistenceLayer;
 
-    protected sealed override async Task HandleInternalAsync(
+    protected sealed override async Task<bool> HandleInternalAsync(
         Message message,
         CancellationToken cancellationToken)
     {
@@ -25,7 +25,7 @@ public abstract class AbstractAccountSavingHandler(
             message, cancellationToken);
         if (file == null)
         {
-            return;
+            return false;
         }
 
         if (string.IsNullOrWhiteSpace(message.Text) ||
@@ -39,12 +39,7 @@ public abstract class AbstractAccountSavingHandler(
                     message.Chat.Id,
                     "Wrong account, aborting",
                     cancellationToken: cancellationToken);
-            await _settingsPersistenceLayer.SetUserSettingByUserIdAsync(
-                message.From!.Id,
-                UserSettings.Status,
-                null,
-                cancellationToken: cancellationToken);
-            return;
+            return false;
         }
 
         await _settingsPersistenceLayer.SetUserSettingByUserIdAsync(
@@ -54,6 +49,7 @@ public abstract class AbstractAccountSavingHandler(
             cancellationToken: cancellationToken);
 
         await ContinueAfterSavingAccount(file, message, cancellationToken);
+        return true;
     }
 
     protected abstract Task ContinueAfterSavingAccount(
