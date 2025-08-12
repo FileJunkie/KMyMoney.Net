@@ -3,6 +3,7 @@ using KMyMoney.Net.Core.FileAccessors;
 using KMyMoney.Net.Models;
 using KMyMoney.Net.TelegramBot.Commands;
 using KMyMoney.Net.TelegramBot.Dropbox;
+using KMyMoney.Net.TelegramBot.Persistence;
 using KMyMoney.Net.TelegramBot.Telegram;
 using NSubstitute;
 using Telegram.Bot;
@@ -23,7 +24,8 @@ public class AccountsCommandTests
         var botWrapper = Substitute.For<ITelegramBotClientWrapper>();
         botWrapper.Bot.Returns(botClient);
         var fileLoader = Substitute.For<IFileLoader>();
-        var command = new AccountsCommand(botWrapper, fileLoader);
+        var settingsPersistenceLayer = Substitute.For<ISettingsPersistenceLayer>();
+        var command = new AccountsCommand(botWrapper, settingsPersistenceLayer, fileLoader);
 
         var message = new Message { From = new TelegramUser { Id = 123 }, Chat = new Chat { Id = 456 } };
         var kmyFile = new KMyMoneyFile(new Uri("file:///test.kmy"),
@@ -37,8 +39,13 @@ public class AccountsCommandTests
 
         // Assert
         await botClient.Received(1).SendRequest(Arg.Is<SendMessageRequest>(
-            r => r.Text.Contains("Checking Account")),
+                r => r.Text.Contains("Checking Account")),
             CancellationToken.None);
+        await settingsPersistenceLayer.Received(1).SetUserSettingByUserIdAsync(
+            123,
+            UserSettings.Status,
+            null,
+            cancellationToken: CancellationToken.None);
     }
 
     [Fact]
@@ -49,7 +56,8 @@ public class AccountsCommandTests
         var botWrapper = Substitute.For<ITelegramBotClientWrapper>();
         botWrapper.Bot.Returns(botClient);
         var fileLoader = Substitute.For<IFileLoader>();
-        var command = new AccountsCommand(botWrapper, fileLoader);
+        var settingsPersistenceLayer = Substitute.For<ISettingsPersistenceLayer>();
+        var command = new AccountsCommand(botWrapper, settingsPersistenceLayer, fileLoader);
 
         var message = new Message { From = new TelegramUser { Id = 123 }, Chat = new Chat { Id = 456 } };
 
@@ -61,6 +69,11 @@ public class AccountsCommandTests
 
         // Assert
         await botClient.DidNotReceiveWithAnyArgs().SendRequest(Arg.Any<IRequest<Message>>(), CancellationToken.None);
+        await settingsPersistenceLayer.Received(1).SetUserSettingByUserIdAsync(
+            123,
+            UserSettings.Status,
+            null,
+            cancellationToken: CancellationToken.None);
     }
 
     private static KmyMoneyFileRoot CreateTestKmyMoneyFileRootWithData() => new()

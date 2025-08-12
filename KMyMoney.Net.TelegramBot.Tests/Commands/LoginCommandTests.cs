@@ -50,5 +50,11 @@ public class LoginCommandTests
         await botClient.Received(1).SendRequest(
             Arg.Is<SendMessageRequest>(r => r.Text.Contains(authUri.ToString())),
             CancellationToken.None);
+
+        await settingsPersistenceLayer.Received(1).SetUserSettingByUserIdAsync(
+            123,
+            UserSettings.Status,
+            null,
+            cancellationToken: CancellationToken.None);
     }
 }
