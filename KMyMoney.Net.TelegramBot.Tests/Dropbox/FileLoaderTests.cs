@@ -1,5 +1,6 @@
 using KMyMoney.Net.Core.FileAccessors;
 using KMyMoney.Net.TelegramBot.Dropbox;
+using KMyMoney.Net.TelegramBot.FileAccess;
 using KMyMoney.Net.TelegramBot.Persistence;
 using KMyMoney.Net.TelegramBot.Telegram;
 using KMyMoney.Net.Tests.Common;
@@ -22,7 +23,7 @@ public class FileLoaderTests
         var botWrapper = Substitute.For<ITelegramBotClientWrapper>();
         botWrapper.Bot.Returns(botClient);
         var fileAccessor = Substitute.For<IFileAccessor>();
-        var fileAccessorFactory = Substitute.For<IFileAccessorFactory>();
+        var fileAccessorFactory = Substitute.For<IFileAccessService>();
         var fileLoader = new FileLoader(settingsPersistenceLayer, botWrapper, fileAccessorFactory);
 
         var message = new Message { From = new User { Id = 123 }, Chat = new Chat { Id = 456 } };
@@ -51,7 +52,7 @@ public class FileLoaderTests
         var botClient = Substitute.For<ITelegramBotClient>();
         var botWrapper = Substitute.For<ITelegramBotClientWrapper>();
         botWrapper.Bot.Returns(botClient);
-        var fileAccessorFactory = Substitute.For<IFileAccessorFactory>();
+        var fileAccessorFactory = Substitute.For<IFileAccessService>();
         var fileLoader = new FileLoader(settingsPersistenceLayer, botWrapper, fileAccessorFactory);
 
         var message = new Message { From = new User { Id = 123 }, Chat = new Chat { Id = 456 } };
@@ -75,7 +76,7 @@ public class FileLoaderTests
         var botClient = Substitute.For<ITelegramBotClient>();
         var botWrapper = Substitute.For<ITelegramBotClientWrapper>();
         botWrapper.Bot.Returns(botClient);
-        var fileAccessorFactory = Substitute.For<IFileAccessorFactory>();
+        var fileAccessorFactory = Substitute.For<IFileAccessService>();
         var fileLoader = new FileLoader(settingsPersistenceLayer, botWrapper, fileAccessorFactory);
 
         var message = new Message { From = new User { Id = 123 }, Chat = new Chat { Id = 456 } };

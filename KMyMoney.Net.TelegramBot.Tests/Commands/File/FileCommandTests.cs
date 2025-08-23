@@ -1,6 +1,7 @@
 using KMyMoney.Net.Core.FileAccessors;
 using KMyMoney.Net.TelegramBot.Commands.File;
 using KMyMoney.Net.TelegramBot.Dropbox;
+using KMyMoney.Net.TelegramBot.FileAccess;
 using KMyMoney.Net.TelegramBot.Persistence;
 using KMyMoney.Net.TelegramBot.Telegram;
 using NSubstitute;
@@ -20,7 +21,7 @@ public class FileCommandTests
         var fileEntryStatusHandler = new FileEntryStatusHandler(null!, null!);
         var botClient = Substitute.For<ITelegramBotClient>();
         var botWrapper = Substitute.For<ITelegramBotClientWrapper>();
-        var fileAccessorFactory = Substitute.For<IFileAccessorFactory>();
+        var fileAccessorFactory = Substitute.For<IFileAccessService>();
         botWrapper.Bot.Returns(botClient);
         var command = new FileCommand(
             settingsPersistenceLayer,
@@ -58,7 +59,7 @@ public class FileCommandTests
         var fileEntryStatusHandler = new FileEntryStatusHandler(null!, null!);
         var botClient = Substitute.For<ITelegramBotClient>();
         var botWrapper = Substitute.For<ITelegramBotClientWrapper>();
-        var fileAccessorFactory = Substitute.For<IFileAccessorFactory>();
+        var fileAccessorFactory = Substitute.For<IFileAccessService>();
         botWrapper.Bot.Returns(botClient);
         var command = new FileCommand(settingsPersistenceLayer,
             fileEntryStatusHandler, fileAccessorFactory, botWrapper);
@@ -87,7 +88,7 @@ public class FileCommandTests
         var fileEntryStatusHandler = new FileEntryStatusHandler(null!, null!);
         var botClient = Substitute.For<ITelegramBotClient>();
         var botWrapper = Substitute.For<ITelegramBotClientWrapper>();
-        var fileAccessorFactory = Substitute.For<IFileAccessorFactory>();
+        var fileAccessorFactory = Substitute.For<IFileAccessService>();
         botWrapper.Bot.Returns(botClient);
         var command = new FileCommand(settingsPersistenceLayer,
             fileEntryStatusHandler, fileAccessorFactory, botWrapper);

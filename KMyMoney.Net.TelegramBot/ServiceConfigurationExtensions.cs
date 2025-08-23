@@ -2,6 +2,7 @@ using KMyMoney.Net.TelegramBot.Commands;
 using KMyMoney.Net.TelegramBot.Commands.AddTransaction;
 using KMyMoney.Net.TelegramBot.Commands.File;
 using KMyMoney.Net.TelegramBot.Dropbox;
+using KMyMoney.Net.TelegramBot.FileAccess;
 using KMyMoney.Net.TelegramBot.Persistence.Etcd;
 using KMyMoney.Net.TelegramBot.Services;
 using KMyMoney.Net.TelegramBot.Settings;
@@ -18,40 +19,24 @@ public static class ServiceConfigurationExtensions
         this IServiceCollection services,
         IConfiguration configuration) =>
         services
-            .ConfigureSettings(configuration)
-            .ConfigurePersistenceLayer()
+            .ConfigurePersistenceLayer(configuration)
             .ConfigureCommandsAndHandlers()
-            .ConfigureTelegram()
-            .ConfigureDropbox()
+            .ConfigureTelegram(configuration)
+            .ConfigureStorage(configuration)
             .ConfigureSystem();
 
-    private static IServiceCollection ConfigureSettings(
-        this IServiceCollection services,
-        IConfiguration configuration) => services
-        .AddOptions<DropboxSettings>()
-        .Bind(configuration.GetSection("Dropbox"))
-        .ValidateDataAnnotations()
-        .ValidateOnStart()
-        .Services
-        .AddOptions<TelegramSettings>()
-        .Bind(configuration.GetSection("Telegram"))
-        .ValidateDataAnnotations()
-        .ValidateOnStart()
-        .Services
-        .AddOptions<EtcdSettings>()
-        .Bind(configuration.GetSection("Etcd"))
-        .ValidateDataAnnotations()
-        .ValidateOnStart()
-        .Services;
-
-    private static IServiceCollection ConfigurePersistenceLayer(this IServiceCollection services)
-        => services.TryAddEtcdPersistenceLayer();
+    private static IServiceCollection ConfigurePersistenceLayer(
+        this IServiceCollection services, IConfiguration configuration)
+        => services
+            .AddOptions<EtcdSettings>()
+            .Bind(configuration.GetSection("Etcd"))
+            .ValidateDataAnnotations()
+            .ValidateOnStart()
+            .Services
+            .TryAddEtcdPersistenceLayer();
 
     private static IServiceCollection ConfigureCommandsAndHandlers(this IServiceCollection services) => services
         .AddSingleton<IDefaultStatusHandler, DefaultStatusHandler>()
-        .AddSingleton<ICommand, LoginCommand>()
-        .AddSingleton<ICommand, FileCommand>()
-        .AddStatusHandler<FileEntryStatusHandler>()
         .AddSingleton<ICommand, AccountsCommand>()
         .AddSingleton<ICommand, AddTransactionCommand>()
         .AddStatusHandler<AddTransactionFromAccountHandler>()
@@ -59,20 +44,65 @@ public static class ServiceConfigurationExtensions
         .AddStatusHandler<AddTransactionCurrencyHandler>()
         .AddStatusHandler<AddTransactionPriceHandler>();
 
-    private static IServiceCollection ConfigureTelegram(this IServiceCollection services)
+    private static IServiceCollection ConfigureTelegram(
+        this IServiceCollection services,
+        IConfiguration configuration)
     {
         services.TryAddSingleton<ITelegramBotClientWrapper, TelegramBotClientWrapper>();
 
         return services
+            .AddOptions<TelegramSettings>()
+            .Bind(configuration.GetSection("Telegram"))
+            .ValidateDataAnnotations()
+            .ValidateOnStart()
+            .Services
             .AddHostedService<HostedTelegramBot>()
             .AddSingleton<IUpdateHandler, UpdateHandler>()
             .ConfigureTelegramBotMvc();
     }
 
-    private static IServiceCollection ConfigureDropbox(this IServiceCollection services) => services
+    private static IServiceCollection ConfigureStorage(
+        this IServiceCollection services,
+        IConfiguration configuration)
+    {
+        var configurationSection = configuration.GetSection("Dropbox");
+        if (configurationSection.Exists())
+        {
+            services = services.ConfigureDropbox(configurationSection);
+        }
+
+        configurationSection = configuration.GetSection("LocalStorage");
+        if (configurationSection.Exists())
+        {
+            services = services.ConfigureLocalStorage(configurationSection);
+        }
+
+        return services.AddSingleton<IFileLoader, FileLoader>();
+    }
+
+    private static IServiceCollection ConfigureDropbox(
+        this IServiceCollection services,
+        IConfigurationSection configurationSection) => services
+        .AddOptions<DropboxSettings>()
+        .Bind(configurationSection)
+        .ValidateDataAnnotations()
+        .ValidateOnStart()
+        .Services
         .AddSingleton<IDropboxOAuth2HelperWrapper, DropboxOAuth2HelperWrapper>()
-        .AddSingleton<IFileAccessorFactory, DropboxFileAccessorFactory>()
-        .AddSingleton<IFileLoader, FileLoader>();
+        .AddSingleton<IFileAccessService, DropboxFileAccessService>()
+        .AddSingleton<ICommand, LoginCommand>()
+        .AddSingleton<ICommand, FileCommand>()
+        .AddStatusHandler<FileEntryStatusHandler>();
+
+    private static IServiceCollection ConfigureLocalStorage(
+        this IServiceCollection services,
+        IConfigurationSection configurationSection) => services
+        .AddOptions<LocalStorageSettings>()
+        .Bind(configurationSection)
+        .ValidateDataAnnotations()
+        .ValidateOnStart()
+        .Services
+        .AddSingleton<IFileAccessService, LocalFileAccessService>();
 
     private static IServiceCollection ConfigureSystem(this IServiceCollection services) => services
         .AddSystemd()

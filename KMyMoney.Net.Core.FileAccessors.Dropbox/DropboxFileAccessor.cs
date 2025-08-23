@@ -51,4 +51,6 @@ public class DropboxFileAccessor(string token) : IFileAccessor
                 new(fileExtensions: ["kmy"])));
         return searchResults.Matches.Select(m => m.Metadata.AsMetadata.Value.PathLower);
     }
+
+    public string UriPrefix => "dropbox://";
 }
