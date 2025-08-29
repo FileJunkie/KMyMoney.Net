@@ -24,4 +24,6 @@ public class LocalFileAccessor : IFileAccessor
     {
         throw new NotImplementedException();
     }
+
+    public string UriPrefix => "file://";
 }

@@ -1,5 +1,6 @@
 using KMyMoney.Net.TelegramBot.Common;
 using KMyMoney.Net.TelegramBot.Dropbox;
+using KMyMoney.Net.TelegramBot.FileAccess;
 using KMyMoney.Net.TelegramBot.Persistence;
 using KMyMoney.Net.TelegramBot.Telegram;
 using Telegram.Bot.Types;
@@ -10,31 +11,22 @@ namespace KMyMoney.Net.TelegramBot.Commands.File;
 public class FileCommand(
     ISettingsPersistenceLayer settingsPersistenceLayer,
     FileEntryStatusHandler fileEntryStatusHandler,
-    IFileAccessorFactory fileAccessorFactory,
+    IFileAccessService fileAccessService,
     ITelegramBotClientWrapper botClient) :
     AbstractMessageHandlerWithNextStep(settingsPersistenceLayer, fileEntryStatusHandler), ICommand
 {
-    private readonly ISettingsPersistenceLayer _settingsPersistenceLayer = settingsPersistenceLayer;
     public string Command => "file";
     public string Description => "Setting path do the file inside Dropbox";
 
     protected override async Task<bool> HandleInternalAsync(Message message, CancellationToken cancellationToken)
     {
-        var token = await _settingsPersistenceLayer.GetUserSettingByUserIdAsync(
-            message.From!.Id,
-            UserSettings.Token,
-            cancellationToken);
-        if (string.IsNullOrWhiteSpace(token))
+        var fileAccessor = await fileAccessService.CreateFileAccessorAsync(message, cancellationToken);
+        if (fileAccessor == null)
         {
-            await botClient.Bot.SendMessageAsync(
-                message.Chat.Id,
-                "Log in with /login command first",
-                cancellationToken: cancellationToken);
             return false;
         }
 
-        var dropboxFileAccessor = fileAccessorFactory.CreateFileAccessor(token);
-        var fileList = (await dropboxFileAccessor.ListFilesAsync()).ToList();
+        var fileList = (await fileAccessor.ListFilesAsync()).ToList();
         if (fileList.Count == 0)
         {
             await botClient.Bot.SendMessageAsync(

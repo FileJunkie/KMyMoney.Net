@@ -6,4 +6,5 @@ public interface IFileAccessor
     Task<Stream> GetReadStreamAsync(Uri uri);
     Task UpdateFileAsync(Uri uri, Stream stream);
     Task<IEnumerable<string>> ListFilesAsync();
+    string UriPrefix { get; }
 }

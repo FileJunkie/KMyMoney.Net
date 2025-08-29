@@ -1,7 +1,7 @@
 using KMyMoney.Net.Core;
 using Telegram.Bot.Types;
 
-namespace KMyMoney.Net.TelegramBot.Dropbox;
+namespace KMyMoney.Net.TelegramBot.FileAccess;
 
 public interface IFileLoader
 {

@@ -73,7 +73,8 @@ public class WebhookControllerTests
         var result = await controller.Post(update, secretToken, CancellationToken.None);
 
         // Assert
-        result.ShouldBeOfType<OkResult>();
+        result.ShouldBeOfType<ObjectResult>()
+            .StatusCode.ShouldBe(500);
         await updateHandler.Received(1).OnErrorAsync(exception, HandleErrorSource.HandleUpdateError);
     }
 

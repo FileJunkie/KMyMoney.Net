@@ -2,6 +2,7 @@ using KMyMoney.Net.Core;
 using KMyMoney.Net.Core.FileAccessors;
 using KMyMoney.Net.TelegramBot.Commands.AddTransaction;
 using KMyMoney.Net.TelegramBot.Dropbox;
+using KMyMoney.Net.TelegramBot.FileAccess;
 using KMyMoney.Net.TelegramBot.Persistence;
 using KMyMoney.Net.TelegramBot.Telegram;
 using KMyMoney.Net.Tests.Common;

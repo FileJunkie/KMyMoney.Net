@@ -20,7 +20,9 @@ public sealed class ServiceConfigurationTests
         var configuration = new ConfigurationBuilder()
             .AddInMemoryCollection(new Dictionary<string, string?>
             {
-                [$"Telegram:{nameof(TelegramSettings.ApiToken)}"] = "value"
+                [$"Telegram:{nameof(TelegramSettings.ApiToken)}"] = "value",
+                [$"Dropbox:{nameof(DropboxSettings.ApiKey)}"] = "value",
+                [$"Dropbox:{nameof(DropboxSettings.ApiSecret)}"] = "value",
             })
             .Build();
 
