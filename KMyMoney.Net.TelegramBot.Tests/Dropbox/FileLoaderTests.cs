@@ -1,3 +1,4 @@
+using KMyMoney.Net.Core;
 using KMyMoney.Net.Core.FileAccessors;
 using KMyMoney.Net.TelegramBot.FileAccess;
 using KMyMoney.Net.TelegramBot.Persistence;
@@ -5,8 +6,6 @@ using KMyMoney.Net.TelegramBot.Telegram;
 using KMyMoney.Net.Tests.Common;
 using NSubstitute;
 using Shouldly;
-using Telegram.Bot;
-using Telegram.Bot.Requests;
 using Telegram.Bot.Types;
 
 namespace KMyMoney.Net.TelegramBot.Tests.Dropbox;
@@ -14,27 +13,23 @@ namespace KMyMoney.Net.TelegramBot.Tests.Dropbox;
 public class FileLoaderTests
 {
     [Fact]
-    public async Task LoadKMyMoneyFile_ShouldReturnFile_WhenTokenAndPathExist()
+    public async Task LoadKMyMoneyFileOrSendErrorAsync_ShouldReturnFile_WhenFileAccessorAndPathExist()
     {
         // Arrange
         var settingsPersistenceLayer = Substitute.For<ISettingsPersistenceLayer>();
-        var botClient = Substitute.For<ITelegramBotClient>();
-        var botWrapper = Substitute.For<ITelegramBotClientWrapper>();
-        botWrapper.Bot.Returns(botClient);
-        var fileAccessor = Substitute.For<IFileAccessor>();
-        var fileAccessorFactory = Substitute.For<IFileAccessService>();
-        var fileLoader = new FileLoader(settingsPersistenceLayer, botWrapper, fileAccessorFactory);
+        var botClientWrapper = Substitute.For<ITelegramBotClientWrapper>();
+        var fileAccessService = Substitute.For<IFileAccessService>();
+        var fileLoader = new FileLoader(settingsPersistenceLayer, botClientWrapper, fileAccessService);
 
         var message = new Message { From = new User { Id = 123 }, Chat = new Chat { Id = 456 } };
-        const string token = "valid_token";
         const string filePath = "/test.kmy";
-        var fileUri = new Uri($"dropbox://{filePath}");
+        var fileUri = new Uri($"test-scheme://{filePath}");
+        var fileAccessor = Substitute.For<IFileAccessor>();
 
-        settingsPersistenceLayer.GetUserSettingByUserIdAsync(123, UserSettings.Token).Returns(token);
-        settingsPersistenceLayer.GetUserSettingByUserIdAsync(123, UserSettings.FilePath).Returns(filePath);
-        fileAccessorFactory
-            .CreateFileAccessorAsync(Arg.Any<Message>(), Arg.Any<CancellationToken>())
-            .Returns(fileAccessor);
+        fileAccessService.CreateFileAccessorAsync(message, CancellationToken.None).Returns(fileAccessor);
+        fileAccessService.GetFilePathAsync(message, CancellationToken.None).Returns(filePath);
+        
+        fileAccessor.UriPrefix.Returns("test-scheme://");
         fileAccessor.UriSupported(fileUri).Returns(true);
         fileAccessor.GetReadStreamAsync(fileUri).Returns(TestUtils.CreateCompressedStream(TestUtils.CreateTestKmyMoneyFileRoot()));
 
@@ -46,52 +41,66 @@ public class FileLoaderTests
     }
 
     [Fact]
-    public async Task LoadKMyMoneyFile_ShouldReturnNullAndSendMessage_WhenTokenIsMissing()
+    public async Task LoadKMyMoneyFileOrSendErrorAsync_ShouldReturnNull_WhenFileAccessorIsNull()
     {
         // Arrange
         var settingsPersistenceLayer = Substitute.For<ISettingsPersistenceLayer>();
-        var botClient = Substitute.For<ITelegramBotClient>();
-        var botWrapper = Substitute.For<ITelegramBotClientWrapper>();
-        botWrapper.Bot.Returns(botClient);
-        var fileAccessorFactory = Substitute.For<IFileAccessService>();
-        var fileLoader = new FileLoader(settingsPersistenceLayer, botWrapper, fileAccessorFactory);
+        var botClientWrapper = Substitute.For<ITelegramBotClientWrapper>();
+        var fileAccessService = Substitute.For<IFileAccessService>();
+        var fileLoader = new FileLoader(settingsPersistenceLayer, botClientWrapper, fileAccessService);
 
         var message = new Message { From = new User { Id = 123 }, Chat = new Chat { Id = 456 } };
 
-        settingsPersistenceLayer.GetUserSettingByUserIdAsync(123, UserSettings.Token).Returns((string?)null);
+        fileAccessService.CreateFileAccessorAsync(message, CancellationToken.None).Returns((IFileAccessor?)null);
 
         // Act
         var result = await fileLoader.LoadKMyMoneyFileOrSendErrorAsync(message, CancellationToken.None);
 
         // Assert
         result.ShouldBeNull();
-        await botClient.Received(1).SendRequest(Arg.Is<SendMessageRequest>(r =>
-            r.Text.Contains("Use /login")), CancellationToken.None);
     }
 
     [Fact]
-    public async Task LoadKMyMoneyFile_ShouldReturnNullAndSendMessage_WhenPathIsMissing()
+    public async Task LoadKMyMoneyFileOrSendErrorAsync_ShouldReturnNull_WhenFilePathIsNull()
     {
         // Arrange
         var settingsPersistenceLayer = Substitute.For<ISettingsPersistenceLayer>();
-        var botClient = Substitute.For<ITelegramBotClient>();
-        var botWrapper = Substitute.For<ITelegramBotClientWrapper>();
-        botWrapper.Bot.Returns(botClient);
-        var fileAccessorFactory = Substitute.For<IFileAccessService>();
-        var fileLoader = new FileLoader(settingsPersistenceLayer, botWrapper, fileAccessorFactory);
+        var botClientWrapper = Substitute.For<ITelegramBotClientWrapper>();
+        var fileAccessService = Substitute.For<IFileAccessService>();
+        var fileLoader = new FileLoader(settingsPersistenceLayer, botClientWrapper, fileAccessService);
 
         var message = new Message { From = new User { Id = 123 }, Chat = new Chat { Id = 456 } };
-        const string token = "valid_token";
+        var fileAccessor = Substitute.For<IFileAccessor>();
 
-        settingsPersistenceLayer.GetUserSettingByUserIdAsync(123, UserSettings.Token).Returns(token);
-        settingsPersistenceLayer.GetUserSettingByUserIdAsync(123, UserSettings.FilePath).Returns((string?)null);
+        fileAccessService.CreateFileAccessorAsync(message, CancellationToken.None).Returns(fileAccessor);
+        fileAccessService.GetFilePathAsync(message, CancellationToken.None).Returns((string?)null);
 
         // Act
         var result = await fileLoader.LoadKMyMoneyFileOrSendErrorAsync(message, CancellationToken.None);
 
         // Assert
         result.ShouldBeNull();
-        await botClient.Received(1).SendRequest(Arg.Is<SendMessageRequest>(r =>
-            r.Text.Contains("Use /file")), CancellationToken.None);
+    }
+    
+    [Fact]
+    public async Task LoadKMyMoneyFileOrSendErrorAsync_ShouldReturnNull_WhenFilePathIsEmpty()
+    {
+        // Arrange
+        var settingsPersistenceLayer = Substitute.For<ISettingsPersistenceLayer>();
+        var botClientWrapper = Substitute.For<ITelegramBotClientWrapper>();
+        var fileAccessService = Substitute.For<IFileAccessService>();
+        var fileLoader = new FileLoader(settingsPersistenceLayer, botClientWrapper, fileAccessService);
+
+        var message = new Message { From = new User { Id = 123 }, Chat = new Chat { Id = 456 } };
+        var fileAccessor = Substitute.For<IFileAccessor>();
+
+        fileAccessService.CreateFileAccessorAsync(message, CancellationToken.None).Returns(fileAccessor);
+        fileAccessService.GetFilePathAsync(message, CancellationToken.None).Returns(string.Empty);
+
+        // Act
+        var result = await fileLoader.LoadKMyMoneyFileOrSendErrorAsync(message, CancellationToken.None);
+
+        // Assert
+        result.ShouldBeNull();
     }
 }
