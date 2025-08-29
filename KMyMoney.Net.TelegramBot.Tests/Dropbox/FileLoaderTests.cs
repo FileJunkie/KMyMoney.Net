@@ -1,5 +1,4 @@
 using KMyMoney.Net.Core.FileAccessors;
-using KMyMoney.Net.TelegramBot.Dropbox;
 using KMyMoney.Net.TelegramBot.FileAccess;
 using KMyMoney.Net.TelegramBot.Persistence;
 using KMyMoney.Net.TelegramBot.Telegram;
@@ -33,7 +32,9 @@ public class FileLoaderTests
 
         settingsPersistenceLayer.GetUserSettingByUserIdAsync(123, UserSettings.Token).Returns(token);
         settingsPersistenceLayer.GetUserSettingByUserIdAsync(123, UserSettings.FilePath).Returns(filePath);
-        fileAccessorFactory.CreateFileAccessor(token).Returns(fileAccessor);
+        fileAccessorFactory
+            .CreateFileAccessorAsync(Arg.Any<Message>(), Arg.Any<CancellationToken>())
+            .Returns(fileAccessor);
         fileAccessor.UriSupported(fileUri).Returns(true);
         fileAccessor.GetReadStreamAsync(fileUri).Returns(TestUtils.CreateCompressedStream(TestUtils.CreateTestKmyMoneyFileRoot()));
 

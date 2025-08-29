@@ -39,6 +39,7 @@ public class WebhookController(
         catch (Exception exception)
         {
             await updateHandler.OnErrorAsync(exception, global::Telegram.Bot.Polling.HandleErrorSource.HandleUpdateError);
+            return Problem();
         }
 
         return Ok();

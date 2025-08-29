@@ -42,7 +42,10 @@ public static class ServiceConfigurationExtensions
         .AddStatusHandler<AddTransactionFromAccountHandler>()
         .AddStatusHandler<AddTransactionToAccountHandler>()
         .AddStatusHandler<AddTransactionCurrencyHandler>()
-        .AddStatusHandler<AddTransactionPriceHandler>();
+        .AddStatusHandler<AddTransactionPriceHandler>()
+        .AddSingleton<ICommand, LoginCommand>()
+        .AddSingleton<ICommand, FileCommand>()
+        .AddStatusHandler<FileEntryStatusHandler>();
 
     private static IServiceCollection ConfigureTelegram(
         this IServiceCollection services,
@@ -71,12 +74,6 @@ public static class ServiceConfigurationExtensions
             services = services.ConfigureDropbox(configurationSection);
         }
 
-        configurationSection = configuration.GetSection("LocalStorage");
-        if (configurationSection.Exists())
-        {
-            services = services.ConfigureLocalStorage(configurationSection);
-        }
-
         return services.AddSingleton<IFileLoader, FileLoader>();
     }
 
@@ -89,20 +86,7 @@ public static class ServiceConfigurationExtensions
         .ValidateOnStart()
         .Services
         .AddSingleton<IDropboxOAuth2HelperWrapper, DropboxOAuth2HelperWrapper>()
-        .AddSingleton<IFileAccessService, DropboxFileAccessService>()
-        .AddSingleton<ICommand, LoginCommand>()
-        .AddSingleton<ICommand, FileCommand>()
-        .AddStatusHandler<FileEntryStatusHandler>();
-
-    private static IServiceCollection ConfigureLocalStorage(
-        this IServiceCollection services,
-        IConfigurationSection configurationSection) => services
-        .AddOptions<LocalStorageSettings>()
-        .Bind(configurationSection)
-        .ValidateDataAnnotations()
-        .ValidateOnStart()
-        .Services
-        .AddSingleton<IFileAccessService, LocalFileAccessService>();
+        .AddSingleton<IFileAccessService, DropboxFileAccessService>();
 
     private static IServiceCollection ConfigureSystem(this IServiceCollection services) => services
         .AddSystemd()

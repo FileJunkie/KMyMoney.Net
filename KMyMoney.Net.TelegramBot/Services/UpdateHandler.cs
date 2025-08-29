@@ -56,7 +56,7 @@ public class UpdateHandler(
             logger.LogError(e, "Unhandled exception");
             await botWrapper.Bot.SendMessageAsync(
                 message.Chat.Id,
-                "Sorry, mate, something went really wrong",
+                $"Sorry, mate, something went really wrong at {System.Net.Dns.GetHostName()}",
                 cancellationToken: cancellationToken);
         }
     }
