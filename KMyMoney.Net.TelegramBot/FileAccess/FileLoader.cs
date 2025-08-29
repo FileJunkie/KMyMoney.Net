@@ -1,13 +1,9 @@
 using KMyMoney.Net.Core;
-using KMyMoney.Net.TelegramBot.Persistence;
-using KMyMoney.Net.TelegramBot.Telegram;
 using Telegram.Bot.Types;
 
 namespace KMyMoney.Net.TelegramBot.FileAccess;
 
 public class FileLoader(
-    ISettingsPersistenceLayer settingsPersistenceLayer,
-    ITelegramBotClientWrapper botClientWrapper,
     IFileAccessService fileAccessService) : IFileLoader
 {
     public async Task<KMyMoneyFile?> LoadKMyMoneyFileOrSendErrorAsync(

@@ -16,10 +16,8 @@ public class FileLoaderTests
     public async Task LoadKMyMoneyFileOrSendErrorAsync_ShouldReturnFile_WhenFileAccessorAndPathExist()
     {
         // Arrange
-        var settingsPersistenceLayer = Substitute.For<ISettingsPersistenceLayer>();
-        var botClientWrapper = Substitute.For<ITelegramBotClientWrapper>();
         var fileAccessService = Substitute.For<IFileAccessService>();
-        var fileLoader = new FileLoader(settingsPersistenceLayer, botClientWrapper, fileAccessService);
+        var fileLoader = new FileLoader(fileAccessService);
 
         var message = new Message { From = new User { Id = 123 }, Chat = new Chat { Id = 456 } };
         const string filePath = "/test.kmy";
@@ -44,10 +42,8 @@ public class FileLoaderTests
     public async Task LoadKMyMoneyFileOrSendErrorAsync_ShouldReturnNull_WhenFileAccessorIsNull()
     {
         // Arrange
-        var settingsPersistenceLayer = Substitute.For<ISettingsPersistenceLayer>();
-        var botClientWrapper = Substitute.For<ITelegramBotClientWrapper>();
         var fileAccessService = Substitute.For<IFileAccessService>();
-        var fileLoader = new FileLoader(settingsPersistenceLayer, botClientWrapper, fileAccessService);
+        var fileLoader = new FileLoader(fileAccessService);
 
         var message = new Message { From = new User { Id = 123 }, Chat = new Chat { Id = 456 } };
 
@@ -64,10 +60,8 @@ public class FileLoaderTests
     public async Task LoadKMyMoneyFileOrSendErrorAsync_ShouldReturnNull_WhenFilePathIsNull()
     {
         // Arrange
-        var settingsPersistenceLayer = Substitute.For<ISettingsPersistenceLayer>();
-        var botClientWrapper = Substitute.For<ITelegramBotClientWrapper>();
         var fileAccessService = Substitute.For<IFileAccessService>();
-        var fileLoader = new FileLoader(settingsPersistenceLayer, botClientWrapper, fileAccessService);
+        var fileLoader = new FileLoader(fileAccessService);
 
         var message = new Message { From = new User { Id = 123 }, Chat = new Chat { Id = 456 } };
         var fileAccessor = Substitute.For<IFileAccessor>();
@@ -86,10 +80,8 @@ public class FileLoaderTests
     public async Task LoadKMyMoneyFileOrSendErrorAsync_ShouldReturnNull_WhenFilePathIsEmpty()
     {
         // Arrange
-        var settingsPersistenceLayer = Substitute.For<ISettingsPersistenceLayer>();
-        var botClientWrapper = Substitute.For<ITelegramBotClientWrapper>();
         var fileAccessService = Substitute.For<IFileAccessService>();
-        var fileLoader = new FileLoader(settingsPersistenceLayer, botClientWrapper, fileAccessService);
+        var fileLoader = new FileLoader(fileAccessService);
 
         var message = new Message { From = new User { Id = 123 }, Chat = new Chat { Id = 456 } };
         var fileAccessor = Substitute.For<IFileAccessor>();
