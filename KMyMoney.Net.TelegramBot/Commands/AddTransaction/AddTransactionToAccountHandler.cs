@@ -26,19 +26,11 @@ public class AddTransactionToAccountHandler(
         Message message,
         CancellationToken cancellationToken)
     {
-        var currencies = file.Root.Prices.Values.Select(v => v.From)
-            .Concat(file.Root.Prices.Values.Select(v => v.To))
-            .Where(c => c.Length == 3)
-            .Distinct();
-
-        var keyboard = currencies.SplitBy(5);
-
         await _botClient
             .Bot
             .SendMessage(
                 message.Chat.Id,
-                "Choose currency",
-                replyMarkup: keyboard,
+                "Enter amount and, optionally, currency",
                 cancellationToken: cancellationToken);
     }
 }
