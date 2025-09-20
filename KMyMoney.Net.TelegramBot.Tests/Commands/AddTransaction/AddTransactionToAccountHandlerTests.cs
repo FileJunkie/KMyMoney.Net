@@ -23,14 +23,13 @@ public class AddTransactionToAccountHandlerTests
         var botWrapper = Substitute.For<ITelegramBotClientWrapper>();
         botWrapper.Bot.Returns(botClient);
         var settingsPersistenceLayer = Substitute.For<ISettingsPersistenceLayer>();
-        var addTransactionCurrencyHandler = new AddTransactionCurrencyHandler(
+        var addTransactionPriceHandler = new AddTransactionPriceHandler(
             Substitute.For<ITelegramBotClientWrapper>(),
             Substitute.For<ISettingsPersistenceLayer>(),
-            new AddTransactionPriceHandler(null!, null!, null!),
             Substitute.For<IFileLoader>());
         var fileLoader = Substitute.For<IFileLoader>();
         var handler = new AddTransactionToAccountHandler(botWrapper,
-            settingsPersistenceLayer, addTransactionCurrencyHandler, fileLoader);
+            settingsPersistenceLayer, addTransactionPriceHandler, fileLoader);
 
         var message = new Message
         {
@@ -53,7 +52,7 @@ public class AddTransactionToAccountHandlerTests
             UserSettings.AccountTo, "Checking Account",
             cancellationToken: CancellationToken.None);
         await settingsPersistenceLayer.Received(1).SetUserSettingByUserIdAsync(123,
-            UserSettings.Status, "AddTransactionEnteringCurrency",
+            UserSettings.Status, "AddTransactionEnteringPrice",
             cancellationToken: CancellationToken.None);
         await botClient.Received(1).SendRequest(
             Arg.Is<SendMessageRequest>(r => r.Text.Contains("Choose currency")),
@@ -68,14 +67,13 @@ public class AddTransactionToAccountHandlerTests
         var botWrapper = Substitute.For<ITelegramBotClientWrapper>();
         botWrapper.Bot.Returns(botClient);
         var settingsPersistenceLayer = Substitute.For<ISettingsPersistenceLayer>();
-        var addTransactionCurrencyHandler = new AddTransactionCurrencyHandler(
+        var addTransactionPriceHandler = new AddTransactionPriceHandler(
             Substitute.For<ITelegramBotClientWrapper>(),
             Substitute.For<ISettingsPersistenceLayer>(),
-            new AddTransactionPriceHandler(null!, null!, null!),
             Substitute.For<IFileLoader>());
         var fileLoader = Substitute.For<IFileLoader>();
         var handler = new AddTransactionToAccountHandler(botWrapper,
-            settingsPersistenceLayer, addTransactionCurrencyHandler, fileLoader);
+            settingsPersistenceLayer, addTransactionPriceHandler, fileLoader);
 
         var message = new Message
         {
@@ -107,14 +105,13 @@ public class AddTransactionToAccountHandlerTests
         var botWrapper = Substitute.For<ITelegramBotClientWrapper>();
         botWrapper.Bot.Returns(botClient);
         var settingsPersistenceLayer = Substitute.For<ISettingsPersistenceLayer>();
-        var addTransactionCurrencyHandler = new AddTransactionCurrencyHandler(
+        var addTransactionPriceHandler = new AddTransactionPriceHandler(
             Substitute.For<ITelegramBotClientWrapper>(),
             Substitute.For<ISettingsPersistenceLayer>(),
-            new AddTransactionPriceHandler(null!, null!, null!),
             Substitute.For<IFileLoader>());
         var fileLoader = Substitute.For<IFileLoader>();
         var handler = new AddTransactionToAccountHandler(botWrapper,
-            settingsPersistenceLayer, addTransactionCurrencyHandler, fileLoader);
+            settingsPersistenceLayer, addTransactionPriceHandler, fileLoader);
 
         var message = new Message
         {

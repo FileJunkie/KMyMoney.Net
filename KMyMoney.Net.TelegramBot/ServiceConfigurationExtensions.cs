@@ -41,7 +41,6 @@ public static class ServiceConfigurationExtensions
         .AddSingleton<ICommand, AddTransactionCommand>()
         .AddStatusHandler<AddTransactionFromAccountHandler>()
         .AddStatusHandler<AddTransactionToAccountHandler>()
-        .AddStatusHandler<AddTransactionCurrencyHandler>()
         .AddStatusHandler<AddTransactionPriceHandler>()
         .AddSingleton<ICommand, LoginCommand>()
         .AddSingleton<ICommand, FileCommand>()

@@ -37,9 +37,7 @@ public class AddTransactionPriceHandlerTests
         settingsPersistenceLayer.GetUserSettingByUserIdAsync(123, UserSettings.AccountFrom)
             .Returns("A000001");
         settingsPersistenceLayer.GetUserSettingByUserIdAsync(123, UserSettings.AccountTo)
-            .Returns("A000001"); // Using same account for simplicity
-        settingsPersistenceLayer.GetUserSettingByUserIdAsync(123, UserSettings.Currency)
-            .Returns("USD");
+            .Returns("A000001");
         fileLoader.LoadKMyMoneyFileOrSendErrorAsync(message, CancellationToken.None)
             .Returns(kmyFile);
 
@@ -49,6 +47,41 @@ public class AddTransactionPriceHandlerTests
         // Assert
         await botClient.Received(1).SendRequest(
             Arg.Is<SendMessageRequest>(r => r.Text.Contains("Saved")),
+            CancellationToken.None);
+    }
+    
+    [Fact]
+    public async Task HandleAsync_ShouldComplain_WhenOverridenCurrencyIsIncorrect()
+    {
+        // Arrange
+        var botClient = Substitute.For<ITelegramBotClient>();
+        var botWrapper = Substitute.For<ITelegramBotClientWrapper>();
+        botWrapper.Bot.Returns(botClient);
+        var settingsPersistenceLayer = Substitute.For<ISettingsPersistenceLayer>();
+        var fileLoader = Substitute.For<IFileLoader>();
+        var handler = new AddTransactionPriceHandler(botWrapper,
+            settingsPersistenceLayer, fileLoader);
+
+        var message = new Message
+            { From = new User { Id = 123 }, Chat = new Chat { Id = 456 }, Text = "123.45 &&&" };
+        var kmyMoneyFileRoot = TestUtils.CreateTestKmyMoneyFileRoot();
+        var kmyFile = new KMyMoneyFile(new Uri("file:///test.kmy"),
+            Substitute.For<IFileAccessor>(),
+            kmyMoneyFileRoot);
+
+        settingsPersistenceLayer.GetUserSettingByUserIdAsync(123, UserSettings.AccountFrom)
+            .Returns("A000001");
+        settingsPersistenceLayer.GetUserSettingByUserIdAsync(123, UserSettings.AccountTo)
+            .Returns("A000001");
+        fileLoader.LoadKMyMoneyFileOrSendErrorAsync(message, CancellationToken.None)
+            .Returns(kmyFile);
+
+        // Act
+        await handler.HandleAsync(message, CancellationToken.None);
+
+        // Assert
+        await botClient.Received(1).SendRequest(
+            Arg.Is<SendMessageRequest>(r => r.Text.Contains("What currency is that?")),
             CancellationToken.None);
     }
 
@@ -66,13 +99,17 @@ public class AddTransactionPriceHandlerTests
 
         var message = new Message
             { From = new User { Id = 123 }, Chat = new Chat { Id = 456 }, Text = "invalid" };
+        var kmyMoneyFileRoot = TestUtils.CreateTestKmyMoneyFileRoot();
+        var kmyFile = new KMyMoneyFile(new Uri("file:///test.kmy"),
+            Substitute.For<IFileAccessor>(),
+            kmyMoneyFileRoot);
 
         settingsPersistenceLayer.GetUserSettingByUserIdAsync(123, UserSettings.AccountFrom)
-            .Returns("A1");
+            .Returns("A000001");
         settingsPersistenceLayer.GetUserSettingByUserIdAsync(123, UserSettings.AccountTo)
-            .Returns("A2");
-        settingsPersistenceLayer.GetUserSettingByUserIdAsync(123, UserSettings.Currency)
-            .Returns("USD");
+            .Returns("A000002");
+        fileLoader.LoadKMyMoneyFileOrSendErrorAsync(message, CancellationToken.None)
+            .Returns(kmyFile);
 
         // Act
         await handler.HandleAsync(message, CancellationToken.None);
@@ -98,9 +135,15 @@ public class AddTransactionPriceHandlerTests
 
         var message = new Message
             { From = new User { Id = 123 }, Chat = new Chat { Id = 456 }, Text = "123.45" };
+        var kmyMoneyFileRoot = TestUtils.CreateTestKmyMoneyFileRoot();
+        var kmyFile = new KMyMoneyFile(new Uri("file:///test.kmy"),
+            Substitute.For<IFileAccessor>(),
+            kmyMoneyFileRoot);
 
         settingsPersistenceLayer.GetUserSettingByUserIdAsync(123, UserSettings.AccountFrom)
             .Returns((string?)null);
+        fileLoader.LoadKMyMoneyFileOrSendErrorAsync(message, CancellationToken.None)
+            .Returns(kmyFile);
 
         // Act
         await handler.HandleAsync(message, CancellationToken.None);
@@ -141,7 +184,7 @@ public class AddTransactionPriceHandlerTests
     }
 
     [Fact]
-    public async Task HandleAsync_ShouldSendError_WhenCurrencyIsNull()
+    public async Task HandleAsync_ShouldSendError_WhenCurrencyInFromAccountIsWrong()
     {
         // Arrange
         var botClient = Substitute.For<ITelegramBotClient>();
@@ -154,20 +197,24 @@ public class AddTransactionPriceHandlerTests
 
         var message = new Message
             { From = new User { Id = 123 }, Chat = new Chat { Id = 456 }, Text = "123.45" };
+        var kmyMoneyFileRoot = TestUtils.CreateTestKmyMoneyFileRoot();
+        var kmyFile = new KMyMoneyFile(new Uri("file:///test.kmy"),
+            Substitute.For<IFileAccessor>(),
+            kmyMoneyFileRoot);
 
         settingsPersistenceLayer.GetUserSettingByUserIdAsync(123, UserSettings.AccountFrom)
-            .Returns("A1");
+            .Returns("A0");
         settingsPersistenceLayer.GetUserSettingByUserIdAsync(123, UserSettings.AccountTo)
             .Returns("A2");
-        settingsPersistenceLayer.GetUserSettingByUserIdAsync(123, UserSettings.Currency)
-            .Returns((string?)null);
+        fileLoader.LoadKMyMoneyFileOrSendErrorAsync(message, CancellationToken.None)
+            .Returns(kmyFile);
 
         // Act
         await handler.HandleAsync(message, CancellationToken.None);
 
         // Assert
         await botClient.Received(1).SendRequest(
-            Arg.Is<SendMessageRequest>(r => r.Text.Contains("Currency was somehow null?")),
+            Arg.Is<SendMessageRequest>(r => r.Text.Contains("Problem with finding currency of accountFrom")),
             CancellationToken.None);
     }
 
@@ -190,8 +237,6 @@ public class AddTransactionPriceHandlerTests
             .Returns("A1");
         settingsPersistenceLayer.GetUserSettingByUserIdAsync(123, UserSettings.AccountTo)
             .Returns("A2");
-        settingsPersistenceLayer.GetUserSettingByUserIdAsync(123, UserSettings.Currency)
-            .Returns("USD");
         fileLoader.LoadKMyMoneyFileOrSendErrorAsync(message, CancellationToken.None)
             .Returns((KMyMoneyFile?)null);
 
