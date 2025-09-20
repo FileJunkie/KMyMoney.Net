@@ -55,7 +55,7 @@ public class AddTransactionToAccountHandlerTests
             UserSettings.Status, "AddTransactionEnteringPrice",
             cancellationToken: CancellationToken.None);
         await botClient.Received(1).SendRequest(
-            Arg.Is<SendMessageRequest>(r => r.Text.Contains("Choose currency")),
+            Arg.Is<SendMessageRequest>(r => r.Text.Contains("Enter amount and, optionally, currency")),
             CancellationToken.None);
     }
 
