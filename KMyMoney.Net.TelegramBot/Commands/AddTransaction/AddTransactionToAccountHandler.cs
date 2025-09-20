@@ -13,9 +13,9 @@ namespace KMyMoney.Net.TelegramBot.Commands.AddTransaction;
 public class AddTransactionToAccountHandler(
     ITelegramBotClientWrapper botClient,
     ISettingsPersistenceLayer settingsPersistenceLayer,
-    AddTransactionCurrencyHandler addTransactionCurrencyHandler,
+    AddTransactionPriceHandler addTransactionPriceHandler,
     IFileLoader fileLoader) :
-    AbstractAccountSavingHandler(botClient, settingsPersistenceLayer, addTransactionCurrencyHandler, fileLoader), IConditionalStatusHandler
+    AbstractAccountSavingHandler(botClient, settingsPersistenceLayer, addTransactionPriceHandler, fileLoader), IConditionalStatusHandler
 {
     private readonly ITelegramBotClientWrapper _botClient = botClient;
     public string HandledStatus => "AddTransactionEnteringToAccount";

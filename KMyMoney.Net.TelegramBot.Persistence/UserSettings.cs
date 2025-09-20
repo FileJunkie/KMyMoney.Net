@@ -6,6 +6,5 @@ public enum UserSettings
     FilePath,
     Status,
     AccountFrom,
-    AccountTo,
-    Currency
+    AccountTo
 }

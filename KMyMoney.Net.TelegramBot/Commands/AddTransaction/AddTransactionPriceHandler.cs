@@ -47,21 +47,38 @@ public class AddTransactionPriceHandler(
             return;
         }
 
-        var currency = await _settingsPersistenceLayer.GetUserSettingByUserIdAsync(
-            message.From!.Id,
-            UserSettings.Currency,
-            cancellationToken: cancellationToken);
+        var file = await fileLoader.LoadKMyMoneyFileOrSendErrorAsync(
+            message, cancellationToken);
+        if (file == null)
+        {
+            return;
+        }
+
+        var (amount, currency) = ExtractValueAndCurrency(message.Text);
+        if (!string.IsNullOrEmpty(currency) &&
+            !file.Root.Prices.Values.Any(p => p.From == currency || p.To == currency))
+        {
+            await botClient.Bot.SendMessageAsync(
+                message.Chat.Id,
+                "What currency is that?",
+                cancellationToken: cancellationToken);
+            return;
+        }
+
+        currency ??= file.Root
+            .Accounts.GetByNameOrId(accountFrom)?
+            .Currency;
 
         if (currency == null)
         {
             await botClient.Bot.SendMessageAsync(
                 message.Chat.Id,
-                "Currency was somehow null?",
+                $"Problem with finding currency of accountFrom {accountFrom}",
                 cancellationToken: cancellationToken);
             return;
         }
 
-        if (!decimal.TryParse(message.Text, out var amount))
+        if (!amount.HasValue)
         {
             await botClient.Bot.SendMessageAsync(
                 message.Chat.Id,
@@ -70,17 +87,10 @@ public class AddTransactionPriceHandler(
             return;
         }
 
-        var file = await fileLoader.LoadKMyMoneyFileOrSendErrorAsync(
-            message, cancellationToken);
-        if (file == null)
-        {
-            return;
-        }
-
         file.Root.AddTransaction(
             accountFrom,
             accountTo,
-            amount,
+            amount.Value,
             currency,
             null);
         await file.SaveAsync();
@@ -89,5 +99,30 @@ public class AddTransactionPriceHandler(
             message.Chat.Id,
             "Saved.",
             cancellationToken: cancellationToken);
+    }
+
+    private static (decimal? amount, string? currency) ExtractValueAndCurrency(
+        string? messageText)
+    {
+        if (string.IsNullOrWhiteSpace(messageText))
+        {
+            return (null, null);
+        }
+
+        var components = messageText.Split(" ");
+        decimal? amount = null;
+        string? currency = null;
+
+        if (decimal.TryParse(components[0], out var val))
+        {
+            amount = val;
+        }
+
+        if (components.Length > 1)
+        {
+            currency = components[1];
+        }
+
+        return (amount, currency);
     }
 }
