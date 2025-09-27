@@ -27,10 +27,11 @@ public class DropboxFileAccessService(
                 "Use /login to set access token",
                 cancellationToken: cancellationToken);
 
+            var serializedMessage = JsonSerializer.Serialize(message);
             await settingsPersistenceLayer.SetUserSettingByUserIdAsync(
                 message.From!.Id,
                 UserSettings.LastFailedMessage,
-                value: JsonSerializer.Serialize(message),
+                value: serializedMessage,
                 expiresIn: TimeSpan.FromMinutes(15),
                 cancellationToken: cancellationToken);
             return null;

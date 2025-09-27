@@ -6,6 +6,7 @@ using NSubstitute;
 using Shouldly;
 using Telegram.Bot;
 using Telegram.Bot.Types;
+using Telegram.Bot.Types.Enums;
 
 namespace KMyMoney.Net.TelegramBot.Tests.Dropbox;
 
@@ -36,7 +37,15 @@ public class DropboxFileAccessServiceTests
     {
         // Arrange
         var settingsPersistenceLayer = Substitute.For<ISettingsPersistenceLayer>();
-        var message = new Message { From = new User { Id = 123 }, Chat = new Chat { Id = 456 } };
+        var message = new Message
+        {
+            From = new User { Id = 123 },
+            Chat = new Chat
+            {
+                Id = 456,
+                Type = ChatType.Private,
+            }
+        };
         settingsPersistenceLayer.GetUserSettingByUserIdAsync(message.From.Id, UserSettings.Token, Arg.Any<CancellationToken>())
             .Returns(Task.FromResult<string?>(null));
         var service = new DropboxFileAccessService(settingsPersistenceLayer, Substitute.For<ITelegramBotClientWrapper>());
@@ -48,6 +57,14 @@ public class DropboxFileAccessServiceTests
 
         // Assert
         result.ShouldBeNull();
+        await settingsPersistenceLayer
+            .Received(1)
+            .SetUserSettingByUserIdAsync(
+                message.From.Id,
+                UserSettings.LastFailedMessage,
+                Arg.Any<string?>(),
+                TimeSpan.FromMinutes(15),
+                Arg.Any<CancellationToken>());
     }
 
     [Fact]
