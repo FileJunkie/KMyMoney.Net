@@ -1,9 +1,13 @@
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json;
 using KMyMoney.Net.TelegramBot.Dropbox;
 using KMyMoney.Net.TelegramBot.Persistence;
+using KMyMoney.Net.TelegramBot.Services;
 using KMyMoney.Net.TelegramBot.Settings;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using Telegram.Bot.Types;
+using Telegram.Bot.Types.Enums;
 
 namespace KMyMoney.Net.TelegramBot.Controllers;
 
@@ -13,6 +17,7 @@ public class DropboxController(
     ISettingsPersistenceLayer settingsPersistenceLayer,
     IOptions<DropboxSettings> dropboxSettings,
     IDropboxOAuth2HelperWrapper dropboxOAuth2HelperWrapper,
+    IUpdateHandler updateHandler,
     ILogger<DropboxController> logger) : ControllerBase
 {
     [HttpGet("callback")]
@@ -51,6 +56,28 @@ public class DropboxController(
                 (token.ExpiresAt.Value - DateTimeOffset.Now) :
                 null,
             cancellationToken: cancellationToken);
+
+        var lastFailedMessage = await settingsPersistenceLayer.GetUserSettingByUserIdAsync(
+            userIdLong,
+            UserSettings.LastFailedMessage,
+            cancellationToken);
+        if (!string.IsNullOrWhiteSpace(lastFailedMessage))
+        {
+                _ = Task.Run(() =>
+                    {
+                        var message = JsonSerializer.Deserialize<Message>(lastFailedMessage);
+                        if (message != null)
+                        {
+                            return updateHandler.OnMessageAsync(
+                                message,
+                                UpdateType.Message,
+                                cancellationToken);
+                        }
+
+                        return Task.CompletedTask;
+                    },
+                    cancellationToken);
+        }
 
         return Ok("Logged in");
     }

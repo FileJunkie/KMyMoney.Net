@@ -6,5 +6,6 @@ public enum UserSettings
     FilePath,
     Status,
     AccountFrom,
-    AccountTo
+    AccountTo,
+    LastFailedMessage
 }

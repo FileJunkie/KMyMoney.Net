@@ -3,12 +3,15 @@ using Dropbox.Api;
 using KMyMoney.Net.TelegramBot.Controllers;
 using KMyMoney.Net.TelegramBot.Dropbox;
 using KMyMoney.Net.TelegramBot.Persistence;
+using KMyMoney.Net.TelegramBot.Services;
 using KMyMoney.Net.TelegramBot.Settings;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NSubstitute;
 using Shouldly;
+using Telegram.Bot.Types;
+using Telegram.Bot.Types.Enums;
 
 namespace KMyMoney.Net.TelegramBot.Tests.Controllers;
 
@@ -26,8 +29,14 @@ public class DropboxControllerTests
             RedirectUri = "https://redirect"
         });
         var dropboxOAuth2HelperWrapper = Substitute.For<IDropboxOAuth2HelperWrapper>();
+        var updateHandler = Substitute.For<IUpdateHandler>();
         var logger = Substitute.For<ILogger<DropboxController>>();
-        var controller = new DropboxController(settingsPersistenceLayer, dropboxSettings, dropboxOAuth2HelperWrapper, logger);
+        var controller = new DropboxController(
+            settingsPersistenceLayer,
+            dropboxSettings,
+            dropboxOAuth2HelperWrapper,
+            updateHandler,
+            logger);
 
         const string code = "valid_code";
         const string state = "valid_state";
@@ -65,6 +74,10 @@ public class DropboxControllerTests
             "access_token",
             Arg.Any<TimeSpan?>(),
             CancellationToken.None);
+        await updateHandler.DidNotReceive().OnMessageAsync(
+            Arg.Any<Message>(),
+            Arg.Any<UpdateType>(),
+            Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -78,11 +91,13 @@ public class DropboxControllerTests
             ApiSecret = "secret"
         });
         var dropboxOAuth2HelperWrapper = Substitute.For<IDropboxOAuth2HelperWrapper>();
+        var updateHandler = Substitute.For<IUpdateHandler>();
         var logger = Substitute.For<ILogger<DropboxController>>();
         var controller = new DropboxController(
             settingsPersistenceLayer,
             dropboxSettings,
             dropboxOAuth2HelperWrapper,
+            updateHandler,
             logger);
 
         settingsPersistenceLayer.GetSavedValueByKeyAsync(Arg.Any<string>()).Returns((string?)null);
@@ -92,6 +107,10 @@ public class DropboxControllerTests
 
         // Assert
         result.ShouldBeOfType<BadRequestResult>();
+        await updateHandler.DidNotReceive().OnMessageAsync(
+            Arg.Any<Message>(),
+            Arg.Any<UpdateType>(),
+            Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -106,11 +125,13 @@ public class DropboxControllerTests
             RedirectUri = "https://redirect"
         });
         var dropboxOAuth2HelperWrapper = Substitute.For<IDropboxOAuth2HelperWrapper>();
+        var updateHandler = Substitute.For<IUpdateHandler>();
         var logger = Substitute.For<ILogger<DropboxController>>();
         var controller = new DropboxController(
             settingsPersistenceLayer,
             dropboxSettings,
             dropboxOAuth2HelperWrapper,
+            updateHandler,
             logger);
 
         const string code = "valid_code";
@@ -130,5 +151,9 @@ public class DropboxControllerTests
 
         // Assert
         result.ShouldBeOfType<ForbidResult>();
+        await updateHandler.DidNotReceive().OnMessageAsync(
+            Arg.Any<Message>(),
+            Arg.Any<UpdateType>(),
+            Arg.Any<CancellationToken>());
     }
 }
