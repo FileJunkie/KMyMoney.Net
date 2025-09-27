@@ -1,3 +1,4 @@
+using System.Text.Json;
 using KMyMoney.Net.Core.FileAccessors;
 using KMyMoney.Net.Core.FileAccessors.Dropbox;
 using KMyMoney.Net.TelegramBot.FileAccess;
@@ -24,6 +25,14 @@ public class DropboxFileAccessService(
             await botClientWrapper.Bot.SendMessageAsync(
                 message.Chat.Id,
                 "Use /login to set access token",
+                cancellationToken: cancellationToken);
+
+            var serializedMessage = JsonSerializer.Serialize(message);
+            await settingsPersistenceLayer.SetUserSettingByUserIdAsync(
+                message.From!.Id,
+                UserSettings.LastFailedMessage,
+                value: serializedMessage,
+                expiresIn: TimeSpan.FromMinutes(15),
                 cancellationToken: cancellationToken);
             return null;
         }
