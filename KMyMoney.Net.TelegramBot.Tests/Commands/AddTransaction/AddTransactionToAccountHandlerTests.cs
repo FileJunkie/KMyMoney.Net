@@ -10,6 +10,7 @@ using NSubstitute;
 using Telegram.Bot;
 using Telegram.Bot.Requests;
 using Telegram.Bot.Types;
+using Xunit.Sdk;
 
 namespace KMyMoney.Net.TelegramBot.Tests.Commands.AddTransaction;
 
@@ -26,6 +27,7 @@ public class AddTransactionToAccountHandlerTests
         var addTransactionPriceHandler = new AddTransactionPriceHandler(
             Substitute.For<ITelegramBotClientWrapper>(),
             Substitute.For<ISettingsPersistenceLayer>(),
+            new(null!, null!, null!, null!),
             Substitute.For<IFileLoader>());
         var fileLoader = Substitute.For<IFileLoader>();
         var handler = new AddTransactionToAccountHandler(botWrapper,
@@ -70,6 +72,7 @@ public class AddTransactionToAccountHandlerTests
         var addTransactionPriceHandler = new AddTransactionPriceHandler(
             Substitute.For<ITelegramBotClientWrapper>(),
             Substitute.For<ISettingsPersistenceLayer>(),
+            new(null!, null!, null!, null!),
             Substitute.For<IFileLoader>());
         var fileLoader = Substitute.For<IFileLoader>();
         var handler = new AddTransactionToAccountHandler(botWrapper,
@@ -108,6 +111,7 @@ public class AddTransactionToAccountHandlerTests
         var addTransactionPriceHandler = new AddTransactionPriceHandler(
             Substitute.For<ITelegramBotClientWrapper>(),
             Substitute.For<ISettingsPersistenceLayer>(),
+            new(null!, null!, null!, null!),
             Substitute.For<IFileLoader>());
         var fileLoader = Substitute.For<IFileLoader>();
         var handler = new AddTransactionToAccountHandler(botWrapper,

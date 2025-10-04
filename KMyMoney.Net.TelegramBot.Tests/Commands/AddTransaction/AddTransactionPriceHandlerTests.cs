@@ -24,8 +24,15 @@ public class AddTransactionPriceHandlerTests
         botWrapper.Bot.Returns(botClient);
         var settingsPersistenceLayer = Substitute.For<ISettingsPersistenceLayer>();
         var fileLoader = Substitute.For<IFileLoader>();
-        var handler = new AddTransactionPriceHandler(botWrapper,
-            settingsPersistenceLayer, fileLoader);
+        var handler = new AddTransactionPriceHandler(
+            botWrapper,
+            settingsPersistenceLayer,
+            new AddTransactionFromAccountHandler(
+                null!,
+                null!,
+                null!,
+                null!),
+            fileLoader);
 
         var message = new Message
             { From = new User { Id = 123 }, Chat = new Chat { Id = 456 }, Text = "123.45" };
@@ -59,8 +66,15 @@ public class AddTransactionPriceHandlerTests
         botWrapper.Bot.Returns(botClient);
         var settingsPersistenceLayer = Substitute.For<ISettingsPersistenceLayer>();
         var fileLoader = Substitute.For<IFileLoader>();
-        var handler = new AddTransactionPriceHandler(botWrapper,
-            settingsPersistenceLayer, fileLoader);
+        var handler = new AddTransactionPriceHandler(
+            botWrapper,
+            settingsPersistenceLayer,
+            new AddTransactionFromAccountHandler(
+                null!,
+                null!,
+                null!,
+                null!),
+            fileLoader);
 
         var message = new Message
             { From = new User { Id = 123 }, Chat = new Chat { Id = 456 }, Text = "123.45 &&&" };
@@ -94,8 +108,15 @@ public class AddTransactionPriceHandlerTests
         botWrapper.Bot.Returns(botClient);
         var settingsPersistenceLayer = Substitute.For<ISettingsPersistenceLayer>();
         var fileLoader = Substitute.For<IFileLoader>();
-        var handler = new AddTransactionPriceHandler(botWrapper,
-            settingsPersistenceLayer, fileLoader);
+        var handler = new AddTransactionPriceHandler(
+            botWrapper,
+            settingsPersistenceLayer,
+            new AddTransactionFromAccountHandler(
+                null!,
+                null!,
+                null!,
+                null!),
+            fileLoader);
 
         var message = new Message
             { From = new User { Id = 123 }, Chat = new Chat { Id = 456 }, Text = "invalid" };
@@ -130,8 +151,15 @@ public class AddTransactionPriceHandlerTests
         botWrapper.Bot.Returns(botClient);
         var settingsPersistenceLayer = Substitute.For<ISettingsPersistenceLayer>();
         var fileLoader = Substitute.For<IFileLoader>();
-        var handler = new AddTransactionPriceHandler(botWrapper,
-            settingsPersistenceLayer, fileLoader);
+        var handler = new AddTransactionPriceHandler(
+            botWrapper,
+            settingsPersistenceLayer,
+            new AddTransactionFromAccountHandler(
+                null!,
+                null!,
+                null!,
+                null!),
+            fileLoader);
 
         var message = new Message
             { From = new User { Id = 123 }, Chat = new Chat { Id = 456 }, Text = "123.45" };
@@ -163,8 +191,15 @@ public class AddTransactionPriceHandlerTests
         botWrapper.Bot.Returns(botClient);
         var settingsPersistenceLayer = Substitute.For<ISettingsPersistenceLayer>();
         var fileLoader = Substitute.For<IFileLoader>();
-        var handler = new AddTransactionPriceHandler(botWrapper,
-            settingsPersistenceLayer, fileLoader);
+        var handler = new AddTransactionPriceHandler(
+            botWrapper,
+            settingsPersistenceLayer,
+            new AddTransactionFromAccountHandler(
+                null!,
+                null!,
+                null!,
+                null!),
+            fileLoader);
 
         var message = new Message
             { From = new User { Id = 123 }, Chat = new Chat { Id = 456 }, Text = "123.45" };
@@ -192,8 +227,15 @@ public class AddTransactionPriceHandlerTests
         botWrapper.Bot.Returns(botClient);
         var settingsPersistenceLayer = Substitute.For<ISettingsPersistenceLayer>();
         var fileLoader = Substitute.For<IFileLoader>();
-        var handler = new AddTransactionPriceHandler(botWrapper,
-            settingsPersistenceLayer, fileLoader);
+        var handler = new AddTransactionPriceHandler(
+            botWrapper,
+            settingsPersistenceLayer,
+            new AddTransactionFromAccountHandler(
+                null!,
+                null!,
+                null!,
+                null!),
+            fileLoader);
 
         var message = new Message
             { From = new User { Id = 123 }, Chat = new Chat { Id = 456 }, Text = "123.45" };
@@ -227,8 +269,15 @@ public class AddTransactionPriceHandlerTests
         botWrapper.Bot.Returns(botClient);
         var settingsPersistenceLayer = Substitute.For<ISettingsPersistenceLayer>();
         var fileLoader = Substitute.For<IFileLoader>();
-        var handler = new AddTransactionPriceHandler(botWrapper,
-            settingsPersistenceLayer, fileLoader);
+        var handler = new AddTransactionPriceHandler(
+            botWrapper,
+            settingsPersistenceLayer,
+            new AddTransactionFromAccountHandler(
+                null!,
+                null!,
+                null!,
+                null!),
+            fileLoader);
 
         var message = new Message
             { From = new User { Id = 123 }, Chat = new Chat { Id = 456 }, Text = "123.45" };

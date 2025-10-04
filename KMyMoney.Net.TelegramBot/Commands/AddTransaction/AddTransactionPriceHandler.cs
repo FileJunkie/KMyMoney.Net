@@ -5,6 +5,7 @@ using KMyMoney.Net.TelegramBot.FileAccess;
 using KMyMoney.Net.TelegramBot.Persistence;
 using KMyMoney.Net.TelegramBot.StatusHandlers;
 using KMyMoney.Net.TelegramBot.Telegram;
+using KMyMoney.Net.TelegramBot.Utils;
 using Telegram.Bot.Types;
 
 namespace KMyMoney.Net.TelegramBot.Commands.AddTransaction;
@@ -12,12 +13,15 @@ namespace KMyMoney.Net.TelegramBot.Commands.AddTransaction;
 public class AddTransactionPriceHandler(
     ITelegramBotClientWrapper botClient,
     ISettingsPersistenceLayer settingsPersistenceLayer,
-    IFileLoader fileLoader) : AbstractMessageHandler(settingsPersistenceLayer), IConditionalStatusHandler
+    AddTransactionFromAccountHandler addTransactionFromAccountHandler,
+    IFileLoader fileLoader) :
+    AbstractMessageHandlerWithNextStep(settingsPersistenceLayer, addTransactionFromAccountHandler),
+    IConditionalStatusHandler
 {
     private readonly ISettingsPersistenceLayer _settingsPersistenceLayer = settingsPersistenceLayer;
     public string HandledStatus => "AddTransactionEnteringPrice";
 
-    protected override async Task HandleAfterResettingStatusAsync(Message message, CancellationToken cancellationToken)
+    protected override async Task<bool> HandleInternalAsync(Message message, CancellationToken cancellationToken)
     {
         var accountFrom = await _settingsPersistenceLayer.GetUserSettingByUserIdAsync(
             message.From!.Id,
@@ -30,7 +34,7 @@ public class AddTransactionPriceHandler(
                 message.Chat.Id,
                 "AccountFrom was somehow null?",
                 cancellationToken: cancellationToken);
-            return;
+            return false;
         }
 
         var accountTo = await _settingsPersistenceLayer.GetUserSettingByUserIdAsync(
@@ -44,14 +48,14 @@ public class AddTransactionPriceHandler(
                 message.Chat.Id,
                 "AccountTo was somehow null?",
                 cancellationToken: cancellationToken);
-            return;
+            return false;
         }
 
         var file = await fileLoader.LoadKMyMoneyFileOrSendErrorAsync(
             message, cancellationToken);
         if (file == null)
         {
-            return;
+            return false;
         }
 
         var (amount, currency) = ExtractValueAndCurrency(message.Text);
@@ -62,7 +66,7 @@ public class AddTransactionPriceHandler(
                 message.Chat.Id,
                 "What currency is that?",
                 cancellationToken: cancellationToken);
-            return;
+            return false;
         }
 
         currency ??= file.Root
@@ -75,7 +79,7 @@ public class AddTransactionPriceHandler(
                 message.Chat.Id,
                 $"Problem with finding currency of accountFrom {accountFrom}",
                 cancellationToken: cancellationToken);
-            return;
+            return false;
         }
 
         if (!amount.HasValue)
@@ -84,7 +88,7 @@ public class AddTransactionPriceHandler(
                 message.Chat.Id,
                 "What kind of amount is that?",
                 cancellationToken: cancellationToken);
-            return;
+            return false;
         }
 
         file.Root.AddTransaction(
@@ -95,10 +99,20 @@ public class AddTransactionPriceHandler(
             null);
         await file.SaveAsync();
 
+        var accounts = file
+            .GetAccountsLatestTransactionDescending()
+            .Select(acc => acc.Name);
+
+        var keyboard = accounts.SplitBy(3);
+
         await botClient.Bot.SendMessageAsync(
             message.Chat.Id,
             "Saved.",
+            replyMarkup: keyboard,
+            disableNotification: true,
             cancellationToken: cancellationToken);
+
+        return true;
     }
 
     private static (decimal? amount, string? currency) ExtractValueAndCurrency(

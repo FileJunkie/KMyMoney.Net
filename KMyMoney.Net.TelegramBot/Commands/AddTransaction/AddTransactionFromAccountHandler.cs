@@ -26,16 +26,8 @@ public class AddTransactionFromAccountHandler(
         Message message,
         CancellationToken cancellationToken)
     {
-        var lastTransactionPerAccount = file
-            .Root
-            .Transactions
-            .GetLatestTransactionsByAccountId();
-
-        var accounts = file.Root.Accounts.Values
-            .Where(acc => !acc.IsClosed)
-            .OrderByDescending(acc =>
-                lastTransactionPerAccount.TryGetValue(acc.Id, out var lastTransaction) ?
-                    lastTransaction : DateTimeOffset.MinValue)
+        var accounts = file
+            .GetAccountsLatestTransactionDescending()
             .Select(acc => acc.Name);
 
         var keyboard = accounts.SplitBy(3);
