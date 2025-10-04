@@ -94,5 +94,7 @@ public static class ServiceConfigurationExtensions
     private static IServiceCollection AddStatusHandler<T>(this IServiceCollection services)
     where T : class, IConditionalStatusHandler => services
         .AddSingleton<T>()
-        .AddSingleton<IConditionalStatusHandler>(sp => sp.GetRequiredService<T>());
+        .AddSingleton(sp =>
+            ConditionalStatusHandlerDescriptor.FromConditionalStatusHandler(
+                sp.GetRequiredService<T>()));
 }

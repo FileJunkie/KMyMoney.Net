@@ -1,6 +1,5 @@
 using KMyMoney.Net.Core;
 using KMyMoney.Net.TelegramBot.Common;
-using KMyMoney.Net.TelegramBot.Dropbox;
 using KMyMoney.Net.TelegramBot.FileAccess;
 using KMyMoney.Net.TelegramBot.Persistence;
 using KMyMoney.Net.TelegramBot.StatusHandlers;
@@ -9,12 +8,12 @@ using Telegram.Bot.Types;
 
 namespace KMyMoney.Net.TelegramBot.Commands.AddTransaction;
 
-public abstract class AbstractAccountSavingHandler(
+public abstract class AbstractAccountSavingHandler<TNextStatusHandler>(
     ITelegramBotClientWrapper botClient,
     ISettingsPersistenceLayer settingsPersistenceLayer,
-    IConditionalStatusHandler nextStatusHandler,
     IFileLoader fileLoader) :
-    AbstractMessageHandlerWithNextStep(settingsPersistenceLayer, nextStatusHandler)
+    AbstractMessageHandlerWithNextStep<TNextStatusHandler>(settingsPersistenceLayer)
+    where TNextStatusHandler : IConditionalStatusHandler
 {
     private readonly ISettingsPersistenceLayer _settingsPersistenceLayer = settingsPersistenceLayer;
 

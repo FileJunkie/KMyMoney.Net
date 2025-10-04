@@ -1,5 +1,4 @@
 using KMyMoney.Net.TelegramBot.Common;
-using KMyMoney.Net.TelegramBot.Dropbox;
 using KMyMoney.Net.TelegramBot.FileAccess;
 using KMyMoney.Net.TelegramBot.Persistence;
 using KMyMoney.Net.TelegramBot.Telegram;
@@ -10,10 +9,9 @@ namespace KMyMoney.Net.TelegramBot.Commands.File;
 
 public class FileCommand(
     ISettingsPersistenceLayer settingsPersistenceLayer,
-    FileEntryStatusHandler fileEntryStatusHandler,
     IFileAccessService fileAccessService,
     ITelegramBotClientWrapper botClient) :
-    AbstractMessageHandlerWithNextStep(settingsPersistenceLayer, fileEntryStatusHandler), ICommand
+    AbstractMessageHandlerWithNextStep<FileEntryStatusHandler>(settingsPersistenceLayer), ICommand
 {
     public string Command => "file";
     public string Description => "Setting path do the file inside Dropbox";

@@ -1,6 +1,5 @@
 using KMyMoney.Net.Core;
 using KMyMoney.Net.TelegramBot.Common;
-using KMyMoney.Net.TelegramBot.Dropbox;
 using KMyMoney.Net.TelegramBot.FileAccess;
 using KMyMoney.Net.TelegramBot.Persistence;
 using KMyMoney.Net.TelegramBot.Telegram;
@@ -13,9 +12,9 @@ namespace KMyMoney.Net.TelegramBot.Commands.AddTransaction;
 public class AddTransactionCommand(
     ISettingsPersistenceLayer settingsPersistenceLayer,
     ITelegramBotClientWrapper botClient,
-    AddTransactionFromAccountHandler addTransactionFromAccountHandler,
     IFileLoader fileLoader) :
-    AbstractMessageHandlerWithNextStep(settingsPersistenceLayer, addTransactionFromAccountHandler), ICommand
+    AbstractMessageHandlerWithNextStep<AddTransactionFromAccountHandler>(settingsPersistenceLayer),
+    ICommand
 {
     public string Command => "add_transaction";
     public string Description => "Adds a new transaction";
@@ -29,16 +28,8 @@ public class AddTransactionCommand(
             return false;
         }
 
-        var lastTransactionPerAccount = file
-            .Root
-            .Transactions
-            .GetLatestTransactionsByAccountId();
-
-        var accounts = file.Root.Accounts.Values
-            .Where(acc => !acc.IsClosed)
-            .OrderByDescending(acc =>
-                lastTransactionPerAccount.TryGetValue(acc.Id, out var lastTransaction) ?
-                    lastTransaction : DateTimeOffset.MinValue)
+        var accounts = file
+            .GetAccountsLatestTransactionDescending()
             .Select(acc => acc.Name);
 
         var keyboard = accounts.SplitBy(3);

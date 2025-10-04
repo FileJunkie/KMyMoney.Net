@@ -2,5 +2,5 @@ namespace KMyMoney.Net.TelegramBot.StatusHandlers;
 
 public interface IConditionalStatusHandler : IStatusHandler
 {
-    string HandledStatus { get; }
+    static abstract string HandledStatus { get; }
 }
