@@ -1,7 +1,6 @@
 using KMyMoney.Net.Core;
 using KMyMoney.Net.Core.FileAccessors;
 using KMyMoney.Net.TelegramBot.Commands.AddTransaction;
-using KMyMoney.Net.TelegramBot.Dropbox;
 using KMyMoney.Net.TelegramBot.FileAccess;
 using KMyMoney.Net.TelegramBot.Persistence;
 using KMyMoney.Net.TelegramBot.Telegram;
@@ -23,12 +22,9 @@ public class AddTransactionCommandTests
         var botClient = Substitute.For<ITelegramBotClient>();
         var botWrapper = Substitute.For<ITelegramBotClientWrapper>();
         botWrapper.Bot.Returns(botClient);
-        var addTransactionFromAccountHandler =
-            new AddTransactionFromAccountHandler(
-                null!, null!, null!, null!);
         var fileLoader = Substitute.For<IFileLoader>();
         var command = new AddTransactionCommand(settingsPersistenceLayer,
-            botWrapper, addTransactionFromAccountHandler, fileLoader);
+            botWrapper, fileLoader);
 
         var message = new Message
             { From = new User { Id = 123 }, Chat = new Chat { Id = 456 } };

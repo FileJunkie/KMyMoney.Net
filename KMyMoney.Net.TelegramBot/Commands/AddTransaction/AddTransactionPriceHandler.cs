@@ -1,6 +1,5 @@
 using KMyMoney.Net.Core;
 using KMyMoney.Net.TelegramBot.Common;
-using KMyMoney.Net.TelegramBot.Dropbox;
 using KMyMoney.Net.TelegramBot.FileAccess;
 using KMyMoney.Net.TelegramBot.Persistence;
 using KMyMoney.Net.TelegramBot.StatusHandlers;
@@ -13,13 +12,12 @@ namespace KMyMoney.Net.TelegramBot.Commands.AddTransaction;
 public class AddTransactionPriceHandler(
     ITelegramBotClientWrapper botClient,
     ISettingsPersistenceLayer settingsPersistenceLayer,
-    AddTransactionFromAccountHandler addTransactionFromAccountHandler,
     IFileLoader fileLoader) :
-    AbstractMessageHandlerWithNextStep(settingsPersistenceLayer, addTransactionFromAccountHandler),
+    AbstractMessageHandlerWithNextStep<AddTransactionFromAccountHandler>(settingsPersistenceLayer),
     IConditionalStatusHandler
 {
     private readonly ISettingsPersistenceLayer _settingsPersistenceLayer = settingsPersistenceLayer;
-    public string HandledStatus => "AddTransactionEnteringPrice";
+    public static string HandledStatus => "AddTransactionEnteringPrice";
 
     protected override async Task<bool> HandleInternalAsync(Message message, CancellationToken cancellationToken)
     {

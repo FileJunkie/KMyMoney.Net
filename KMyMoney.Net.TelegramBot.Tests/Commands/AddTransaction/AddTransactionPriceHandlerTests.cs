@@ -1,7 +1,6 @@
 using KMyMoney.Net.Core;
 using KMyMoney.Net.Core.FileAccessors;
 using KMyMoney.Net.TelegramBot.Commands.AddTransaction;
-using KMyMoney.Net.TelegramBot.Dropbox;
 using KMyMoney.Net.TelegramBot.FileAccess;
 using KMyMoney.Net.TelegramBot.Persistence;
 using KMyMoney.Net.TelegramBot.Telegram;
@@ -27,11 +26,6 @@ public class AddTransactionPriceHandlerTests
         var handler = new AddTransactionPriceHandler(
             botWrapper,
             settingsPersistenceLayer,
-            new AddTransactionFromAccountHandler(
-                null!,
-                null!,
-                null!,
-                null!),
             fileLoader);
 
         var message = new Message
@@ -69,11 +63,6 @@ public class AddTransactionPriceHandlerTests
         var handler = new AddTransactionPriceHandler(
             botWrapper,
             settingsPersistenceLayer,
-            new AddTransactionFromAccountHandler(
-                null!,
-                null!,
-                null!,
-                null!),
             fileLoader);
 
         var message = new Message
@@ -111,11 +100,6 @@ public class AddTransactionPriceHandlerTests
         var handler = new AddTransactionPriceHandler(
             botWrapper,
             settingsPersistenceLayer,
-            new AddTransactionFromAccountHandler(
-                null!,
-                null!,
-                null!,
-                null!),
             fileLoader);
 
         var message = new Message
@@ -154,11 +138,6 @@ public class AddTransactionPriceHandlerTests
         var handler = new AddTransactionPriceHandler(
             botWrapper,
             settingsPersistenceLayer,
-            new AddTransactionFromAccountHandler(
-                null!,
-                null!,
-                null!,
-                null!),
             fileLoader);
 
         var message = new Message
@@ -194,11 +173,6 @@ public class AddTransactionPriceHandlerTests
         var handler = new AddTransactionPriceHandler(
             botWrapper,
             settingsPersistenceLayer,
-            new AddTransactionFromAccountHandler(
-                null!,
-                null!,
-                null!,
-                null!),
             fileLoader);
 
         var message = new Message
@@ -230,11 +204,6 @@ public class AddTransactionPriceHandlerTests
         var handler = new AddTransactionPriceHandler(
             botWrapper,
             settingsPersistenceLayer,
-            new AddTransactionFromAccountHandler(
-                null!,
-                null!,
-                null!,
-                null!),
             fileLoader);
 
         var message = new Message
@@ -272,11 +241,6 @@ public class AddTransactionPriceHandlerTests
         var handler = new AddTransactionPriceHandler(
             botWrapper,
             settingsPersistenceLayer,
-            new AddTransactionFromAccountHandler(
-                null!,
-                null!,
-                null!,
-                null!),
             fileLoader);
 
         var message = new Message

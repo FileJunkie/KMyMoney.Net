@@ -18,27 +18,29 @@ public class UpdateHandlerTests
     public async Task OnMessageAsync_ShouldRouteToConditionalHandler_WhenStatusIsSet()
     {
         // Arrange
+        const string userStatus = "TestStatus";
         var botWrapper = Substitute.For<ITelegramBotClientWrapper>();
         var settingsPersistenceLayer = Substitute.For<ISettingsPersistenceLayer>();
-        var conditionalHandler = Substitute.For<IConditionalStatusHandler>();
+        var statusHandler = Substitute.For<IStatusHandler>();
+        var conditionalStatusHandlerDescriptor = new ConditionalStatusHandlerDescriptor(
+            statusHandler,
+            userStatus);
         var defaultStatusHandler = Substitute.For<IDefaultStatusHandler>();
         var logger = Substitute.For<ILogger<UpdateHandler>>();
         var handler = new UpdateHandler(botWrapper, settingsPersistenceLayer,
-            [conditionalHandler], defaultStatusHandler, logger);
+            [conditionalStatusHandlerDescriptor], defaultStatusHandler, logger);
 
         var message = new Message
             { From = new User { Id = 123 }, Chat = new Chat { Id = 456, Type = ChatType.Private } };
-        const string userStatus = "TestStatus";
 
         settingsPersistenceLayer.GetUserSettingByUserIdAsync(123, UserSettings.Status)
             .Returns(userStatus);
-        conditionalHandler.HandledStatus.Returns(userStatus);
 
         // Act
         await handler.OnMessageAsync(message, UpdateType.Message, CancellationToken.None);
 
         // Assert
-        await conditionalHandler.Received(1)
+        await statusHandler.Received(1)
             .HandleAsync(message, CancellationToken.None);
         await defaultStatusHandler.DidNotReceive()
             .HandleAsync(message, CancellationToken.None);
@@ -48,13 +50,17 @@ public class UpdateHandlerTests
     public async Task OnMessageAsync_ShouldRouteToDefaultHandler_WhenStatusIsNotSet()
     {
         // Arrange
+        const string userStatus = "TestStatus";
         var botWrapper = Substitute.For<ITelegramBotClientWrapper>();
         var settingsPersistenceLayer = Substitute.For<ISettingsPersistenceLayer>();
-        var conditionalHandler = Substitute.For<IConditionalStatusHandler>();
+        var statusHandler = Substitute.For<IStatusHandler>();
+        var conditionalStatusHandlerDescriptor = new ConditionalStatusHandlerDescriptor(
+            statusHandler,
+            userStatus);
         var defaultStatusHandler = Substitute.For<IDefaultStatusHandler>();
         var logger = Substitute.For<ILogger<UpdateHandler>>();
         var handler = new UpdateHandler(botWrapper, settingsPersistenceLayer,
-            [conditionalHandler], defaultStatusHandler, logger);
+            [conditionalStatusHandlerDescriptor], defaultStatusHandler, logger);
 
         var message = new Message
             { From = new User { Id = 123 }, Chat = new Chat { Id = 456, Type = ChatType.Private } };
