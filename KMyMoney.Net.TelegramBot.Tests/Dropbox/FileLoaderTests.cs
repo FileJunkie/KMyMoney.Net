@@ -1,8 +1,5 @@
-using KMyMoney.Net.Core;
 using KMyMoney.Net.Core.FileAccessors;
 using KMyMoney.Net.TelegramBot.FileAccess;
-using KMyMoney.Net.TelegramBot.Persistence;
-using KMyMoney.Net.TelegramBot.Telegram;
 using KMyMoney.Net.Tests.Common;
 using NSubstitute;
 using Shouldly;

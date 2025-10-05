@@ -9,7 +9,7 @@ public class FileEntryStatusHandler(
     ITelegramBotClientWrapper botClient,
     ISettingsPersistenceLayer settingsPersistenceLayer) : IConditionalStatusHandler
 {
-    public string HandledStatus => "EnteringFileName";
+    public static string HandledStatus => "EnteringFileName";
 
     public async Task HandleAsync(Message message, CancellationToken cancellationToken)
     {

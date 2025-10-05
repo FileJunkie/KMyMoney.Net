@@ -1,7 +1,6 @@
 using KMyMoney.Net.Core;
 using KMyMoney.Net.Core.FileAccessors;
 using KMyMoney.Net.TelegramBot.Commands.AddTransaction;
-using KMyMoney.Net.TelegramBot.Dropbox;
 using KMyMoney.Net.TelegramBot.FileAccess;
 using KMyMoney.Net.TelegramBot.Persistence;
 using KMyMoney.Net.TelegramBot.Telegram;
@@ -23,11 +22,9 @@ public class AddTransactionFromAccountHandlerTests
         var botWrapper = Substitute.For<ITelegramBotClientWrapper>();
         botWrapper.Bot.Returns(botClient);
         var settingsPersistenceLayer = Substitute.For<ISettingsPersistenceLayer>();
-        var addTransactionToAccountHandler = new AddTransactionToAccountHandler(
-            null!, null!, null!, null!);
         var fileLoader = Substitute.For<IFileLoader>();
         var handler = new AddTransactionFromAccountHandler(botWrapper,
-            settingsPersistenceLayer, addTransactionToAccountHandler, fileLoader);
+            settingsPersistenceLayer, fileLoader);
 
         var message = new Message
         {
@@ -63,11 +60,9 @@ public class AddTransactionFromAccountHandlerTests
         var botWrapper = Substitute.For<ITelegramBotClientWrapper>();
         botWrapper.Bot.Returns(botClient);
         var settingsPersistenceLayer = Substitute.For<ISettingsPersistenceLayer>();
-        var addTransactionToAccountHandler = new AddTransactionToAccountHandler(
-            null!, null!, null!, null!);
         var fileLoader = Substitute.For<IFileLoader>();
         var handler = new AddTransactionFromAccountHandler(botWrapper,
-            settingsPersistenceLayer, addTransactionToAccountHandler, fileLoader);
+            settingsPersistenceLayer, fileLoader);
 
         var message = new Message
         {
@@ -99,11 +94,9 @@ public class AddTransactionFromAccountHandlerTests
         var botWrapper = Substitute.For<ITelegramBotClientWrapper>();
         botWrapper.Bot.Returns(botClient);
         var settingsPersistenceLayer = Substitute.For<ISettingsPersistenceLayer>();
-        var addTransactionToAccountHandler = new AddTransactionToAccountHandler(
-            null!, null!, null!, null!);
         var fileLoader = Substitute.For<IFileLoader>();
         var handler = new AddTransactionFromAccountHandler(botWrapper,
-            settingsPersistenceLayer, addTransactionToAccountHandler, fileLoader);
+            settingsPersistenceLayer, fileLoader);
 
         var message = new Message
         {

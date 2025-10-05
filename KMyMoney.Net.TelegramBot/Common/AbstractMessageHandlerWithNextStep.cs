@@ -4,9 +4,10 @@ using Telegram.Bot.Types;
 
 namespace KMyMoney.Net.TelegramBot.Common;
 
-public abstract class AbstractMessageHandlerWithNextStep(
-    ISettingsPersistenceLayer settingsPersistenceLayer,
-    IConditionalStatusHandler nextStatusHandler) : AbstractMessageHandler(settingsPersistenceLayer)
+public abstract class AbstractMessageHandlerWithNextStep<TNextStatusHandler>(
+    ISettingsPersistenceLayer settingsPersistenceLayer) :
+    AbstractMessageHandler(settingsPersistenceLayer)
+    where TNextStatusHandler : IConditionalStatusHandler
 {
     private readonly ISettingsPersistenceLayer _settingsPersistenceLayer = settingsPersistenceLayer;
 
@@ -17,7 +18,7 @@ public abstract class AbstractMessageHandlerWithNextStep(
             await _settingsPersistenceLayer.SetUserSettingByUserIdAsync(
                 message.From!.Id,
                 UserSettings.Status,
-                nextStatusHandler.HandledStatus,
+                TNextStatusHandler.HandledStatus,
                 cancellationToken: cancellationToken);
         }
     }

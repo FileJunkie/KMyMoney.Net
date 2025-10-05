@@ -1,6 +1,5 @@
 using System.Text;
 using KMyMoney.Net.TelegramBot.Common;
-using KMyMoney.Net.TelegramBot.Dropbox;
 using KMyMoney.Net.TelegramBot.FileAccess;
 using KMyMoney.Net.TelegramBot.Persistence;
 using KMyMoney.Net.TelegramBot.Telegram;

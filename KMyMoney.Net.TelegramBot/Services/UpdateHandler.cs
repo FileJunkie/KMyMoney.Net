@@ -10,7 +10,7 @@ namespace KMyMoney.Net.TelegramBot.Services;
 public class UpdateHandler(
     ITelegramBotClientWrapper botWrapper,
     ISettingsPersistenceLayer settingsPersistenceLayer,
-    IEnumerable<IConditionalStatusHandler> statusHandlers,
+    IEnumerable<ConditionalStatusHandlerDescriptor> statusHandlerDescriptors,
     IDefaultStatusHandler defaultStatusHandler,
     ILogger<UpdateHandler> logger) : IUpdateHandler
 {
@@ -39,11 +39,11 @@ public class UpdateHandler(
             var userStatus = await settingsPersistenceLayer.GetUserSettingByUserIdAsync(message.From.Id, UserSettings.Status, cancellationToken: cancellationToken);
             if (!string.IsNullOrWhiteSpace(userStatus))
             {
-                foreach (var statusHandler in statusHandlers)
+                foreach (var statusHandlerDescriptor in statusHandlerDescriptors)
                 {
-                    if (statusHandler.HandledStatus == userStatus)
+                    if (statusHandlerDescriptor.HandledStatus == userStatus)
                     {
-                        await statusHandler.HandleAsync(message, cancellationToken);
+                        await statusHandlerDescriptor.Handler.HandleAsync(message, cancellationToken);
                         return;
                     }
                 }

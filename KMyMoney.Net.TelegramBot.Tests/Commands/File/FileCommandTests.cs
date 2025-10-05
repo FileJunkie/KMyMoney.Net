@@ -17,14 +17,12 @@ public class FileCommandTests
     {
         // Arrange
         var settingsPersistenceLayer = Substitute.For<ISettingsPersistenceLayer>();
-        var fileEntryStatusHandler = new FileEntryStatusHandler(null!, null!);
         var botClient = Substitute.For<ITelegramBotClient>();
         var botWrapper = Substitute.For<ITelegramBotClientWrapper>();
         var fileAccessorFactory = Substitute.For<IFileAccessService>();
         botWrapper.Bot.Returns(botClient);
         var command = new FileCommand(
             settingsPersistenceLayer,
-            fileEntryStatusHandler,
             fileAccessorFactory,
             botWrapper);
 
@@ -58,13 +56,11 @@ public class FileCommandTests
     {
         // Arrange
         var settingsPersistenceLayer = Substitute.For<ISettingsPersistenceLayer>();
-        var fileEntryStatusHandler = new FileEntryStatusHandler(null!, null!);
         var botClient = Substitute.For<ITelegramBotClient>();
         var botWrapper = Substitute.For<ITelegramBotClientWrapper>();
         var fileAccessorFactory = Substitute.For<IFileAccessService>();
         botWrapper.Bot.Returns(botClient);
-        var command = new FileCommand(settingsPersistenceLayer,
-            fileEntryStatusHandler, fileAccessorFactory, botWrapper);
+        var command = new FileCommand(settingsPersistenceLayer, fileAccessorFactory, botWrapper);
 
         var message = new Message
             { From = new User { Id = 123 }, Chat = new Chat { Id = 456 } };
