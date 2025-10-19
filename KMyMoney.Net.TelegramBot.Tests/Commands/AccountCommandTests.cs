@@ -8,7 +8,6 @@ using KMyMoney.Net.TelegramBot.Telegram;
 using NSubstitute;
 using Telegram.Bot;
 using Telegram.Bot.Requests;
-using Telegram.Bot.Requests.Abstractions;
 using Telegram.Bot.Types;
 using TelegramUser = Telegram.Bot.Types.User;
 
