@@ -1,20 +1,22 @@
 using System.Text;
-using KMyMoney.Net.TelegramBot.Commands;
 using KMyMoney.Net.TelegramBot.Common;
 using KMyMoney.Net.TelegramBot.Persistence;
+using KMyMoney.Net.TelegramBot.StatusHandlers;
 using KMyMoney.Net.TelegramBot.Telegram;
 using Telegram.Bot.Types;
 
-namespace KMyMoney.Net.TelegramBot.StatusHandlers;
+namespace KMyMoney.Net.TelegramBot.Commands;
 
-public class DefaultStatusHandler(
+public class CommandDispatcher(
     ISettingsPersistenceLayer settingsPersistenceLayer,
     ITelegramBotClientWrapper botClientWrapper,
     IEnumerable<ICommand> commands) :
     AbstractMessageHandler(botClientWrapper, settingsPersistenceLayer),
-    IDefaultStatusHandler
+    ICommandDispatcher
 {
     private readonly ITelegramBotClientWrapper _botClientWrapper = botClientWrapper;
+
+    public bool MessageContainsCommand(Message message) => message.Text?.StartsWith('/') ?? false;
 
     protected override async Task HandleAfterResettingStatusAsync(Message message, CancellationToken cancellationToken)
     {
