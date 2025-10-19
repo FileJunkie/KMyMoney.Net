@@ -5,11 +5,11 @@ namespace KMyMoney.Net.TelegramBot.FileAccess;
 
 public interface IFileAccessService
 {
-    Task<IFileAccessor?> CreateFileAccessorAsync(
+    Task<IFileAccessor> CreateFileAccessorAsync(
         Message message,
         CancellationToken cancellationToken);
 
-    Task<string?> GetFilePathAsync(
+    Task<string> GetFilePathAsync(
         Message message,
         CancellationToken cancellationToken);
 }

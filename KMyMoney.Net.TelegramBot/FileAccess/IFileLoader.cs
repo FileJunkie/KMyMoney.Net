@@ -5,7 +5,7 @@ namespace KMyMoney.Net.TelegramBot.FileAccess;
 
 public interface IFileLoader
 {
-    Task<KMyMoneyFile?> LoadKMyMoneyFileOrSendErrorAsync(
+    Task<KMyMoneyFile> LoadKMyMoneyFileOrSendErrorAsync(
         Message message,
         CancellationToken cancellationToken);
 }

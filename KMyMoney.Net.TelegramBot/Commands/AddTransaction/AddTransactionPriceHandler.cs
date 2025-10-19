@@ -1,5 +1,6 @@
 using KMyMoney.Net.Core;
 using KMyMoney.Net.TelegramBot.Common;
+using KMyMoney.Net.TelegramBot.Exceptions;
 using KMyMoney.Net.TelegramBot.FileAccess;
 using KMyMoney.Net.TelegramBot.Persistence;
 using KMyMoney.Net.TelegramBot.StatusHandlers;
@@ -13,13 +14,14 @@ public class AddTransactionPriceHandler(
     ITelegramBotClientWrapper botClient,
     ISettingsPersistenceLayer settingsPersistenceLayer,
     IFileLoader fileLoader) :
-    AbstractMessageHandlerWithNextStep<AddTransactionFromAccountHandler>(settingsPersistenceLayer),
+    AbstractMessageHandlerWithNextStep<AddTransactionFromAccountHandler>(botClient, settingsPersistenceLayer),
     IConditionalStatusHandler
 {
     private readonly ISettingsPersistenceLayer _settingsPersistenceLayer = settingsPersistenceLayer;
+    private readonly ITelegramBotClientWrapper _botClient = botClient;
     public static string HandledStatus => "AddTransactionEnteringPrice";
 
-    protected override async Task<bool> HandleInternalAsync(Message message, CancellationToken cancellationToken)
+    protected override async Task HandleInternalAsync(Message message, CancellationToken cancellationToken)
     {
         var accountFrom = await _settingsPersistenceLayer.GetUserSettingByUserIdAsync(
             message.From!.Id,
@@ -28,11 +30,7 @@ public class AddTransactionPriceHandler(
 
         if (accountFrom == null)
         {
-            await botClient.Bot.SendMessageAsync(
-                message.Chat.Id,
-                "AccountFrom was somehow null?",
-                cancellationToken: cancellationToken);
-            return false;
+            throw new WithUserMessageException("AccountFrom was somehow null?");
         }
 
         var accountTo = await _settingsPersistenceLayer.GetUserSettingByUserIdAsync(
@@ -42,29 +40,17 @@ public class AddTransactionPriceHandler(
 
         if (accountTo == null)
         {
-            await botClient.Bot.SendMessageAsync(
-                message.Chat.Id,
-                "AccountTo was somehow null?",
-                cancellationToken: cancellationToken);
-            return false;
+            throw new WithUserMessageException("AccountTo was somehow null?");
         }
 
         var file = await fileLoader.LoadKMyMoneyFileOrSendErrorAsync(
             message, cancellationToken);
-        if (file == null)
-        {
-            return false;
-        }
 
         var (amount, currency) = ExtractValueAndCurrency(message.Text);
         if (!string.IsNullOrEmpty(currency) &&
             !file.Root.Prices.Values.Any(p => p.From == currency || p.To == currency))
         {
-            await botClient.Bot.SendMessageAsync(
-                message.Chat.Id,
-                "What currency is that?",
-                cancellationToken: cancellationToken);
-            return false;
+            throw new WithUserMessageException("What currency is that?");
         }
 
         currency ??= file.Root
@@ -73,20 +59,12 @@ public class AddTransactionPriceHandler(
 
         if (currency == null)
         {
-            await botClient.Bot.SendMessageAsync(
-                message.Chat.Id,
-                $"Problem with finding currency of accountFrom {accountFrom}",
-                cancellationToken: cancellationToken);
-            return false;
+            throw new WithUserMessageException("Currency was somehow null?");
         }
 
         if (!amount.HasValue)
         {
-            await botClient.Bot.SendMessageAsync(
-                message.Chat.Id,
-                "What kind of amount is that?",
-                cancellationToken: cancellationToken);
-            return false;
+            throw new WithUserMessageException("What kind of amount is that?");
         }
 
         file.Root.AddTransaction(
@@ -103,14 +81,12 @@ public class AddTransactionPriceHandler(
 
         var keyboard = accounts.SplitBy(3);
 
-        await botClient.Bot.SendMessageAsync(
+        await _botClient.Bot.SendMessageAsync(
             message.Chat.Id,
             "Saved.",
             replyMarkup: keyboard,
             disableNotification: true,
             cancellationToken: cancellationToken);
-
-        return true;
     }
 
     private static (decimal? amount, string? currency) ExtractValueAndCurrency(

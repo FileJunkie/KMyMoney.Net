@@ -11,8 +11,9 @@ public class AccountsCommand(
     ITelegramBotClientWrapper botClient,
     ISettingsPersistenceLayer settingsPersistenceLayer,
     IFileLoader fileLoader) :
-    AbstractMessageHandler(settingsPersistenceLayer), ICommand
+    AbstractMessageHandler(botClient, settingsPersistenceLayer), ICommand
 {
+    private readonly ITelegramBotClientWrapper _botClient = botClient;
     public string Command => "accounts";
     public string Description => "Get accounts from .kmy file";
 
@@ -20,10 +21,6 @@ public class AccountsCommand(
     {
         var file = await fileLoader.LoadKMyMoneyFileOrSendErrorAsync(
             message, cancellationToken);
-        if (file == null)
-        {
-            return;
-        }
 
         var sb = new StringBuilder();
         foreach (var (account, i) in file
@@ -37,7 +34,7 @@ public class AccountsCommand(
             if (i % 10 == 0)
             {
                 var answer = sb.ToString();
-                await botClient.Bot.SendMessageAsync(message.Chat.Id, answer,
+                await _botClient.Bot.SendMessageAsync(message.Chat.Id, answer,
                     cancellationToken: cancellationToken);
                 sb.Clear();
             }
@@ -45,7 +42,7 @@ public class AccountsCommand(
 
         if (sb.Length > 0)
         {
-            await botClient.Bot.SendMessageAsync(message.Chat.Id, sb.ToString(),
+            await _botClient.Bot.SendMessageAsync(message.Chat.Id, sb.ToString(),
                 cancellationToken: cancellationToken);
         }
     }
