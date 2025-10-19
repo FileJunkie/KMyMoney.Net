@@ -36,7 +36,7 @@ public static class ServiceConfigurationExtensions
             .TryAddEtcdPersistenceLayer();
 
     private static IServiceCollection ConfigureCommandsAndHandlers(this IServiceCollection services) => services
-        .AddSingleton<IDefaultStatusHandler, DefaultStatusHandler>()
+        .AddSingleton<ICommandDispatcher, CommandDispatcher>()
         .AddSingleton<ICommand, AccountsCommand>()
         .AddSingleton<ICommand, AddTransactionCommand>()
         .AddStatusHandler<AddTransactionFromAccountHandler>()

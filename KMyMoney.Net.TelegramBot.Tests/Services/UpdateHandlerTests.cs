@@ -1,3 +1,4 @@
+using KMyMoney.Net.TelegramBot.Commands;
 using KMyMoney.Net.TelegramBot.Persistence;
 using KMyMoney.Net.TelegramBot.Services;
 using KMyMoney.Net.TelegramBot.StatusHandlers;
@@ -25,7 +26,7 @@ public class UpdateHandlerTests
         var conditionalStatusHandlerDescriptor = new ConditionalStatusHandlerDescriptor(
             statusHandler,
             userStatus);
-        var defaultStatusHandler = Substitute.For<IDefaultStatusHandler>();
+        var defaultStatusHandler = Substitute.For<ICommandDispatcher>();
         var logger = Substitute.For<ILogger<UpdateHandler>>();
         var handler = new UpdateHandler(botWrapper, settingsPersistenceLayer,
             [conditionalStatusHandlerDescriptor], defaultStatusHandler, logger);
@@ -57,7 +58,7 @@ public class UpdateHandlerTests
         var conditionalStatusHandlerDescriptor = new ConditionalStatusHandlerDescriptor(
             statusHandler,
             userStatus);
-        var defaultStatusHandler = Substitute.For<IDefaultStatusHandler>();
+        var defaultStatusHandler = Substitute.For<ICommandDispatcher>();
         var logger = Substitute.For<ILogger<UpdateHandler>>();
         var handler = new UpdateHandler(botWrapper, settingsPersistenceLayer,
             [conditionalStatusHandlerDescriptor], defaultStatusHandler, logger);
@@ -84,7 +85,7 @@ public class UpdateHandlerTests
         var botWrapper = Substitute.For<ITelegramBotClientWrapper>();
         botWrapper.Bot.Returns(botClient);
         var settingsPersistenceLayer = Substitute.For<ISettingsPersistenceLayer>();
-        var defaultStatusHandler = Substitute.For<IDefaultStatusHandler>();
+        var defaultStatusHandler = Substitute.For<ICommandDispatcher>();
         var logger = Substitute.For<ILogger<UpdateHandler>>();
         var handler = new UpdateHandler(botWrapper, settingsPersistenceLayer,
             [], defaultStatusHandler, logger);
@@ -111,7 +112,7 @@ public class UpdateHandlerTests
         UpdateType updateType)
     {
         // Arrange
-        var defaultStatusHandler = Substitute.For<IDefaultStatusHandler>();
+        var defaultStatusHandler = Substitute.For<ICommandDispatcher>();
         var logger = Substitute.For<ILogger<UpdateHandler>>();
         var handler = new UpdateHandler(null!, null!, null!, defaultStatusHandler,
             logger);
@@ -129,7 +130,7 @@ public class UpdateHandlerTests
     public async Task OnMessageAsync_ShouldIgnore_GroupMessages()
     {
         // Arrange
-        var defaultStatusHandler = Substitute.For<IDefaultStatusHandler>();
+        var defaultStatusHandler = Substitute.For<ICommandDispatcher>();
         var logger = Substitute.For<ILogger<UpdateHandler>>();
         var handler = new UpdateHandler(null!, null!, null!, defaultStatusHandler,
             logger);
@@ -148,7 +149,7 @@ public class UpdateHandlerTests
     public async Task OnMessageAsync_ShouldIgnore_MessagesWithNoFrom()
     {
         // Arrange
-        var defaultStatusHandler = Substitute.For<IDefaultStatusHandler>();
+        var defaultStatusHandler = Substitute.For<ICommandDispatcher>();
         var logger = Substitute.For<ILogger<UpdateHandler>>();
         var handler = new UpdateHandler(null!, null!, null!, defaultStatusHandler,
             logger);

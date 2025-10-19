@@ -1,3 +1,4 @@
+using KMyMoney.Net.TelegramBot.Commands;
 using KMyMoney.Net.TelegramBot.Persistence;
 using KMyMoney.Net.TelegramBot.StatusHandlers;
 using KMyMoney.Net.TelegramBot.Telegram;
@@ -11,7 +12,7 @@ public class UpdateHandler(
     ITelegramBotClientWrapper botWrapper,
     ISettingsPersistenceLayer settingsPersistenceLayer,
     IEnumerable<ConditionalStatusHandlerDescriptor> statusHandlerDescriptors,
-    IDefaultStatusHandler defaultStatusHandler,
+    ICommandDispatcher commandDispatcher,
     ILogger<UpdateHandler> logger) : IUpdateHandler
 {
     public async Task OnMessageAsync(Message message, UpdateType type, CancellationToken cancellationToken)
@@ -36,20 +37,24 @@ public class UpdateHandler(
 
         try
         {
-            var userStatus = await settingsPersistenceLayer.GetUserSettingByUserIdAsync(message.From.Id, UserSettings.Status, cancellationToken: cancellationToken);
-            if (!string.IsNullOrWhiteSpace(userStatus))
+            if (!commandDispatcher.MessageContainsCommand(message))
             {
-                foreach (var statusHandlerDescriptor in statusHandlerDescriptors)
+                var userStatus = await settingsPersistenceLayer.GetUserSettingByUserIdAsync(message.From.Id,
+                    UserSettings.Status, cancellationToken: cancellationToken);
+                if (!string.IsNullOrWhiteSpace(userStatus))
                 {
-                    if (statusHandlerDescriptor.HandledStatus == userStatus)
+                    foreach (var statusHandlerDescriptor in statusHandlerDescriptors)
                     {
-                        await statusHandlerDescriptor.Handler.HandleAsync(message, cancellationToken);
-                        return;
+                        if (statusHandlerDescriptor.HandledStatus == userStatus)
+                        {
+                            await statusHandlerDescriptor.Handler.HandleAsync(message, cancellationToken);
+                            return;
+                        }
                     }
                 }
             }
 
-            await defaultStatusHandler.HandleAsync(message, cancellationToken);
+            await commandDispatcher.HandleAsync(message, cancellationToken);
         }
         catch (Exception e)
         {

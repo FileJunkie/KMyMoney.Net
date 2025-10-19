@@ -106,7 +106,7 @@ public class HostedTelegramBotTests
             SettingsPersistenceLayer = Substitute.For<ISettingsPersistenceLayer>();
             var logger = Substitute.For<ILogger<UpdateHandler>>();
             var statusHandlers = Enumerable.Empty<ConditionalStatusHandlerDescriptor>();
-            var defaultStatusHandler = Substitute.For<IDefaultStatusHandler>();
+            var defaultStatusHandler = Substitute.For<ICommandDispatcher>();
             var updateHandler = Substitute.For<UpdateHandler>(BotWrapper, SettingsPersistenceLayer, statusHandlers, defaultStatusHandler, logger);
             var telegramSettings = Options.Create(settings);
 
