@@ -17,7 +17,6 @@ public abstract class AbstractAccountSavingHandler<TNextStatusHandler>(
     where TNextStatusHandler : IConditionalStatusHandler
 {
     private readonly ISettingsPersistenceLayer _settingsPersistenceLayer = settingsPersistenceLayer;
-    private readonly ITelegramBotClientWrapper _botClient = botClient;
 
     protected sealed override async Task HandleInternalAsync(
         Message message,
