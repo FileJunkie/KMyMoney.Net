@@ -1,5 +1,6 @@
 using KMyMoney.Net.Core;
 using KMyMoney.Net.TelegramBot.Common;
+using KMyMoney.Net.TelegramBot.Exceptions;
 using KMyMoney.Net.TelegramBot.FileAccess;
 using KMyMoney.Net.TelegramBot.Persistence;
 using KMyMoney.Net.TelegramBot.StatusHandlers;
@@ -12,34 +13,24 @@ public abstract class AbstractAccountSavingHandler<TNextStatusHandler>(
     ITelegramBotClientWrapper botClient,
     ISettingsPersistenceLayer settingsPersistenceLayer,
     IFileLoader fileLoader) :
-    AbstractMessageHandlerWithNextStep<TNextStatusHandler>(settingsPersistenceLayer)
+    AbstractMessageHandlerWithNextStep<TNextStatusHandler>(botClient, settingsPersistenceLayer)
     where TNextStatusHandler : IConditionalStatusHandler
 {
     private readonly ISettingsPersistenceLayer _settingsPersistenceLayer = settingsPersistenceLayer;
 
-    protected sealed override async Task<bool> HandleInternalAsync(
+    protected sealed override async Task HandleInternalAsync(
         Message message,
         CancellationToken cancellationToken)
     {
         var file = await fileLoader.LoadKMyMoneyFileOrSendErrorAsync(
             message, cancellationToken);
-        if (file == null)
-        {
-            return false;
-        }
 
         if (string.IsNullOrWhiteSpace(message.Text) ||
             !file.Root.Accounts.Values.Select(acc => acc.Name)
                 .Concat(file.Root.Accounts.Values.Select(acc => acc.Id))
                 .Contains(message.Text))
         {
-            await botClient
-                .Bot
-                .SendMessageAsync(
-                    message.Chat.Id,
-                    "Wrong account, aborting",
-                    cancellationToken: cancellationToken);
-            return false;
+            throw new WithUserMessageException("Wrong account, aborting");
         }
 
         await _settingsPersistenceLayer.SetUserSettingByUserIdAsync(
@@ -49,7 +40,6 @@ public abstract class AbstractAccountSavingHandler<TNextStatusHandler>(
             cancellationToken: cancellationToken);
 
         await ContinueAfterSavingAccount(file, message, cancellationToken);
-        return true;
     }
 
     protected abstract Task ContinueAfterSavingAccount(

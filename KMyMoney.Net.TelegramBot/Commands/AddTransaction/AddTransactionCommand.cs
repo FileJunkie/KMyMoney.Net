@@ -13,20 +13,18 @@ public class AddTransactionCommand(
     ISettingsPersistenceLayer settingsPersistenceLayer,
     ITelegramBotClientWrapper botClient,
     IFileLoader fileLoader) :
-    AbstractMessageHandlerWithNextStep<AddTransactionFromAccountHandler>(settingsPersistenceLayer),
+    AbstractMessageHandlerWithNextStep<AddTransactionFromAccountHandler>(
+        botClient, settingsPersistenceLayer),
     ICommand
 {
+    private readonly ITelegramBotClientWrapper _botClient = botClient;
     public string Command => "add_transaction";
     public string Description => "Adds a new transaction";
 
-    protected override async Task<bool> HandleInternalAsync(Message message, CancellationToken cancellationToken)
+    protected override async Task HandleInternalAsync(Message message, CancellationToken cancellationToken)
     {
         var file = await fileLoader.LoadKMyMoneyFileOrSendErrorAsync(
             message, cancellationToken);
-        if (file == null)
-        {
-            return false;
-        }
 
         var accounts = file
             .GetAccountsLatestTransactionDescending()
@@ -34,13 +32,12 @@ public class AddTransactionCommand(
 
         var keyboard = accounts.SplitBy(3);
 
-        await botClient
+        await _botClient
             .Bot
             .SendMessage(
                 message.Chat.Id,
                 "Choose account to take money from",
                 replyMarkup: keyboard,
                 cancellationToken: cancellationToken);
-        return true;
     }
 }

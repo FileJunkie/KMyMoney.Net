@@ -15,9 +15,10 @@ public class LoginCommand(
     ISettingsPersistenceLayer settingsPersistenceLayer,
     IDropboxOAuth2HelperWrapper dropboxOAuth2HelperWrapper,
     IOptions<DropboxSettings> dropboxSettings) :
-    AbstractMessageHandler(settingsPersistenceLayer), ICommand
+    AbstractMessageHandler(botWrapper, settingsPersistenceLayer), ICommand
 {
     private readonly ISettingsPersistenceLayer _settingsPersistenceLayer = settingsPersistenceLayer;
+    private readonly ITelegramBotClientWrapper _botWrapper = botWrapper;
     public string Command => "login";
     public string Description => "Log in into Dropbox";
 
@@ -37,7 +38,7 @@ public class LoginCommand(
             state: state,
             redirectUri: dropboxSettings.Value.RedirectUri);
 
-        await botWrapper.Bot.SendMessageAsync(
+        await _botWrapper.Bot.SendMessageAsync(
             message.Chat.Id,
             $"Go here: {uri} to log in",
             cancellationToken: cancellationToken);

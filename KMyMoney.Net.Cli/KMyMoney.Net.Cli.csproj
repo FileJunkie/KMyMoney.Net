@@ -2,7 +2,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\KMyMoney.Net.Core\KMyMoney.Net.Core.csproj" />
-    <PackageReference Include="System.CommandLine" Version="2.0.0-rc.1.25451.107" />
+    <PackageReference Include="System.CommandLine" Version="2.0.0-rc.2.25502.107" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,4 +1,5 @@
 using KMyMoney.Net.TelegramBot.Common;
+using KMyMoney.Net.TelegramBot.Exceptions;
 using KMyMoney.Net.TelegramBot.FileAccess;
 using KMyMoney.Net.TelegramBot.Persistence;
 using KMyMoney.Net.TelegramBot.Telegram;
@@ -11,30 +12,23 @@ public class FileCommand(
     ISettingsPersistenceLayer settingsPersistenceLayer,
     IFileAccessService fileAccessService,
     ITelegramBotClientWrapper botClient) :
-    AbstractMessageHandlerWithNextStep<FileEntryStatusHandler>(settingsPersistenceLayer), ICommand
+    AbstractMessageHandlerWithNextStep<FileEntryStatusHandler>(botClient, settingsPersistenceLayer), ICommand
 {
+    private readonly ITelegramBotClientWrapper _botClient = botClient;
     public string Command => "file";
     public string Description => "Setting path do the file inside Dropbox";
 
-    protected override async Task<bool> HandleInternalAsync(Message message, CancellationToken cancellationToken)
+    protected override async Task HandleInternalAsync(Message message, CancellationToken cancellationToken)
     {
         var fileAccessor = await fileAccessService.CreateFileAccessorAsync(message, cancellationToken);
-        if (fileAccessor == null)
-        {
-            return false;
-        }
 
         var fileList = (await fileAccessor.ListFilesAsync()).ToList();
         if (fileList.Count == 0)
         {
-            await botClient.Bot.SendMessageAsync(
-                message.Chat.Id,
-                text: "You have no .kmy files, mate",
-                cancellationToken: cancellationToken);
-            return false;
+            throw new WithUserMessageException("You have no .kmy files, mate");
         }
 
-        await botClient.Bot.SendMessageAsync(
+        await _botClient.Bot.SendMessageAsync(
             message.Chat.Id,
             text: "Choose .kmy file",
             replyMarkup: new[]
@@ -42,7 +36,5 @@ public class FileCommand(
                 fileList.Select(file => new KeyboardButton(file)).ToArray()
             },
             cancellationToken:cancellationToken);
-
-        return true;
     }
 }

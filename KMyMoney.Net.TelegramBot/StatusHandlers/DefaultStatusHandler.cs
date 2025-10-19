@@ -10,8 +10,12 @@ namespace KMyMoney.Net.TelegramBot.StatusHandlers;
 public class DefaultStatusHandler(
     ISettingsPersistenceLayer settingsPersistenceLayer,
     ITelegramBotClientWrapper botClientWrapper,
-    IEnumerable<ICommand> commands) : AbstractMessageHandler(settingsPersistenceLayer), IDefaultStatusHandler
+    IEnumerable<ICommand> commands) :
+    AbstractMessageHandler(botClientWrapper, settingsPersistenceLayer),
+    IDefaultStatusHandler
 {
+    private readonly ITelegramBotClientWrapper _botClientWrapper = botClientWrapper;
+
     protected override async Task HandleAfterResettingStatusAsync(Message message, CancellationToken cancellationToken)
     {
         var command = ExtractCommand(message.Text);
@@ -40,7 +44,7 @@ public class DefaultStatusHandler(
             stringBuilder.AppendLine($"/{cmd.Command}: {cmd.Description}");
         }
 
-        await botClientWrapper.Bot.SendMessageAsync(chatId, stringBuilder.ToString());
+        await _botClientWrapper.Bot.SendMessageAsync(chatId, stringBuilder.ToString());
     }
 
     private static string? ExtractCommand(string? message)
