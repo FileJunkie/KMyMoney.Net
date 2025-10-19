@@ -44,33 +44,6 @@ public class AccountCommandTests
             cancellationToken: CancellationToken.None);
     }
 
-    [Fact]
-    public async Task HandleAsync_ShouldDoNothing_WhenFileLoaderReturnsNull()
-    {
-        // Arrange
-        var botClient = Substitute.For<ITelegramBotClient>();
-        var botWrapper = Substitute.For<ITelegramBotClientWrapper>();
-        botWrapper.Bot.Returns(botClient);
-        var fileLoader = Substitute.For<IFileLoader>();
-        var settingsPersistenceLayer = Substitute.For<ISettingsPersistenceLayer>();
-        var command = new AccountsCommand(botWrapper, settingsPersistenceLayer, fileLoader);
-
-        var message = new Message { From = new TelegramUser { Id = 123 }, Chat = new Chat { Id = 456 } };
-
-        fileLoader.LoadKMyMoneyFileOrSendErrorAsync(message, CancellationToken.None).Returns((KMyMoneyFile?)null);
-
-        // Act
-        await command.HandleAsync(message, CancellationToken.None);
-
-        // Assert
-        await botClient.DidNotReceiveWithAnyArgs().SendRequest(Arg.Any<IRequest<Message>>(), CancellationToken.None);
-        await settingsPersistenceLayer.Received(1).SetUserSettingByUserIdAsync(
-            123,
-            UserSettings.Status,
-            null,
-            cancellationToken: CancellationToken.None);
-    }
-
     private static KmyMoneyFileRoot CreateTestKmyMoneyFileRootWithData() => new()
     {
         FileInfo = new(),

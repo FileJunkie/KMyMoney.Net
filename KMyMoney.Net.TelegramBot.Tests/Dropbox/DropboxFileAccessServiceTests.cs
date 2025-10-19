@@ -1,5 +1,6 @@
 using KMyMoney.Net.Core.FileAccessors.Dropbox;
 using KMyMoney.Net.TelegramBot.Dropbox;
+using KMyMoney.Net.TelegramBot.Exceptions;
 using KMyMoney.Net.TelegramBot.Persistence;
 using KMyMoney.Net.TelegramBot.Telegram;
 using NSubstitute;
@@ -16,12 +17,11 @@ public class DropboxFileAccessServiceTests
     {
         // Arrange
         var settingsPersistenceLayer = Substitute.For<ISettingsPersistenceLayer>();
-        var botClientWrapper = Substitute.For<ITelegramBotClientWrapper>();
         var message = new Message { From = new User { Id = 123 }, Chat = new Chat { Id = 456 } };
         const string token = "test_token";
         settingsPersistenceLayer.GetUserSettingByUserIdAsync(message.From.Id, UserSettings.Token, Arg.Any<CancellationToken>())
             .Returns(Task.FromResult<string?>(token));
-        var service = new DropboxFileAccessService(settingsPersistenceLayer, botClientWrapper);
+        var service = new DropboxFileAccessService(settingsPersistenceLayer);
 
         // Act
         var result = await service.CreateFileAccessorAsync(message, CancellationToken.None);
@@ -47,15 +47,15 @@ public class DropboxFileAccessServiceTests
         };
         settingsPersistenceLayer.GetUserSettingByUserIdAsync(message.From.Id, UserSettings.Token, Arg.Any<CancellationToken>())
             .Returns(Task.FromResult<string?>(null));
-        var service = new DropboxFileAccessService(settingsPersistenceLayer, Substitute.For<ITelegramBotClientWrapper>());
+        var service = new DropboxFileAccessService(settingsPersistenceLayer);
 
         // Act
-        var result = await service.CreateFileAccessorAsync(
+        var action = () => service.CreateFileAccessorAsync(
             message,
             CancellationToken.None);
 
         // Assert
-        result.ShouldBeNull();
+        await action.ShouldThrowAsync<WithUserMessageException>();
         await settingsPersistenceLayer
             .Received(1)
             .SetUserSettingByUserIdAsync(
@@ -71,12 +71,11 @@ public class DropboxFileAccessServiceTests
     {
         // Arrange
         var settingsPersistenceLayer = Substitute.For<ISettingsPersistenceLayer>();
-        var botClientWrapper = Substitute.For<ITelegramBotClientWrapper>();
         var message = new Message { From = new User { Id = 123 }, Chat = new Chat { Id = 456 } };
         const string filePath = "/test/file.kmy";
         settingsPersistenceLayer.GetUserSettingByUserIdAsync(message.From.Id, UserSettings.FilePath, Arg.Any<CancellationToken>())
             .Returns(Task.FromResult<string?>(filePath));
-        var service = new DropboxFileAccessService(settingsPersistenceLayer, botClientWrapper);
+        var service = new DropboxFileAccessService(settingsPersistenceLayer);
 
         // Act
         var result = await service.GetFilePathAsync(message, CancellationToken.None);
@@ -94,12 +93,12 @@ public class DropboxFileAccessServiceTests
         var message = new Message { From = new User { Id = 123 }, Chat = new Chat { Id = 456 } };
         settingsPersistenceLayer.GetUserSettingByUserIdAsync(message.From.Id, UserSettings.FilePath, Arg.Any<CancellationToken>())
             .Returns(Task.FromResult<string?>(null));
-        var service = new DropboxFileAccessService(settingsPersistenceLayer, Substitute.For<ITelegramBotClientWrapper>());
+        var service = new DropboxFileAccessService(settingsPersistenceLayer);
 
         // Act
-        var result = await service.GetFilePathAsync(message, CancellationToken.None);
+        var action = () => service.GetFilePathAsync(message, CancellationToken.None);
 
         // Assert
-        result.ShouldBeNull();
+        await action.ShouldThrowAsync<WithUserMessageException>();
     }
 }
