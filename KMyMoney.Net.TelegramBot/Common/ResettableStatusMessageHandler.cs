@@ -5,18 +5,20 @@ using Telegram.Bot.Types;
 
 namespace KMyMoney.Net.TelegramBot.Common;
 
-public abstract class AbstractMessageHandler(
+public abstract class ResettableStatusMessageHandler(
     ITelegramBotClientWrapper botClient,
     ISettingsPersistenceLayer settingsPersistenceLayer) : IMessageHandler
 {
+    protected readonly ISettingsPersistenceLayer SettingsPersistenceLayer = settingsPersistenceLayer;
+
     public async Task HandleAsync(Message message, CancellationToken cancellationToken)
     {
-        var status = await settingsPersistenceLayer.GetUserSettingByUserIdAsync(
+        var status = await SettingsPersistenceLayer.GetUserSettingByUserIdAsync(
             message.From!.Id,
             UserSettings.Status,
             cancellationToken);
 
-        await settingsPersistenceLayer.SetUserSettingByUserIdAsync(
+        await SettingsPersistenceLayer.SetUserSettingByUserIdAsync(
             message.From!.Id,
             UserSettings.Status,
             null,
@@ -24,7 +26,7 @@ public abstract class AbstractMessageHandler(
 
         try
         {
-            await HandleAfterResettingStatusAsync(message, cancellationToken);
+            await HandleInternalAsync(message, cancellationToken);
         }
         catch (WithUserMessageException e)
         {
@@ -35,7 +37,7 @@ public abstract class AbstractMessageHandler(
 
             if (e.KeepStatus)
             {
-                await settingsPersistenceLayer.SetUserSettingByUserIdAsync(
+                await SettingsPersistenceLayer.SetUserSettingByUserIdAsync(
                     message.From!.Id,
                     UserSettings.Status,
                     status,
@@ -44,5 +46,5 @@ public abstract class AbstractMessageHandler(
         }
     }
 
-    protected abstract Task HandleAfterResettingStatusAsync(Message message, CancellationToken cancellationToken);
+    protected abstract Task HandleInternalAsync(Message message, CancellationToken cancellationToken);
 }

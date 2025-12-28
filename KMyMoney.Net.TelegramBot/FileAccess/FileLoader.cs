@@ -1,5 +1,4 @@
 using KMyMoney.Net.Core;
-using KMyMoney.Net.TelegramBot.Exceptions;
 using Telegram.Bot.Types;
 
 namespace KMyMoney.Net.TelegramBot.FileAccess;

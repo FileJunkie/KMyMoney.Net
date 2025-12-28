@@ -7,7 +7,7 @@ using Telegram.Bot.Types;
 
 namespace KMyMoney.Net.TelegramBot.Tests.Common;
 
-public class AbstractMessageHandlerTests
+public class NonResettableStatusMessageHandlerTests
 {
     [Theory]
     [InlineData(true)]
@@ -18,7 +18,7 @@ public class AbstractMessageHandlerTests
         var botClient = Substitute.For<ITelegramBotClientWrapper>();
         var settingsPersistenceLayer = Substitute.For<ISettingsPersistenceLayer>();
         var exception = new WithUserMessageException("Message", keepStatus);
-        var handler = new AbstractMessageHandlerMock(exception, botClient, settingsPersistenceLayer);
+        var handler = new NonResettableStatusMessageHandlerMock(exception, botClient, settingsPersistenceLayer);
 
         var message = new Message { From = new User { Id = 123 }, Chat = new Chat { Id = 456 } };
         settingsPersistenceLayer.GetUserSettingByUserIdAsync(
@@ -35,7 +35,7 @@ public class AbstractMessageHandlerTests
             message.From!.Id,
             UserSettings.Status,
             Arg.Any<CancellationToken>());
-        await settingsPersistenceLayer.Received(1).SetUserSettingByUserIdAsync(
+        await settingsPersistenceLayer.DidNotReceive().SetUserSettingByUserIdAsync(
             message.From!.Id,
             UserSettings.Status,
             null,
@@ -49,13 +49,13 @@ public class AbstractMessageHandlerTests
             Arg.Any<CancellationToken>());
     }
 
-    private class AbstractMessageHandlerMock(
+    private class NonResettableStatusMessageHandlerMock(
         Exception exception,
         ITelegramBotClientWrapper botClient,
         ISettingsPersistenceLayer settingsPersistenceLayer) :
-        AbstractMessageHandler(botClient, settingsPersistenceLayer)
+        NonResettableStatusMessageHandler(botClient, settingsPersistenceLayer)
     {
-        protected override Task HandleAfterResettingStatusAsync(Message message, CancellationToken cancellationToken)
+        protected override Task HandleInternalAsync(Message message, CancellationToken cancellationToken)
         {
             throw exception;
         }

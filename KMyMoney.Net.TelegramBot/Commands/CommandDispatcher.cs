@@ -1,7 +1,6 @@
 using System.Text;
 using KMyMoney.Net.TelegramBot.Common;
 using KMyMoney.Net.TelegramBot.Persistence;
-using KMyMoney.Net.TelegramBot.StatusHandlers;
 using KMyMoney.Net.TelegramBot.Telegram;
 using Telegram.Bot.Types;
 
@@ -11,14 +10,14 @@ public class CommandDispatcher(
     ISettingsPersistenceLayer settingsPersistenceLayer,
     ITelegramBotClientWrapper botClientWrapper,
     IEnumerable<ICommand> commands) :
-    AbstractMessageHandler(botClientWrapper, settingsPersistenceLayer),
+    ResettableStatusMessageHandler(botClientWrapper, settingsPersistenceLayer),
     ICommandDispatcher
 {
     private readonly ITelegramBotClientWrapper _botClientWrapper = botClientWrapper;
 
     public bool MessageContainsCommand(Message message) => message.Text?.StartsWith('/') ?? false;
 
-    protected override async Task HandleAfterResettingStatusAsync(Message message, CancellationToken cancellationToken)
+    protected override async Task HandleInternalAsync(Message message, CancellationToken cancellationToken)
     {
         var command = ExtractCommand(message.Text);
 
