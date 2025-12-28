@@ -16,7 +16,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: 9.0.x
+          dotnet-version: 10.0.x
 
       - name: Build binary
         run: |
@@ -27,7 +27,7 @@ jobs:
           mkdir .debpkg
           cp -rv packaging/DEBIAN .debpkg/
           mkdir -p .debpkg/usr/bin
-          cp -v ./KMyMoney.Net.TelegramBot/bin/Release/net9.0/linux-x64/publish/KMyMoney.Net.TelegramBot .debpkg/usr/bin/
+          cp -v ./KMyMoney.Net.TelegramBot/bin/Release/net10.0/linux-x64/publish/KMyMoney.Net.TelegramBot .debpkg/usr/bin/
           mkdir -p .debpkg/etc/systemd/system/
           cp -v packaging/systemd/KMyMoney.Net.TelegramBot.service .debpkg/etc/systemd/system/
           mkdir -p .debpkg/etc/KMyMoney.Net.TelegramBot
