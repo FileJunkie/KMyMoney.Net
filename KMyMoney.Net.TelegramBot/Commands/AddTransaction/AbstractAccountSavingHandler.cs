@@ -18,7 +18,7 @@ public abstract class AbstractAccountSavingHandler<TNextStatusHandler>(
 {
     private readonly ISettingsPersistenceLayer _settingsPersistenceLayer = settingsPersistenceLayer;
 
-    protected sealed override async Task HandleAndSetNextStepAsync(
+    protected sealed override async Task HandleBeforeSettingNextStepAsync(
         Message message,
         CancellationToken cancellationToken)
     {

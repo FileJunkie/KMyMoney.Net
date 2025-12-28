@@ -9,16 +9,14 @@ public abstract class ResettableStatusMessageHandler(
     ITelegramBotClientWrapper botClient,
     ISettingsPersistenceLayer settingsPersistenceLayer) : IMessageHandler
 {
-    protected readonly ISettingsPersistenceLayer SettingsPersistenceLayer = settingsPersistenceLayer;
-
     public async Task HandleAsync(Message message, CancellationToken cancellationToken)
     {
-        var status = await SettingsPersistenceLayer.GetUserSettingByUserIdAsync(
+        var status = await settingsPersistenceLayer.GetUserSettingByUserIdAsync(
             message.From!.Id,
             UserSettings.Status,
             cancellationToken);
 
-        await SettingsPersistenceLayer.SetUserSettingByUserIdAsync(
+        await settingsPersistenceLayer.SetUserSettingByUserIdAsync(
             message.From!.Id,
             UserSettings.Status,
             null,
@@ -37,7 +35,7 @@ public abstract class ResettableStatusMessageHandler(
 
             if (e.KeepStatus)
             {
-                await SettingsPersistenceLayer.SetUserSettingByUserIdAsync(
+                await settingsPersistenceLayer.SetUserSettingByUserIdAsync(
                     message.From!.Id,
                     UserSettings.Status,
                     status,

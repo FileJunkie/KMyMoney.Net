@@ -11,15 +11,17 @@ public abstract class ResettableStatusMessageHandlerWithNextStep<TNextStatusHand
     : ResettableStatusMessageHandler(botClient, settingsPersistenceLayer)
     where TNextStatusHandler : IConditionalStatusHandler
 {
+    private readonly ISettingsPersistenceLayer _settingsPersistenceLayer = settingsPersistenceLayer;
+
     protected override async Task HandleInternalAsync(Message message, CancellationToken cancellationToken)
     {
-        await HandleAndSetNextStepAsync(message, cancellationToken);
-        await SettingsPersistenceLayer.SetUserSettingByUserIdAsync(
+        await HandleBeforeSettingNextStepAsync(message, cancellationToken);
+        await _settingsPersistenceLayer.SetUserSettingByUserIdAsync(
             message.From!.Id,
             UserSettings.Status,
             TNextStatusHandler.HandledStatus,
             cancellationToken: cancellationToken);
     }
 
-    protected abstract Task HandleAndSetNextStepAsync(Message message, CancellationToken cancellationToken);
+    protected abstract Task HandleBeforeSettingNextStepAsync(Message message, CancellationToken cancellationToken);
 }

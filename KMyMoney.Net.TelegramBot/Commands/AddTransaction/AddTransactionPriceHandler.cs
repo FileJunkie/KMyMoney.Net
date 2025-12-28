@@ -21,7 +21,7 @@ public class AddTransactionPriceHandler(
     private readonly ITelegramBotClientWrapper _botClient = botClient;
     public static string HandledStatus => "AddTransactionEnteringPrice";
 
-    protected override async Task HandleAndSetNextStepAsync(Message message, CancellationToken cancellationToken)
+    protected override async Task HandleBeforeSettingNextStepAsync(Message message, CancellationToken cancellationToken)
     {
         var accountFrom = await _settingsPersistenceLayer.GetUserSettingByUserIdAsync(
             message.From!.Id,

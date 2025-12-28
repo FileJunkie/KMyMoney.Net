@@ -18,7 +18,7 @@ public class FileCommand(
     public string Command => "file";
     public string Description => "Setting path do the file inside Dropbox";
 
-    protected override async Task HandleAndSetNextStepAsync(Message message, CancellationToken cancellationToken)
+    protected override async Task HandleBeforeSettingNextStepAsync(Message message, CancellationToken cancellationToken)
     {
         var fileAccessor = await fileAccessService.CreateFileAccessorAsync(message, cancellationToken);
 
