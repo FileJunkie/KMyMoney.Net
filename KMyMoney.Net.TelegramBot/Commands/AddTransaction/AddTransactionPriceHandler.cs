@@ -14,14 +14,14 @@ public class AddTransactionPriceHandler(
     ITelegramBotClientWrapper botClient,
     ISettingsPersistenceLayer settingsPersistenceLayer,
     IFileLoader fileLoader) :
-    AbstractMessageHandlerWithNextStep<AddTransactionFromAccountHandler>(botClient, settingsPersistenceLayer),
+    ResettableStatusMessageHandlerWithNextStep<AddTransactionFromAccountHandler>(botClient, settingsPersistenceLayer),
     IConditionalStatusHandler
 {
     private readonly ISettingsPersistenceLayer _settingsPersistenceLayer = settingsPersistenceLayer;
     private readonly ITelegramBotClientWrapper _botClient = botClient;
     public static string HandledStatus => "AddTransactionEnteringPrice";
 
-    protected override async Task HandleInternalAsync(Message message, CancellationToken cancellationToken)
+    protected override async Task HandleBeforeSettingNextStepAsync(Message message, CancellationToken cancellationToken)
     {
         var accountFrom = await _settingsPersistenceLayer.GetUserSettingByUserIdAsync(
             message.From!.Id,

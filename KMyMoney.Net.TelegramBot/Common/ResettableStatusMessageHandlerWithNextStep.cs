@@ -5,17 +5,17 @@ using Telegram.Bot.Types;
 
 namespace KMyMoney.Net.TelegramBot.Common;
 
-public abstract class AbstractMessageHandlerWithNextStep<TNextStatusHandler>(
+public abstract class ResettableStatusMessageHandlerWithNextStep<TNextStatusHandler>(
     ITelegramBotClientWrapper botClient,
-    ISettingsPersistenceLayer settingsPersistenceLayer) :
-    AbstractMessageHandler(botClient, settingsPersistenceLayer)
+    ISettingsPersistenceLayer settingsPersistenceLayer)
+    : ResettableStatusMessageHandler(botClient, settingsPersistenceLayer)
     where TNextStatusHandler : IConditionalStatusHandler
 {
     private readonly ISettingsPersistenceLayer _settingsPersistenceLayer = settingsPersistenceLayer;
 
-    protected override async Task HandleAfterResettingStatusAsync(Message message, CancellationToken cancellationToken)
+    protected override async Task HandleInternalAsync(Message message, CancellationToken cancellationToken)
     {
-        await HandleInternalAsync(message, cancellationToken);
+        await HandleBeforeSettingNextStepAsync(message, cancellationToken);
         await _settingsPersistenceLayer.SetUserSettingByUserIdAsync(
             message.From!.Id,
             UserSettings.Status,
@@ -23,5 +23,5 @@ public abstract class AbstractMessageHandlerWithNextStep<TNextStatusHandler>(
             cancellationToken: cancellationToken);
     }
 
-    protected abstract Task HandleInternalAsync(Message message, CancellationToken cancellationToken);
+    protected abstract Task HandleBeforeSettingNextStepAsync(Message message, CancellationToken cancellationToken);
 }

@@ -5,7 +5,7 @@ using Telegram.Bot.Types;
 
 namespace KMyMoney.Net.TelegramBot.Common;
 
-public abstract class AbstractMessageHandler(
+public abstract class ResettableStatusMessageHandler(
     ITelegramBotClientWrapper botClient,
     ISettingsPersistenceLayer settingsPersistenceLayer) : IMessageHandler
 {
@@ -24,7 +24,7 @@ public abstract class AbstractMessageHandler(
 
         try
         {
-            await HandleAfterResettingStatusAsync(message, cancellationToken);
+            await HandleInternalAsync(message, cancellationToken);
         }
         catch (WithUserMessageException e)
         {
@@ -44,5 +44,5 @@ public abstract class AbstractMessageHandler(
         }
     }
 
-    protected abstract Task HandleAfterResettingStatusAsync(Message message, CancellationToken cancellationToken);
+    protected abstract Task HandleInternalAsync(Message message, CancellationToken cancellationToken);
 }

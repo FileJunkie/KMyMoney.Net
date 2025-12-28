@@ -15,17 +15,16 @@ public class LoginCommand(
     ISettingsPersistenceLayer settingsPersistenceLayer,
     IDropboxOAuth2HelperWrapper dropboxOAuth2HelperWrapper,
     IOptions<DropboxSettings> dropboxSettings) :
-    AbstractMessageHandler(botWrapper, settingsPersistenceLayer), ICommand
+    NonResettableStatusMessageHandler(botWrapper), ICommand
 {
-    private readonly ISettingsPersistenceLayer _settingsPersistenceLayer = settingsPersistenceLayer;
     private readonly ITelegramBotClientWrapper _botWrapper = botWrapper;
     public string Command => "login";
     public string Description => "Log in into Dropbox";
 
-    protected override async Task HandleAfterResettingStatusAsync(Message message, CancellationToken cancellationToken)
+    protected override async Task HandleInternalAsync(Message message, CancellationToken cancellationToken)
     {
         var state = RandomNumberGenerator.GetHexString(16);
-        await _settingsPersistenceLayer.SetSavedValueByKeyAsync(
+        await settingsPersistenceLayer.SetSavedValueByKeyAsync(
             $"states/{state}",
             message.From!.Id.ToString(),
             TimeSpan.FromMinutes(10),

@@ -11,13 +11,13 @@ public class AccountsCommand(
     ITelegramBotClientWrapper botClient,
     ISettingsPersistenceLayer settingsPersistenceLayer,
     IFileLoader fileLoader) :
-    AbstractMessageHandler(botClient, settingsPersistenceLayer), ICommand
+    ResettableStatusMessageHandler(botClient, settingsPersistenceLayer), ICommand
 {
     private readonly ITelegramBotClientWrapper _botClient = botClient;
     public string Command => "accounts";
     public string Description => "Get accounts from .kmy file";
 
-    protected override async Task HandleAfterResettingStatusAsync(Message message, CancellationToken cancellationToken)
+    protected override async Task HandleInternalAsync(Message message, CancellationToken cancellationToken)
     {
         var file = await fileLoader.LoadKMyMoneyFileOrSendErrorAsync(
             message, cancellationToken);

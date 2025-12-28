@@ -12,13 +12,13 @@ public class FileCommand(
     ISettingsPersistenceLayer settingsPersistenceLayer,
     IFileAccessService fileAccessService,
     ITelegramBotClientWrapper botClient) :
-    AbstractMessageHandlerWithNextStep<FileEntryStatusHandler>(botClient, settingsPersistenceLayer), ICommand
+    ResettableStatusMessageHandlerWithNextStep<FileEntryStatusHandler>(botClient, settingsPersistenceLayer), ICommand
 {
     private readonly ITelegramBotClientWrapper _botClient = botClient;
     public string Command => "file";
     public string Description => "Setting path do the file inside Dropbox";
 
-    protected override async Task HandleInternalAsync(Message message, CancellationToken cancellationToken)
+    protected override async Task HandleBeforeSettingNextStepAsync(Message message, CancellationToken cancellationToken)
     {
         var fileAccessor = await fileAccessService.CreateFileAccessorAsync(message, cancellationToken);
 

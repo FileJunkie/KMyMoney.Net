@@ -13,12 +13,12 @@ public abstract class AbstractAccountSavingHandler<TNextStatusHandler>(
     ITelegramBotClientWrapper botClient,
     ISettingsPersistenceLayer settingsPersistenceLayer,
     IFileLoader fileLoader) :
-    AbstractMessageHandlerWithNextStep<TNextStatusHandler>(botClient, settingsPersistenceLayer)
+    ResettableStatusMessageHandlerWithNextStep<TNextStatusHandler>(botClient, settingsPersistenceLayer)
     where TNextStatusHandler : IConditionalStatusHandler
 {
     private readonly ISettingsPersistenceLayer _settingsPersistenceLayer = settingsPersistenceLayer;
 
-    protected sealed override async Task HandleInternalAsync(
+    protected sealed override async Task HandleBeforeSettingNextStepAsync(
         Message message,
         CancellationToken cancellationToken)
     {

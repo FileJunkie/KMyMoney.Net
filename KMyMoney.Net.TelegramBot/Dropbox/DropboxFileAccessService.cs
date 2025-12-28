@@ -4,7 +4,6 @@ using KMyMoney.Net.Core.FileAccessors.Dropbox;
 using KMyMoney.Net.TelegramBot.Exceptions;
 using KMyMoney.Net.TelegramBot.FileAccess;
 using KMyMoney.Net.TelegramBot.Persistence;
-using KMyMoney.Net.TelegramBot.Telegram;
 using Telegram.Bot.Types;
 
 namespace KMyMoney.Net.TelegramBot.Dropbox;

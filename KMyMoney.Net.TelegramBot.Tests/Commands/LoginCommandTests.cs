@@ -51,7 +51,7 @@ public class LoginCommandTests
             Arg.Is<SendMessageRequest>(r => r.Text.Contains(authUri.ToString())),
             CancellationToken.None);
 
-        await settingsPersistenceLayer.Received(1).SetUserSettingByUserIdAsync(
+        await settingsPersistenceLayer.DidNotReceive().SetUserSettingByUserIdAsync(
             123,
             UserSettings.Status,
             null,
