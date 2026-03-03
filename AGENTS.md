@@ -25,17 +25,20 @@
 - `.TelegramBot.Persistence.InMemory` implements the user persistence layer for in-memory storage
 - `.Tests.Common` contains common test helpers
 - Projects which names end in `.Tests` contain unit tests for the projects their names are derived from 
+- All projects should be referenced in the top-level `.sln` file.
 
 ## Development instructions
 
 - Unless explicitly requested, change as little code as possible, and ask for permissions before performing major refactoring
 - Do not add any dependencies on your own
 - You are free to update dependencies' versions
+- Use test-driven-development approach
+- Every class should be in its own file
 
 ## Testing instructions
 
 - Use `dotnet test` to run tests
-- Use `FluentAssertions` and `NSubstitute`
+- Use `Shouldly` and `NSubstitute`
 - Add Arrange-Act-Assert comments between sections
 
 ## Other instructions
