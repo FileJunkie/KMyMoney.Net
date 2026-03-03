@@ -35,6 +35,8 @@
 ## Testing instructions
 
 - Use `dotnet test` to run tests
+- Use `FluentAssertions` and `NSubstitute`
+- Add Arrange-Act-Assert comments between sections
 
 ## Other instructions
 
