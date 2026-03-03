@@ -39,3 +39,7 @@
 ## Other instructions
 
 - Do not execute any git-related commands on your own
+
+## Additional documentation
+
+- Supported user workflows are documented in `USER_WORKFLOWS.md`
