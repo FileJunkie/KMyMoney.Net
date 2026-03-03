@@ -12,7 +12,7 @@ public class TelegramBotWorkflowsIntegrationTests
     public async Task ReceiveUpdates_ShouldIgnore_NonMessageAndNonPrivateUpdates()
     {
         // Arrange
-        var context = new KMyMoneyIntegrationTestContext();
+        var context = CreateContext();
 
         // Act
         await context.OnMessageAsync("/accounts", chatType: ChatType.Group);
@@ -26,16 +26,12 @@ public class TelegramBotWorkflowsIntegrationTests
     public async Task LoginWorkflow_ShouldSendAuthorizeUrlAndSaveState()
     {
         // Arrange
-        var context = new KMyMoneyIntegrationTestContext();
+        var context = CreateContext();
 
         // Act
-        await context.OnMessageAsync("/login");
+        var state = await LoginAndGetStateAsync(context);
 
         // Assert
-        var sentMessage = context.SentMessages().Single();
-        sentMessage.GetRequiredText().ShouldContain("Go here:");
-        sentMessage.GetRequiredText().ShouldContain("dropbox.test/oauth");
-        var state = ExtractState(sentMessage.GetRequiredText());
         var savedState = await context.GetSavedValueAsync($"states/{state}");
         savedState.ShouldBe("123");
     }
@@ -44,7 +40,7 @@ public class TelegramBotWorkflowsIntegrationTests
     public async Task LoginCallback_ShouldSaveTokenAndReplayLastFailedMessage()
     {
         // Arrange
-        var context = new KMyMoneyIntegrationTestContext(
+        var context = CreateContext(
             new KMyMoneyIntegrationTestContextOptions(
                 OAuth2Responses:
                 [
@@ -52,9 +48,8 @@ public class TelegramBotWorkflowsIntegrationTests
                 ]));
         await context.OnMessageAsync("/accounts");
         context.ClearMessages();
-        await context.OnMessageAsync("/login");
-        var state = ExtractState(context.SentMessages().Single().GetRequiredText());
-        await context.SetUserSettingAsync(123, UserSettings.FilePath, "/wallet.kmy");
+        var state = await LoginAndGetStateAsync(context);
+        await SetFilePathAsync(context);
 
         // Act
         var callbackResult = await context.OnDropboxCallbackAsync("code-1", state);
@@ -62,41 +57,34 @@ public class TelegramBotWorkflowsIntegrationTests
 
         // Assert
         callbackResult.ShouldBeOfType<OkObjectResult>();
-        var token = await context.GetUserSettingAsync(123, UserSettings.Token);
-        token.ShouldBe("token-after-login");
-        context.SentMessages().Any(m => m.GetRequiredText().Contains("Id: A000001 name: Checking Account"))
-            .ShouldBeTrue();
+        (await context.GetUserSettingAsync(123, UserSettings.Token)).ShouldBe("token-after-login");
+        AssertContainsMessage(context, "Id: A000001 name: Checking Account");
     }
 
     [Fact]
     public async Task FileWorkflow_ShouldPromptAndSaveNormalizedPath()
     {
         // Arrange
-        var context = new KMyMoneyIntegrationTestContext();
-        await context.SetUserSettingAsync(123, UserSettings.Token, "token-1");
+        var context = CreateContext();
+        await SetTokenAsync(context);
 
         // Act
         await context.OnMessageAsync("/file");
         await context.OnMessageAsync("wallet.kmy");
 
         // Assert
-        var status = await context.GetUserSettingAsync(123, UserSettings.Status);
-        var filePath = await context.GetUserSettingAsync(123, UserSettings.FilePath);
-        status.ShouldBeNull();
-        filePath.ShouldBe("/wallet.kmy");
-        context.SentMessages().Any(m => m.GetRequiredText().Contains("Choose .kmy file"))
-            .ShouldBeTrue();
-        context.SentMessages().Any(m => m.GetRequiredText().Contains("Got your file path, saving"))
-            .ShouldBeTrue();
+        (await context.GetUserSettingAsync(123, UserSettings.Status)).ShouldBeNull();
+        (await context.GetUserSettingAsync(123, UserSettings.FilePath)).ShouldBe("/wallet.kmy");
+        AssertContainsMessage(context, "Choose .kmy file");
+        AssertContainsMessage(context, "Got your file path, saving");
     }
 
     [Fact]
     public async Task AccountsWorkflow_ShouldListOnlyOpenAccounts()
     {
         // Arrange
-        var context = new KMyMoneyIntegrationTestContext();
-        await context.SetUserSettingAsync(123, UserSettings.Token, "token-1");
-        await context.SetUserSettingAsync(123, UserSettings.FilePath, "/wallet.kmy");
+        var context = CreateContext();
+        await SetAuthorizedFileAccessAsync(context);
 
         // Act
         await context.OnMessageAsync("/accounts");
@@ -112,21 +100,15 @@ public class TelegramBotWorkflowsIntegrationTests
     public async Task AddTransactionWorkflow_ShouldCompleteInteractiveFlowAndPersistTransaction()
     {
         // Arrange
-        var context = new KMyMoneyIntegrationTestContext();
-        await context.SetUserSettingAsync(123, UserSettings.Token, "token-1");
-        await context.SetUserSettingAsync(123, UserSettings.FilePath, "/wallet.kmy");
+        var context = CreateContext();
+        await SetAuthorizedFileAccessAsync(context);
 
         // Act
-        await context.OnMessageAsync("/add_transaction");
-        await context.OnMessageAsync("Checking Account");
-        await context.OnMessageAsync("Cash");
-        await context.OnMessageAsync("100");
+        await RunAddTransactionHappyPathAsync(context);
 
         // Assert
-        var status = await context.GetUserSettingAsync(123, UserSettings.Status);
-        status.ShouldBe("AddTransactionEnteringFromAccount");
-        context.SentMessages().Any(m => m.Text == "Saved.").ShouldBeTrue();
-
+        (await context.GetUserSettingAsync(123, UserSettings.Status)).ShouldBe("AddTransactionEnteringFromAccount");
+        AssertContainsExactMessage(context, "Saved.");
         var file = await context.LoadTestFileAsync();
         file.Root.Transactions.Values.Length.ShouldBe(1);
     }
@@ -135,7 +117,7 @@ public class TelegramBotWorkflowsIntegrationTests
     public async Task UnknownCommandWorkflow_ShouldReturnHelp()
     {
         // Arrange
-        var context = new KMyMoneyIntegrationTestContext();
+        var context = CreateContext();
 
         // Act
         await context.OnMessageAsync("/unknown_command");
@@ -153,81 +135,74 @@ public class TelegramBotWorkflowsIntegrationTests
     public async Task ErrorWorkflow_MissingToken_ShouldAskLoginAndKeepStatus()
     {
         // Arrange
-        var context = new KMyMoneyIntegrationTestContext();
+        var context = CreateContext();
         await context.SetUserSettingAsync(123, UserSettings.Status, "AddTransactionEnteringFromAccount");
-        await context.SetUserSettingAsync(123, UserSettings.FilePath, "/wallet.kmy");
+        await SetFilePathAsync(context);
 
         // Act
         await context.OnMessageAsync("Checking Account");
 
         // Assert
-        context.SentMessages().Single().GetRequiredText().ShouldBe("Use /login to set access token");
-        var status = await context.GetUserSettingAsync(123, UserSettings.Status);
-        status.ShouldBe("AddTransactionEnteringFromAccount");
-        var lastFailedMessage = await context.GetUserSettingAsync(123, UserSettings.LastFailedMessage);
-        lastFailedMessage.ShouldNotBeNull();
+        AssertSingleMessageEquals(context, "Use /login to set access token");
+        (await context.GetUserSettingAsync(123, UserSettings.Status)).ShouldBe("AddTransactionEnteringFromAccount");
+        (await context.GetUserSettingAsync(123, UserSettings.LastFailedMessage)).ShouldNotBeNull();
     }
 
     [Fact]
     public async Task ErrorWorkflow_MissingFilePath_ShouldAskToSetPath()
     {
         // Arrange
-        var context = new KMyMoneyIntegrationTestContext();
-        await context.SetUserSettingAsync(123, UserSettings.Token, "token-1");
+        var context = CreateContext();
+        await SetTokenAsync(context);
 
         // Act
         await context.OnMessageAsync("/accounts");
 
         // Assert
-        context.SentMessages().Single().GetRequiredText().ShouldBe("Use /file to set file path");
+        AssertSingleMessageEquals(context, "Use /file to set file path");
     }
 
     [Fact]
     public async Task ErrorWorkflow_InvalidAccount_ShouldAbort()
     {
         // Arrange
-        var context = new KMyMoneyIntegrationTestContext();
-        await context.SetUserSettingAsync(123, UserSettings.Token, "token-1");
-        await context.SetUserSettingAsync(123, UserSettings.FilePath, "/wallet.kmy");
+        var context = CreateContext();
+        await SetAuthorizedFileAccessAsync(context);
 
         // Act
         await context.OnMessageAsync("/add_transaction");
         await context.OnMessageAsync("Not existing account");
 
         // Assert
-        context.SentMessages().Any(m => m.GetRequiredText() == "Wrong account, aborting").ShouldBeTrue();
+        AssertContainsExactMessage(context, "Wrong account, aborting");
     }
 
     [Fact]
     public async Task ErrorWorkflow_InvalidAmount_AndUnknownCurrency_ShouldReturnValidationErrors()
     {
         // Arrange
-        var context = new KMyMoneyIntegrationTestContext();
-        await context.SetUserSettingAsync(123, UserSettings.Token, "token-1");
-        await context.SetUserSettingAsync(123, UserSettings.FilePath, "/wallet.kmy");
-        await context.SetUserSettingAsync(123, UserSettings.AccountFrom, "Checking Account");
-        await context.SetUserSettingAsync(123, UserSettings.AccountTo, "Cash");
-        await context.SetUserSettingAsync(123, UserSettings.Status, "AddTransactionEnteringPrice");
+        var context = CreateContext();
+        await SetAuthorizedFileAccessAsync(context);
+        await SetAddTransactionAccountsAndPriceStatusAsync(context);
 
         // Act
         await context.OnMessageAsync("abc");
-        await context.SetUserSettingAsync(123, UserSettings.Status, "AddTransactionEnteringPrice");
+        await SetAddTransactionPriceStatusAsync(context);
         await context.OnMessageAsync("100 XYZ");
 
         // Assert
-        var sentMessages = context.SentMessages();
-        sentMessages.Any(m => m.GetRequiredText() == "What kind of amount is that?").ShouldBeTrue();
-        sentMessages.Any(m => m.GetRequiredText() == "What currency is that?").ShouldBeTrue();
+        AssertContainsExactMessage(context, "What kind of amount is that?");
+        AssertContainsExactMessage(context, "What currency is that?");
     }
 
     [Fact]
     public async Task ErrorWorkflow_UnhandledException_ShouldSendGenericError()
     {
         // Arrange
-        var context = new KMyMoneyIntegrationTestContext(
+        var context = CreateContext(
             new KMyMoneyIntegrationTestContextOptions(
                 ThrowUnexpectedFileAccessError: true));
-        await context.SetUserSettingAsync(123, UserSettings.Token, "token-1");
+        await SetTokenAsync(context);
 
         // Act
         await context.OnMessageAsync("/file");
@@ -241,36 +216,84 @@ public class TelegramBotWorkflowsIntegrationTests
     public async Task TokenExpiration_ShouldRequireRelogin_AndReplayMessageAfterNewLogin()
     {
         // Arrange
-        var context = new KMyMoneyIntegrationTestContext(
+        var context = CreateContext(
             new KMyMoneyIntegrationTestContextOptions(
                 OAuth2Responses:
                 [
                     KMyMoneyIntegrationTestContext.CreateOAuth2Response("short-lived-token", expiresInSeconds: 1),
                     KMyMoneyIntegrationTestContext.CreateOAuth2Response("new-token")
                 ]));
-        await context.OnMessageAsync("/login");
-        var firstState = ExtractState(context.SentMessages().Single().GetRequiredText());
+        var firstState = await LoginAndGetStateAsync(context);
         context.ClearMessages();
 
         await context.OnDropboxCallbackAsync("code-1", firstState);
-        await context.SetUserSettingAsync(123, UserSettings.FilePath, "/wallet.kmy");
+        await SetFilePathAsync(context);
         context.ClearMessages();
         context.AdvanceTimeBy(TimeSpan.FromSeconds(2));
 
         // Act
         await context.OnMessageAsync("/accounts");
-        await context.OnMessageAsync("/login");
-        var secondState = ExtractState(
-            context.SentMessages().Last(m => m.GetRequiredText().Contains("Go here:")).GetRequiredText());
+        var secondState = await LoginAndGetStateAsync(context);
         var callbackResult = await context.OnDropboxCallbackAsync("code-2", secondState);
         await Task.Delay(100);
 
         // Assert
         callbackResult.ShouldBeOfType<OkObjectResult>();
-        context.SentMessages().Any(m => m.GetRequiredText() == "Use /login to set access token").ShouldBeTrue();
-        context.SentMessages().Any(m => m.GetRequiredText().Contains("Id: A000001 name: Checking Account"))
-            .ShouldBeTrue();
+        AssertContainsExactMessage(context, "Use /login to set access token");
+        AssertContainsMessage(context, "Id: A000001 name: Checking Account");
     }
+
+    private static KMyMoneyIntegrationTestContext CreateContext(
+        KMyMoneyIntegrationTestContextOptions? options = null) =>
+        new(options);
+
+    private static async Task<string> LoginAndGetStateAsync(KMyMoneyIntegrationTestContext context)
+    {
+        await context.OnMessageAsync("/login");
+        var loginMessage = context.SentMessages().Last().GetRequiredText();
+        loginMessage.ShouldContain("Go here:");
+        loginMessage.ShouldContain("dropbox.test/oauth");
+        return ExtractState(loginMessage);
+    }
+
+    private static async Task SetTokenAsync(KMyMoneyIntegrationTestContext context) =>
+        await context.SetUserSettingAsync(123, UserSettings.Token, "token-1");
+
+    private static async Task SetFilePathAsync(KMyMoneyIntegrationTestContext context) =>
+        await context.SetUserSettingAsync(123, UserSettings.FilePath, "/wallet.kmy");
+
+    private static async Task SetAuthorizedFileAccessAsync(KMyMoneyIntegrationTestContext context)
+    {
+        await SetTokenAsync(context);
+        await SetFilePathAsync(context);
+    }
+
+    private static async Task SetAddTransactionAccountsAndPriceStatusAsync(KMyMoneyIntegrationTestContext context)
+    {
+        await context.SetUserSettingAsync(123, UserSettings.AccountFrom, "Checking Account");
+        await context.SetUserSettingAsync(123, UserSettings.AccountTo, "Cash");
+        await SetAddTransactionPriceStatusAsync(context);
+    }
+
+    private static async Task SetAddTransactionPriceStatusAsync(KMyMoneyIntegrationTestContext context) =>
+        await context.SetUserSettingAsync(123, UserSettings.Status, "AddTransactionEnteringPrice");
+
+    private static async Task RunAddTransactionHappyPathAsync(KMyMoneyIntegrationTestContext context)
+    {
+        await context.OnMessageAsync("/add_transaction");
+        await context.OnMessageAsync("Checking Account");
+        await context.OnMessageAsync("Cash");
+        await context.OnMessageAsync("100");
+    }
+
+    private static void AssertSingleMessageEquals(KMyMoneyIntegrationTestContext context, string expected) =>
+        context.SentMessages().Single().GetRequiredText().ShouldBe(expected);
+
+    private static void AssertContainsExactMessage(KMyMoneyIntegrationTestContext context, string expected) =>
+        context.SentMessages().Any(m => m.GetRequiredText() == expected).ShouldBeTrue();
+
+    private static void AssertContainsMessage(KMyMoneyIntegrationTestContext context, string fragment) =>
+        context.SentMessages().Any(m => m.GetRequiredText().Contains(fragment)).ShouldBeTrue();
 
     private static string ExtractState(string loginMessage)
     {
