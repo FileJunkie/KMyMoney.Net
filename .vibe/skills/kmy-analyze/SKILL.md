@@ -212,7 +212,7 @@ grep -rn "[0-9][0-9]*\.[0-9]\+" . --include="*.cs" | grep -v "//" | head -20
 ### AGENTS.md Compliance Checklist
 
 #### Critical Rules
-- [ ] No US-based LLM usage (enforced by project policy)
+- [ ] Use Mistral Vibe or EU-based LLMs (recommended)
 - [ ] AGPL-3.0 license respected
 
 #### Development Rules

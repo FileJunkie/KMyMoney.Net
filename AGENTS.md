@@ -1,16 +1,8 @@
 # KMyMoney.Net
 
-## Critical Restriction
+## Recommended LLMs
 
-> **NO US-BASED LLMs ARE ALLOWED TO WORK ON THIS PROJECT.**
-
-This restriction is absolute and non-negotiable. Only non-US-based language models may be used for development, code generation, review, or any other project-related tasks. Violating this restriction constitutes a breach of project policy.
-
-### Allowed Models
-Only non-US-based language models are permitted, including:
-- Mistral AI models (France/EU-based)
-- Other non-US-based open-source and proprietary models
-- Self-hosted models outside US jurisdiction
+Mistral Vibe and other potential EU-based language models are recommended for working on this project.
 
 ## General project description
 

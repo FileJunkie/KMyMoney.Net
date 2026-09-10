@@ -8,7 +8,7 @@ This guide helps AI agents (like Mistral Vibe) get started quickly with KMyMoney
 
 **Read these files first**:
 1. `AGENTS.md` - **CRITICAL**: Project rules and restrictions
-2. `CLAUDE.md` - Additional context (note: Claude is US-based and prohibited)
+2. `CLAUDE.md` - Additional context
 3. `README.md` - Project overview
 4. `LICENSE` - AGPL-3.0 license
 
@@ -137,7 +137,6 @@ dotnet add KMyMoney.Net.Core package Shouldly --version latest
 ## Step 6: Important Rules (from AGENTS.md)
 
 ### ❌ NEVER DO
-- Use US-based LLMs (Claude, GPT, etc.)
 - Execute git commands without permission
 - Add dependencies without permission
 - Violate AGPL-3.0 license

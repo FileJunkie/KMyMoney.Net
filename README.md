@@ -4,7 +4,7 @@ Libraries to work with .kmy files from KMyMoney from .NET, as well as a Telegram
 
 AI disclosure: model classes are mostly (I'm sorry) AI-generated, so are tests, other stuff originally was too, but later almost completely rewritten.
 
-Staring from 10.09.2026, all new changes will be done via LLM plus some manual hacking. US-based LLMs are however prohibited here.
+Staring from 10.09.2026, all new changes will be done via LLM plus some manual hacking.
 
 ## Telegram bot installation
 

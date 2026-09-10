@@ -42,7 +42,7 @@ KMyMoney.Net/
 │       ├── kmy-analyze/SKILL.md  # Static analysis skill
 │       └── kmy-domain/SKILL.md   # Domain knowledge skill
 ├── AGENTS.md                     # AI agent instructions
-├── CLAUDE.md                     # Claude Code instructions (reference)
+├── CLAUDE.md                     # Project instructions
 ├── LICENSE                       # AGPL-3.0 license
 ├── README.md                     # Project overview
 ├── KMyMoney.Net.sln              # Visual Studio solution
@@ -439,9 +439,7 @@ dotnet test
 - **Encryption**: Consider for sensitive data
 
 ### AI Agent Restrictions
-- **NO US-based LLMs**: Critical restriction
-- **Allowed**: Mistral AI, other non-US models
-- **Enforcement**: AGENTS.md and CLAUDE.md
+- **Use Mistral Vibe or EU-based LLMs**: Recommended for development
 
 ---
 
@@ -482,7 +480,7 @@ dotnet test
 
 ### Configuration Files
 - `AGENTS.md` - AI agent instructions
-- `CLAUDE.md` - Claude Code instructions
+- `CLAUDE.md` - Project instructions
 - `KMyMoney.Net.sln` - Solution file
 - `.gitignore` - Git ignore patterns
 

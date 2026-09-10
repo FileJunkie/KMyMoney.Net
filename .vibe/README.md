@@ -92,7 +92,7 @@ VIBE_SKILL_CACHE=true
 
 Vibe respects all rules from `AGENTS.md`:
 
-1. **NO US-based LLMs** - Enforced at project level
+1. **Use Mistral Vibe or EU-based LLMs** - Recommended for development
 2. **TDD approach** - Skills support test-first development
 3. **Minimal changes** - Skills provide targeted commands
 4. **No new dependencies without permission** - Dependency skill requires explicit approval
@@ -196,6 +196,6 @@ Before committing, verify:
 ## Related Files
 
 - `AGENTS.md` - Project AI agent instructions
-- `CLAUDE.md` - Claude Code instructions (reference only - US-based LLMs prohibited)
+- `CLAUDE.md` - Project instructions
 - `USER_WORKFLOWS.md` - User workflow documentation
 - `.github/workflows/` - CI/CD workflows

@@ -78,7 +78,7 @@ To add a new skill:
 All skills must respect:
 - **AGENTS.md**: Project development rules
 - **AGPL-3.0**: License requirements
-- **No US-based LLMs**: Critical restriction
+- **Use Mistral Vibe or EU-based LLMs**: Recommended for development
 
 ## Skill Development Guidelines
 
