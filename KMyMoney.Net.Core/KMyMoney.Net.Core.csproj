@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
     <ProjectReference Include="..\KMyMoney.Net.Models\KMyMoney.Net.Models.csproj" />
@@ -6,7 +6,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Fractions" Version="8.3.2" />
+    <PackageReference Include="Fractions" />
   </ItemGroup>
 
   <PropertyGroup>
