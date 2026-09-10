@@ -9,6 +9,7 @@ This directory contains specialized Vibe skills for the KMyMoney.Net project. Ea
 | [`kmy-test`](kmy-test/SKILL.md) | Test execution and management | Running tests, filtering, coverage, debugging |
 | [`kmy-tdd`](kmy-tdd/SKILL.md) | Test-Driven Development workflow | Implementing features with TDD, test-first approach |
 | [`kmy-deps`](kmy-deps/SKILL.md) | Dependency management | Checking, updating, resolving NuGet packages |
+| [`kmy-outdated`](kmy-outdated/SKILL.md) | dotnet-outdated tool | Using dotnet-outdated to check and update dependencies |
 | [`kmy-build`](kmy-build/SKILL.md) | Build and packaging | Building, packing NuGet/Debian packages, publishing |
 | [`kmy-analyze`](kmy-analyze/SKILL.md) | Static analysis | Code quality checks, AGENTS.md compliance, architecture analysis |
 | [`kmy-domain`](kmy-domain/SKILL.md) | Domain knowledge | Understanding .kmy format, Telegram bot, project architecture |
@@ -53,6 +54,7 @@ Load multiple skills for complex tasks:
 ```
 /load kmy-build
 /load kmy-deps
+/load kmy-outdated
 Update dependencies and rebuild
 ```
 
@@ -105,6 +107,8 @@ Regularly review and update skills when:
 │   └── SKILL.md                # TDD workflow skill
 ├── kmy-deps/
 │   └── SKILL.md                # Dependency management skill
+├── kmy-outdated/
+│   └── SKILL.md                # dotnet-outdated tool skill
 ├── kmy-build/
 │   └── SKILL.md                # Build and packaging skill
 ├── kmy-analyze/
