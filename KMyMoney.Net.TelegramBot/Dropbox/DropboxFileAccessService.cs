@@ -9,31 +9,54 @@ using Telegram.Bot.Types;
 namespace KMyMoney.Net.TelegramBot.Dropbox;
 
 public class DropboxFileAccessService(
-    ISettingsPersistenceLayer settingsPersistenceLayer) : IFileAccessService
+    ISettingsPersistenceLayer settingsPersistenceLayer,
+    IDropboxTokenManager dropboxTokenManager) : IFileAccessService
 {
     public async Task<IFileAccessor> CreateFileAccessorAsync(
         Message message,
         CancellationToken cancellationToken)
     {
-        var token = await settingsPersistenceLayer.GetUserSettingByUserIdAsync(
-            message.From!.Id,
-            UserSettings.Token,
-            cancellationToken: cancellationToken);
-        if (string.IsNullOrWhiteSpace(token))
+        try
         {
-            var serializedMessage = JsonSerializer.Serialize(message);
+            var accessToken = await dropboxTokenManager.GetValidAccessTokenAsync(
+                message.From!.Id,
+                cancellationToken);
+
+            return new DropboxFileAccessor(accessToken);
+        }
+        catch (TokenRefreshFailedException ex)
+        {
             await settingsPersistenceLayer.SetUserSettingByUserIdAsync(
                 message.From!.Id,
-                UserSettings.LastFailedMessage,
-                value: serializedMessage,
-                expiresIn: TimeSpan.FromMinutes(15),
+                UserSettings.Token,
+                null,
                 cancellationToken: cancellationToken);
-            throw new WithUserMessageException(
-                "Use /login to set access token",
-                keepStatus: true);
-        }
 
-        return new DropboxFileAccessor(token);
+            throw new WithUserMessageException(
+                ex.Message,
+                keepStatus: false);
+        }
+        catch (Exception ex) when (IsTokenRelatedError(ex))
+        {
+            await settingsPersistenceLayer.SetUserSettingByUserIdAsync(
+                message.From!.Id,
+                UserSettings.Token,
+                null,
+                cancellationToken: cancellationToken);
+
+            throw new WithUserMessageException(
+                "Dropbox session expired. Please use /login to re-authorize.",
+                keepStatus: false);
+        }
+    }
+
+    private static bool IsTokenRelatedError(Exception ex)
+    {
+        return (ex.InnerException != null && IsTokenRelatedError(ex.InnerException))
+            || ex.Message.Contains("401")
+            || ex.Message.Contains("Unauthorized")
+            || ex.Message.Contains("invalid_token")
+            || ex.Message.Contains("access denied");
     }
 
     public async Task<string> GetFilePathAsync(Message message, CancellationToken cancellationToken)

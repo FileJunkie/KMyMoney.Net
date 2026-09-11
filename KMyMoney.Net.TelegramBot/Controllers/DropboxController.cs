@@ -57,6 +57,16 @@ public class DropboxController(
                 null,
             cancellationToken: cancellationToken);
 
+        if (!string.IsNullOrEmpty(token.RefreshToken))
+        {
+            await settingsPersistenceLayer.SetUserSettingByUserIdAsync(
+                userIdLong,
+                UserSettings.RefreshToken,
+                token.RefreshToken,
+                expiresIn: null,
+                cancellationToken: cancellationToken);
+        }
+
         var lastFailedMessage = await settingsPersistenceLayer.GetUserSettingByUserIdAsync(
             userIdLong,
             UserSettings.LastFailedMessage,
@@ -79,6 +89,9 @@ public class DropboxController(
                     cancellationToken);
         }
 
-        return Ok("Logged in");
+        return Content(
+            "<html><body><script>window.close();</script>" +
+            "<noscript><p>Logged in. You may close this window.</p></noscript></body></html>",
+            "text/html");
     }
 }

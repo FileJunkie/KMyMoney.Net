@@ -34,7 +34,7 @@ public class LoginCommandTests
             "key",
             "https://redirect",
             Arg.Any<string>(),
-            tokenAccessType: TokenAccessType.Online)
+            tokenAccessType: TokenAccessType.Offline)
             .Returns(authUri);
 
         // Act

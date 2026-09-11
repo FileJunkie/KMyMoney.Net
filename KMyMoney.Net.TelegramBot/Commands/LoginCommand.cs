@@ -33,7 +33,7 @@ public class LoginCommand(
         var uri = dropboxOAuth2HelperWrapper.GetAuthorizeUri(
             OAuthResponseType.Code,
             clientId: dropboxSettings.Value.ApiKey,
-            tokenAccessType: TokenAccessType.Online,
+            tokenAccessType: TokenAccessType.Offline,
             state: state,
             redirectUri: dropboxSettings.Value.RedirectUri);
 
