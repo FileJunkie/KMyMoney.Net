@@ -25,4 +25,11 @@ public interface IDropboxOAuth2HelperWrapper
         string? redirectUri = null,
         HttpClient? client = null,
         string? codeVerifier = null);
+
+    Task<OAuth2Response?> ProcessRefreshFlowAsync(
+        string refreshToken,
+        string appKey,
+        string appSecret,
+        string? redirectUri = null,
+        HttpClient? client = null);
 }

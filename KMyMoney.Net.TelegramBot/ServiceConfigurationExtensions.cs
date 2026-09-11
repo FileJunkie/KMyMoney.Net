@@ -85,6 +85,7 @@ public static class ServiceConfigurationExtensions
         .ValidateOnStart()
         .Services
         .AddSingleton<IDropboxOAuth2HelperWrapper, DropboxOAuth2HelperWrapper>()
+        .AddSingleton<IDropboxTokenManager, DropboxTokenManager>()
         .AddSingleton<IFileAccessService, DropboxFileAccessService>();
 
     private static IServiceCollection ConfigureSystem(this IServiceCollection services) => services

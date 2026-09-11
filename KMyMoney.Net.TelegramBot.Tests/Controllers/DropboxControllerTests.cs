@@ -68,11 +68,17 @@ public class DropboxControllerTests
         var result = await controller.CallbackAsync(code, state, CancellationToken.None);
 
         // Assert
-        result.ShouldBeOfType<OkObjectResult>();
+        result.ShouldBeOfType<ContentResult>();
         await settingsPersistenceLayer.Received(1).SetUserSettingByUserIdAsync(
             userId,
             UserSettings.Token,
             "access_token",
+            Arg.Any<TimeSpan?>(),
+            CancellationToken.None);
+        await settingsPersistenceLayer.Received(1).SetUserSettingByUserIdAsync(
+            userId,
+            UserSettings.RefreshToken,
+            "refresh_token",
             Arg.Any<TimeSpan?>(),
             CancellationToken.None);
         await updateHandler.DidNotReceive().OnMessageAsync(
@@ -146,11 +152,17 @@ public class DropboxControllerTests
         var result = await controller.CallbackAsync(code, state, CancellationToken.None);
 
         // Assert
-        result.ShouldBeOfType<OkObjectResult>();
+        result.ShouldBeOfType<ContentResult>();
         await settingsPersistenceLayer.Received(1).SetUserSettingByUserIdAsync(
             userId,
             UserSettings.Token,
             "access_token",
+            Arg.Any<TimeSpan?>(),
+            CancellationToken.None);
+        await settingsPersistenceLayer.Received(1).SetUserSettingByUserIdAsync(
+            userId,
+            UserSettings.RefreshToken,
+            "refresh_token",
             Arg.Any<TimeSpan?>(),
             CancellationToken.None);
         for (var i = 0; i < 10; i++)

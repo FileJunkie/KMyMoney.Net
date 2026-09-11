@@ -17,7 +17,7 @@ public class DropboxFileAccessor(string token) : IFileAccessor
         var uri = DropboxOAuth2Helper.GetAuthorizeUri(
             OAuthResponseType.Code,
             clientId: apiKey,
-            tokenAccessType: TokenAccessType.Legacy,
+            tokenAccessType: TokenAccessType.Offline,
             redirectUri: (string?)null);
         var code = await codeRequester(uri);
         var token = await DropboxOAuth2Helper.ProcessCodeFlowAsync(code, apiKey, apiSecret);

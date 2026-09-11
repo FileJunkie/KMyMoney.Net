@@ -1,4 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Net;
+using System.Text.Json;
 using Dropbox.Api;
 
 namespace KMyMoney.Net.TelegramBot.Dropbox;
@@ -34,4 +36,29 @@ public class DropboxOAuth2HelperWrapper : IDropboxOAuth2HelperWrapper
             redirectUri: redirectUri,
             client: client,
             codeVerifier: codeVerifier);
+
+    public async Task<OAuth2Response?> ProcessRefreshFlowAsync(
+        string refreshToken,
+        string appKey,
+        string appSecret,
+        string? redirectUri = null,
+        HttpClient? client = null)
+    {
+        using var httpClient = client ?? new HttpClient();
+        var request = new Dictionary<string, string>
+        {
+            ["grant_type"] = "refresh_token",
+            ["refresh_token"] = refreshToken,
+            ["client_id"] = appKey,
+            ["client_secret"] = appSecret
+        };
+
+        var response = await httpClient.PostAsync(
+            "https://api.dropboxapi.com/oauth2/token",
+            new FormUrlEncodedContent(request));
+
+        response.EnsureSuccessStatusCode();
+        var responseString = await response.Content.ReadAsStringAsync();
+        return JsonSerializer.Deserialize<OAuth2Response>(responseString);
+    }
 }
