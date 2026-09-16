@@ -6,7 +6,6 @@ using Microsoft.Extensions.Options;
 
 namespace KMyMoney.Net.TelegramBot.Dropbox;
 
-[ExcludeFromCodeCoverage(Justification = "Integrates with real Dropbox API")]
 public class DropboxTokenManager(
     ISettingsPersistenceLayer? settingsPersistenceLayer = null,
     IDropboxOAuth2HelperWrapper? dropboxOAuth2HelperWrapper = null,
@@ -25,23 +24,20 @@ public class DropboxTokenManager(
         var accessToken = await _settingsPersistenceLayer.GetUserSettingByUserIdAsync(
             userId, UserSettings.Token, cancellationToken);
 
-        if (string.IsNullOrEmpty(accessToken))
-        {
-            _logger.LogInformation("No access token for user {UserId}, forcing re-login", userId);
-            throw new TokenRefreshFailedException("No access token. Please use /login");
-        }
-
-        if (await IsTokenValidAsync(accessToken, cancellationToken))
+        if (!string.IsNullOrEmpty(accessToken) && await IsTokenValidAsync(accessToken, cancellationToken))
         {
             return accessToken;
         }
 
-        _logger.LogInformation("Access token invalid for user {UserId}, attempting refresh", userId);
+        _logger.LogInformation("Access token missing or invalid for user {UserId}, attempting refresh", userId);
 
         try
         {
-            var refreshedToken = await RefreshAccessTokenAsync(userId, cancellationToken);
-            return refreshedToken;
+            return await RefreshAccessTokenAsync(userId, cancellationToken);
+        }
+        catch (TokenRefreshFailedException)
+        {
+            throw;
         }
         catch (Exception ex)
         {
@@ -51,7 +47,8 @@ public class DropboxTokenManager(
         }
     }
 
-    private async Task<bool> IsTokenValidAsync(
+    [ExcludeFromCodeCoverage(Justification = "Integrates with real Dropbox API")]
+    protected virtual async Task<bool> IsTokenValidAsync(
         string accessToken,
         CancellationToken cancellationToken)
     {
