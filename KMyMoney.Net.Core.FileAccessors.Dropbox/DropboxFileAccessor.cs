@@ -4,24 +4,23 @@ using Dropbox.Api.Files;
 
 namespace KMyMoney.Net.Core.FileAccessors.Dropbox;
 
-public class DropboxFileAccessor(string token) : IFileAccessor
+public class DropboxFileAccessor(string refreshToken, DropboxSettings settings) : IFileAccessor
 {
-    private readonly DropboxClient _client = new(token);
+    private readonly DropboxClient _client = new(refreshToken, settings.ApiKey, settings.ApiSecret);
 
     [ExcludeFromCodeCoverage(Justification = "Makes a call to the real API")]
     public static async Task<DropboxFileAccessor> CreateAsync(
-        string apiKey,
-        string apiSecret,
+        DropboxSettings settings,
         CodeRequester codeRequester)
     {
         var uri = DropboxOAuth2Helper.GetAuthorizeUri(
             OAuthResponseType.Code,
-            clientId: apiKey,
+            clientId: settings.ApiKey,
             tokenAccessType: TokenAccessType.Offline,
             redirectUri: (string?)null);
         var code = await codeRequester(uri);
-        var token = await DropboxOAuth2Helper.ProcessCodeFlowAsync(code, apiKey, apiSecret);
-        return new (token.AccessToken);
+        var token = await DropboxOAuth2Helper.ProcessCodeFlowAsync(code, settings.ApiKey, settings.ApiSecret);
+        return new(token.RefreshToken ?? token.AccessToken, settings);
     }
 
     public bool UriSupported(Uri uri) =>
