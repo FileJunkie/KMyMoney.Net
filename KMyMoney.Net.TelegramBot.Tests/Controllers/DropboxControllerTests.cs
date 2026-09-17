@@ -71,15 +71,9 @@ public class DropboxControllerTests
         result.ShouldBeOfType<ContentResult>();
         await settingsPersistenceLayer.Received(1).SetUserSettingByUserIdAsync(
             userId,
-            UserSettings.Token,
-            "access_token",
-            Arg.Any<TimeSpan?>(),
-            CancellationToken.None);
-        await settingsPersistenceLayer.Received(1).SetUserSettingByUserIdAsync(
-            userId,
             UserSettings.RefreshToken,
             "refresh_token",
-            Arg.Any<TimeSpan?>(),
+            TimeSpan.FromDays(7),
             CancellationToken.None);
         await updateHandler.DidNotReceive().OnMessageAsync(
             Arg.Any<Message>(),
@@ -155,15 +149,9 @@ public class DropboxControllerTests
         result.ShouldBeOfType<ContentResult>();
         await settingsPersistenceLayer.Received(1).SetUserSettingByUserIdAsync(
             userId,
-            UserSettings.Token,
-            "access_token",
-            Arg.Any<TimeSpan?>(),
-            CancellationToken.None);
-        await settingsPersistenceLayer.Received(1).SetUserSettingByUserIdAsync(
-            userId,
             UserSettings.RefreshToken,
             "refresh_token",
-            Arg.Any<TimeSpan?>(),
+            TimeSpan.FromDays(7),
             CancellationToken.None);
         for (var i = 0; i < 10; i++)
         {
@@ -217,7 +205,7 @@ public class DropboxControllerTests
     }
 
     [Fact]
-    public async Task CallbackAsync_ShouldReturnForbid_WhenTokenIsNull()
+    public async Task CallbackAsync_ShouldReturnForbid_WhenRefreshTokenIsNull()
     {
         // Arrange
         var settingsPersistenceLayer = Substitute.For<ISettingsPersistenceLayer>();
@@ -241,13 +229,26 @@ public class DropboxControllerTests
         const string state = "valid_state";
         const long userId = 12345;
 
+        var constructor = typeof(OAuth2Response).GetConstructors(
+            BindingFlags.Instance | BindingFlags.NonPublic)[0];
+        var oauth2Response = (OAuth2Response)constructor.Invoke(
+            [
+                "access_token",
+                null,
+                "uid",
+                "state",
+                "bearer",
+                3600,
+                new [] {"account_id"}
+            ]);
+
         settingsPersistenceLayer.GetSavedValueByKeyAsync($"states/{state}").Returns(userId.ToString());
         dropboxOAuth2HelperWrapper.ProcessCodeFlowAsync(
             code,
             "key",
             "secret",
             "https://redirect")
-            .Returns((OAuth2Response?)null);
+            .Returns(oauth2Response);
 
         // Act
         var result = await controller.CallbackAsync(code, state, CancellationToken.None);

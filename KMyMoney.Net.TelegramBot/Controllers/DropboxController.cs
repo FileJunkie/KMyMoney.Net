@@ -41,31 +41,19 @@ public class DropboxController(
             appSecret: dropboxSettings.Value.ApiSecret,
             redirectUri: dropboxSettings.Value.RedirectUri);
 
-        if (token == null)
+        if (token?.RefreshToken == null)
         {
             return Forbid();
         }
 
-        logger.LogInformation("Token for user {UserId} saved until {Expiration}", userId, token.ExpiresAt);
+        logger.LogInformation("Refresh token saved for user {UserId}", userId);
 
         await settingsPersistenceLayer.SetUserSettingByUserIdAsync(
             userIdLong,
-            UserSettings.Token,
-            token.AccessToken,
-            token.ExpiresAt.HasValue ?
-                (token.ExpiresAt.Value - DateTimeOffset.Now) :
-                null,
+            UserSettings.RefreshToken,
+            token.RefreshToken,
+            expiresIn: TimeSpan.FromDays(7),
             cancellationToken: cancellationToken);
-
-        if (!string.IsNullOrEmpty(token.RefreshToken))
-        {
-            await settingsPersistenceLayer.SetUserSettingByUserIdAsync(
-                userIdLong,
-                UserSettings.RefreshToken,
-                token.RefreshToken,
-                expiresIn: null,
-                cancellationToken: cancellationToken);
-        }
 
         var lastFailedMessage = await settingsPersistenceLayer.GetUserSettingByUserIdAsync(
             userIdLong,

@@ -2,6 +2,8 @@ using KMyMoney.Net.Core.FileAccessors.Dropbox;
 using KMyMoney.Net.TelegramBot.Dropbox;
 using KMyMoney.Net.TelegramBot.Exceptions;
 using KMyMoney.Net.TelegramBot.Persistence;
+using KMyMoney.Net.TelegramBot.Settings;
+using Microsoft.Extensions.Options;
 using NSubstitute;
 using Shouldly;
 using Telegram.Bot.Types;
@@ -11,17 +13,27 @@ namespace KMyMoney.Net.TelegramBot.Tests.Dropbox;
 
 public class DropboxFileAccessServiceTests
 {
+    private static IOptions<DropboxSettings> CreateDropboxSettings() =>
+        Options.Create(new DropboxSettings
+        {
+            ApiKey = "key",
+            ApiSecret = "secret",
+            RedirectUri = "https://redirect"
+        });
+
     [Fact]
-    public async Task CreateFileAccessorAsync_WhenTokenExists_ShouldReturnDropboxFileAccessor()
+    public async Task CreateFileAccessorAsync_WhenRefreshTokenExists_ShouldReturnDropboxFileAccessor()
     {
         // Arrange
         var settingsPersistenceLayer = Substitute.For<ISettingsPersistenceLayer>();
-        var dropboxTokenManager = Substitute.For<IDropboxTokenManager>();
         var message = new Message { From = new User { Id = 123 }, Chat = new Chat { Id = 456 } };
-        const string token = "test_token";
-        dropboxTokenManager.GetValidAccessTokenAsync(message.From.Id, Arg.Any<CancellationToken>())
-            .Returns(token);
-        var service = new DropboxFileAccessService(settingsPersistenceLayer, dropboxTokenManager);
+        const string refreshToken = "stored_refresh_token";
+        settingsPersistenceLayer.GetUserSettingByUserIdAsync(
+            message.From.Id, UserSettings.RefreshToken, Arg.Any<CancellationToken>())
+            .Returns(refreshToken);
+        var service = new DropboxFileAccessService(
+            settingsPersistenceLayer,
+            CreateDropboxSettings());
 
         // Act
         var result = await service.CreateFileAccessorAsync(message, CancellationToken.None);
@@ -32,11 +44,10 @@ public class DropboxFileAccessServiceTests
     }
 
     [Fact]
-    public async Task CreateFileAccessorAsync_WhenTokenIsMissing_ShouldReturnNullAndSendMessage()
+    public async Task CreateFileAccessorAsync_WhenRefreshTokenIsMissing_ShouldThrowWithUserMessageException()
     {
         // Arrange
         var settingsPersistenceLayer = Substitute.For<ISettingsPersistenceLayer>();
-        var dropboxTokenManager = Substitute.For<IDropboxTokenManager>();
         var message = new Message
         {
             From = new User { Id = 123 },
@@ -46,11 +57,14 @@ public class DropboxFileAccessServiceTests
                 Type = ChatType.Private,
             }
         };
-        
-        dropboxTokenManager.GetValidAccessTokenAsync(Arg.Any<long>(), Arg.Any<CancellationToken>())
-            .Returns(Task.FromException<string>(new TokenRefreshFailedException("No access token. Please use /login")));
-        
-        var service = new DropboxFileAccessService(settingsPersistenceLayer, dropboxTokenManager);
+
+        settingsPersistenceLayer.GetUserSettingByUserIdAsync(
+            Arg.Any<long>(), UserSettings.RefreshToken, Arg.Any<CancellationToken>())
+            .Returns((string?)null);
+
+        var service = new DropboxFileAccessService(
+            settingsPersistenceLayer,
+            CreateDropboxSettings());
 
         // Act
         var action = () => service.CreateFileAccessorAsync(
@@ -58,15 +72,8 @@ public class DropboxFileAccessServiceTests
             CancellationToken.None);
 
         // Assert
-        await action.ShouldThrowAsync<WithUserMessageException>();
-        await settingsPersistenceLayer
-            .Received(1)
-            .SetUserSettingByUserIdAsync(
-                message.From.Id,
-                UserSettings.Token,
-                null,
-                Arg.Any<TimeSpan?>(),
-                Arg.Any<CancellationToken>());
+        var ex = await action.ShouldThrowAsync<WithUserMessageException>();
+        ex.Message.ShouldContain("/login");
     }
 
     [Fact]
@@ -74,12 +81,13 @@ public class DropboxFileAccessServiceTests
     {
         // Arrange
         var settingsPersistenceLayer = Substitute.For<ISettingsPersistenceLayer>();
-        var dropboxTokenManager = Substitute.For<IDropboxTokenManager>();
         var message = new Message { From = new User { Id = 123 }, Chat = new Chat { Id = 456 } };
         const string filePath = "/test/file.kmy";
         settingsPersistenceLayer.GetUserSettingByUserIdAsync(message.From.Id, UserSettings.FilePath, Arg.Any<CancellationToken>())
             .Returns(Task.FromResult<string?>(filePath));
-        var service = new DropboxFileAccessService(settingsPersistenceLayer, dropboxTokenManager);
+        var service = new DropboxFileAccessService(
+            settingsPersistenceLayer,
+            CreateDropboxSettings());
 
         // Act
         var result = await service.GetFilePathAsync(message, CancellationToken.None);
@@ -94,11 +102,12 @@ public class DropboxFileAccessServiceTests
     {
         // Arrange
         var settingsPersistenceLayer = Substitute.For<ISettingsPersistenceLayer>();
-        var dropboxTokenManager = Substitute.For<IDropboxTokenManager>();
         var message = new Message { From = new User { Id = 123 }, Chat = new Chat { Id = 456 } };
         settingsPersistenceLayer.GetUserSettingByUserIdAsync(message.From.Id, UserSettings.FilePath, Arg.Any<CancellationToken>())
             .Returns(Task.FromResult<string?>(null));
-        var service = new DropboxFileAccessService(settingsPersistenceLayer, dropboxTokenManager);
+        var service = new DropboxFileAccessService(
+            settingsPersistenceLayer,
+            CreateDropboxSettings());
 
         // Act
         var action = service.GetFilePathAsync(message, CancellationToken.None);
