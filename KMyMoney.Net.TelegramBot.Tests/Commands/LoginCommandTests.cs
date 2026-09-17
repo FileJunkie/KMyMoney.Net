@@ -2,7 +2,7 @@ using Dropbox.Api;
 using KMyMoney.Net.TelegramBot.Commands;
 using KMyMoney.Net.TelegramBot.Dropbox;
 using KMyMoney.Net.TelegramBot.Persistence;
-using KMyMoney.Net.TelegramBot.Settings;
+using KMyMoney.Net.Core.FileAccessors.Dropbox;
 using KMyMoney.Net.TelegramBot.Telegram;
 using Microsoft.Extensions.Options;
 using NSubstitute;

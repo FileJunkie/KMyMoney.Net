@@ -3,7 +3,6 @@ using KMyMoney.Net.Core.FileAccessors.Dropbox;
 using KMyMoney.Net.TelegramBot.Exceptions;
 using KMyMoney.Net.TelegramBot.FileAccess;
 using KMyMoney.Net.TelegramBot.Persistence;
-using KMyMoney.Net.TelegramBot.Settings;
 using Microsoft.Extensions.Options;
 using Telegram.Bot.Types;
 
@@ -38,8 +37,7 @@ public class DropboxFileAccessService(
 
         return new DropboxFileAccessor(
             refreshToken,
-            dropboxSettings.Value.ApiKey,
-            dropboxSettings.Value.ApiSecret);
+            dropboxSettings.Value);
     }
 
     public async Task<string> GetFilePathAsync(Message message, CancellationToken cancellationToken)

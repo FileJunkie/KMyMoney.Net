@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace KMyMoney.Net.TelegramBot.Settings;
+namespace KMyMoney.Net.Core.FileAccessors.Dropbox;
 
 public class DropboxSettings
 {

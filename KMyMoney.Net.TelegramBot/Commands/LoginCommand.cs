@@ -1,9 +1,9 @@
 using System.Security.Cryptography;
 using Dropbox.Api;
+using KMyMoney.Net.Core.FileAccessors.Dropbox;
 using KMyMoney.Net.TelegramBot.Common;
 using KMyMoney.Net.TelegramBot.Dropbox;
 using KMyMoney.Net.TelegramBot.Persistence;
-using KMyMoney.Net.TelegramBot.Settings;
 using KMyMoney.Net.TelegramBot.Telegram;
 using Microsoft.Extensions.Options;
 using Telegram.Bot.Types;

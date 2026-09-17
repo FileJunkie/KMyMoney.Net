@@ -27,8 +27,11 @@ public static class BaseOptions
     private static async Task<KMyMoneyFile> LoadFileAsync(ArgumentResult result)
     {
         var dropboxFileAccessor = await DropboxFileAccessor.CreateAsync(
-            apiKey: Environment.GetEnvironmentVariable("DROPBOX_API_KEY")!,
-            apiSecret: Environment.GetEnvironmentVariable("DROPBOX_API_SECRET")!,
+            new DropboxSettings
+            {
+                ApiKey = Environment.GetEnvironmentVariable("DROPBOX_API_KEY")!,
+                ApiSecret = Environment.GetEnvironmentVariable("DROPBOX_API_SECRET")!,
+            },
             uri =>
             {
                 Console.WriteLine("Please go here: {0}", uri);

@@ -5,7 +5,7 @@ using KMyMoney.Net.TelegramBot.Controllers;
 using KMyMoney.Net.TelegramBot.Dropbox;
 using KMyMoney.Net.TelegramBot.Persistence;
 using KMyMoney.Net.TelegramBot.Services;
-using KMyMoney.Net.TelegramBot.Settings;
+using KMyMoney.Net.Core.FileAccessors.Dropbox;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
