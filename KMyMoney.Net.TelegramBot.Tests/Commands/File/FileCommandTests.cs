@@ -13,7 +13,7 @@ namespace KMyMoney.Net.TelegramBot.Tests.Commands.File;
 public class FileCommandTests
 {
     [Fact]
-    public async Task HandleAsync_ShouldPromptForFile_WhenTokenExists()
+    public async Task HandleAsync_ShouldPromptForFile_WhenFileAccessorAvailable()
     {
         // Arrange
         var settingsPersistenceLayer = Substitute.For<ISettingsPersistenceLayer>();
@@ -28,10 +28,6 @@ public class FileCommandTests
 
         var message = new Message
             { From = new User { Id = 123 }, Chat = new Chat { Id = 456 } };
-        const string token = "valid_token";
-
-        settingsPersistenceLayer.GetUserSettingByUserIdAsync(123, UserSettings.Token)
-            .Returns(token);
 
         var fileAccessor = Substitute.For<IFileAccessor>();
         fileAccessorFactory
@@ -64,10 +60,6 @@ public class FileCommandTests
 
         var message = new Message
             { From = new User { Id = 123 }, Chat = new Chat { Id = 456 } };
-        const string token = "valid_token";
-
-        settingsPersistenceLayer.GetUserSettingByUserIdAsync(123, UserSettings.Token)
-            .Returns(token);
 
         var fileAccessor = Substitute.For<IFileAccessor>();
         fileAccessorFactory

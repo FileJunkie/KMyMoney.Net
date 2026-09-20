@@ -11,7 +11,7 @@ public class DropboxFileAccessorTests
     public void UriSupported_ShouldReturnCorrectResultForScheme(string uriString, bool expected)
     {
         // Arrange
-        var accessor = new DropboxFileAccessor("dummy_token");
+        var accessor = new DropboxFileAccessor("dummy_refresh_token", new DropboxSettings { ApiKey = "key", ApiSecret = "secret" });
         var uri = new Uri(uriString);
 
         // Act

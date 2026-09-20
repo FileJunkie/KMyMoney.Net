@@ -1,3 +1,4 @@
+using KMyMoney.Net.Core.FileAccessors.Dropbox;
 using KMyMoney.Net.TelegramBot.Commands;
 using KMyMoney.Net.TelegramBot.Commands.AddTransaction;
 using KMyMoney.Net.TelegramBot.Commands.File;
@@ -85,7 +86,6 @@ public static class ServiceConfigurationExtensions
         .ValidateOnStart()
         .Services
         .AddSingleton<IDropboxOAuth2HelperWrapper, DropboxOAuth2HelperWrapper>()
-        .AddSingleton<IDropboxTokenManager, DropboxTokenManager>()
         .AddSingleton<IFileAccessService, DropboxFileAccessService>();
 
     private static IServiceCollection ConfigureSystem(this IServiceCollection services) => services
